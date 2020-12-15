@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">EyeMusic</string>
+    <string name="play">Play</string>
+    <string name="pause">pause</string>
 </resources>
