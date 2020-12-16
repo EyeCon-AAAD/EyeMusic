@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private SpotifyAppRemote mSpotifyAppRemote;
     Button btn_play, btn_pause;
     TextView tv_message;
+    TextView tv_artist;
     boolean flag = false;
 
     @Override
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
         btn_play = findViewById(R.id.btn_main_play);
         btn_pause = findViewById(R.id.btn_main_pause);
         tv_message = findViewById(R.id.tv_main_message);
+
     }
 
     @Override
@@ -84,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
                                 final Track track = playerState.track;
                                 if(track != null){
                                     tv_message.setText(track.name);
+                                    tv_artist.setText(track.artist.name);
                                 }
                             });
                     flag = true;
