@@ -2,6 +2,9 @@ package com.projectx.eyemusic;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -53,21 +56,39 @@ public class MainActivity extends AppCompatActivity {
             // Send user to Play Store to install if available in current market
             // TO-DO: If Spotify is not in user's market --> potentially can't of our app
             Log.w(TAG, "Spotify isn't installed! Going to play store");
-            try{
-                Uri uri = Uri.parse("market://details")
-                        .buildUpon()
-                        .appendQueryParameter("id", SPOTIFY_PACKAGE_NAME)
-                        .appendQueryParameter("referrer", REFERRER)
-                        .build();
-                startActivity(new Intent(Intent.ACTION_VIEW, uri));
-            }catch (android.content.ActivityNotFoundException ignored){
-                Uri uri = Uri.parse(PLAY_STORE_URI)
-                        .buildUpon()
-                        .appendQueryParameter("id", SPOTIFY_PACKAGE_NAME)
-                        .appendQueryParameter("referrer", REFERRER)
-                        .build();
-                startActivity(new Intent(Intent.ACTION_VIEW, uri));
-            }
+            // Alert Dialog for good UX
+            Context context;
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this); // look up context
+            builder.setMessage("Please install Spotify from Play Store then launch app again.")
+            .setCancelable(true) // may change this
+            .setPositiveButton("Install", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    try{
+                        Uri uri = Uri.parse("market://details")
+                                .buildUpon()
+                                .appendQueryParameter("id", SPOTIFY_PACKAGE_NAME)
+                                .appendQueryParameter("referrer", REFERRER)
+                                .build();
+                        startActivity(new Intent(Intent.ACTION_VIEW, uri));
+                    }catch (android.content.ActivityNotFoundException ignored){
+                        Uri uri = Uri.parse(PLAY_STORE_URI)
+                                .buildUpon()
+                                .appendQueryParameter("id", SPOTIFY_PACKAGE_NAME)
+                                .appendQueryParameter("referrer", REFERRER)
+                                .build();
+                        startActivity(new Intent(Intent.ACTION_VIEW, uri));
+                    }
+                }
+            })
+            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.cancel();
+                }
+            })
+            .create().show();
+
         } else{
             // spotify is installed. Now try and connect
             // set the connection parameters
