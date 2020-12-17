@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         btn_play = findViewById(R.id.btn_main_play);
         btn_pause = findViewById(R.id.btn_main_pause);
         tv_message = findViewById(R.id.tv_main_message);
+        tv_artist = findViewById(R.id.tv_main_artist);
         packageManager = getPackageManager();
 
 
@@ -103,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
             //    Spotify
             // Use the SpotifyAppRemote.Connector to connect to Spotify and get an instance of
             // SpotifyAppRemote
-            SpotifyAppRemote.disconnect(mSpotifyAppRemote);
+            //SpotifyAppRemote.disconnect(mSpotifyAppRemote);
             SpotifyAppRemote.connect(this, connectionParams, new Connector.ConnectionListener() {
                 @Override
                 public void onConnected(SpotifyAppRemote spotifyAppRemote) {
@@ -146,6 +147,15 @@ public class MainActivity extends AppCompatActivity {
                     flag = true;
                 } else{
                     mSpotifyAppRemote.getPlayerApi().resume();
+                    mSpotifyAppRemote.getPlayerApi()
+                            .subscribeToPlayerState()
+                            .setEventCallback(playerState -> {
+                                final Track track = playerState.track;
+                                if(track != null){
+                                    tv_message.setText(track.name);
+                                    tv_artist.setText(track.artist.name);
+                                }
+                            });
                 }
                 btn_play.setEnabled(false);
             }
