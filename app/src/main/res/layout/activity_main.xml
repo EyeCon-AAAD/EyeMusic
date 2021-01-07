@@ -15,10 +15,11 @@
         android:text="@string/play"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.207"
+        app:layout_constraintEnd_toStartOf="@+id/btn_main_pause"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_main_message"
-        app:layout_constraintVertical_bias="0.076" />
+        app:layout_constraintVertical_bias="0.151" />
 
     <Button
         android:id="@+id/btn_main_pause"
@@ -29,16 +30,17 @@
         android:text="@string/pause"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.075"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/btn_main_play"
         app:layout_constraintTop_toBottomOf="@+id/tv_main_message"
-        app:layout_constraintVertical_bias="0.06" />
+        app:layout_constraintVertical_bias="0.137" />
 
     <TextView
         android:id="@+id/tv_main_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Artist"
+        android:text="Song"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.494"
@@ -52,12 +54,36 @@
         android:id="@+id/tv_main_artist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
+        android:text="Artist name"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.257" />
+
+    <Button
+        android:id="@+id/btn_main_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="152dp"
+        android:text="Get Access Token"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_main_play"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/tv_main_auth_token"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Authorization Token"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_main_login" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
