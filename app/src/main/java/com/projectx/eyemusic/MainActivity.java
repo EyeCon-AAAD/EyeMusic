@@ -54,15 +54,22 @@ public class MainActivity extends AppCompatActivity {
         tv_auth_token = findViewById(R.id.tv_main_auth_token);
         packageManager = getPackageManager();
 
+
+        // press this button to load the access token to mAccessToken
+        btn_login.setOnClickListener(view -> {
+            authenticate();
+            });
+
+    }
+
+    private void authenticate() {
         AuthorizationRequest.Builder builder = new AuthorizationRequest.Builder(CLIENT_ID,
                 AuthorizationResponse.Type.TOKEN, REDIRECT_URI);
         builder.setScopes(new String[]{"playlist-read-private", "playlist-read-collaborative", "user-library-read"});
 
         AuthorizationRequest request = builder.build();
         Log.d(TAG, request.toString());
-
-        btn_login.setOnClickListener(view ->
-                AuthorizationClient.openLoginActivity(MainActivity.this, SPOTIFY_TOKEN_REQUEST_CODE, request));
+        AuthorizationClient.openLoginActivity(MainActivity.this, SPOTIFY_TOKEN_REQUEST_CODE, request);
     }
 
     /**
@@ -84,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == SPOTIFY_TOKEN_REQUEST_CODE){
             mAccessToken = response.getAccessToken();
 
+            // do what we want with the token
             Log.d(TAG, mAccessToken);
             tv_auth_token.setText(mAccessToken);
         }
