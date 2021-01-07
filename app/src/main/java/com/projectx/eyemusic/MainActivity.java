@@ -1,5 +1,6 @@
 package com.projectx.eyemusic;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
@@ -18,8 +19,11 @@ import android.widget.Toast;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
+import com.spotify.sdk.android.auth.*;
 
 import com.spotify.protocol.types.Track;
+import com.spotify.sdk.android.auth.AuthorizationRequest;
+import com.spotify.sdk.android.auth.AuthorizationResponse;
 
 public class MainActivity extends AppCompatActivity {
     private static final String CLIENT_ID = "f23b98eceee94735bddd9bab5b2d8280";
@@ -27,12 +31,14 @@ public class MainActivity extends AppCompatActivity {
     private static final String SPOTIFY_PACKAGE_NAME = "com.spotify.music";
     private static final String PLAY_STORE_URI = "https://play.google.com/store/apps/details";
     private static final String REFERRER = "adjust_campaign=com.projectx.eyemusic&adjust_tracker=ndjczk&utm_source=adjust_preinstall";
+    private static final int SPOTIFY_TOKEN_REQUEST_CODE = 777;
     private final String TAG = MainActivity.class.getName();
     private SpotifyAppRemote mSpotifyAppRemote;
+    private String mAccessToken;
 
-    Button btn_play, btn_pause;
+    Button btn_play, btn_pause, btn_login;
     TextView tv_message;
-    TextView tv_artist;
+    TextView tv_artist, tv_auth_token;
     boolean flag = false;
     PackageManager packageManager;
 
@@ -42,10 +48,45 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         btn_play = findViewById(R.id.btn_main_play);
         btn_pause = findViewById(R.id.btn_main_pause);
+        btn_login = findViewById(R.id.btn_main_login);
         tv_message = findViewById(R.id.tv_main_message);
         tv_artist = findViewById(R.id.tv_main_artist);
+        tv_auth_token = findViewById(R.id.tv_main_auth_token);
         packageManager = getPackageManager();
 
+        AuthorizationRequest.Builder builder = new AuthorizationRequest.Builder(CLIENT_ID,
+                AuthorizationResponse.Type.TOKEN, REDIRECT_URI);
+        builder.setScopes(new String[]{"playlist-read-private", "playlist-read-collaborative", "user-library-read"});
+
+        AuthorizationRequest request = builder.build();
+        Log.d(TAG, request.toString());
+
+        btn_login.setOnClickListener(view ->
+                AuthorizationClient.openLoginActivity(MainActivity.this, SPOTIFY_TOKEN_REQUEST_CODE, request));
+    }
+
+    /**
+     * Dispatch incoming result to the correct fragment.
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        final AuthorizationResponse response = AuthorizationClient.getResponse(resultCode, data);
+        // error occurred
+        if (response.getError() != null && response.getError().isEmpty()){
+            tv_auth_token.setText(response.getError());
+            Log.e(TAG, response.getError());
+        }
+        if (requestCode == SPOTIFY_TOKEN_REQUEST_CODE){
+            mAccessToken = response.getAccessToken();
+
+            Log.d(TAG, mAccessToken);
+            tv_auth_token.setText(mAccessToken);
+        }
 
     }
 
