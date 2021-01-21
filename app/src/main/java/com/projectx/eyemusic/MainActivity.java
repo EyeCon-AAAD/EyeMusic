@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -29,14 +30,23 @@ public class MainActivity extends AppCompatActivity {
     private static final String CLIENT_ID = "f23b98eceee94735bddd9bab5b2d8280";
     private static final String REDIRECT_URI = "http://com.projectx.eyemusic/callback";
     private static final String SPOTIFY_PACKAGE_NAME = "com.spotify.music";
+    private static final String APP_PACKAGE_NAME = "com.projectx.eyemusic";
     private static final String PLAY_STORE_URI = "https://play.google.com/store/apps/details";
     private static final String REFERRER = "adjust_campaign=com.projectx.eyemusic&adjust_tracker=ndjczk&utm_source=adjust_preinstall";
     private static final int SPOTIFY_TOKEN_REQUEST_CODE = 777;
     private final String TAG = MainActivity.class.getName();
     private SpotifyAppRemote mSpotifyAppRemote;
     private String mAccessToken;
+    private final String[] SCOPES = {
+            "playlist-read-private",
+            "playlist-read-collaborative",
+            "user-library-read",
+            "app-remote-control"};
 
-    Button btn_play, btn_pause, btn_login;
+    SharedPreferences preferences = null;
+
+    // Views
+    Button btn_play, btn_pause;
     TextView tv_message;
     TextView tv_artist, tv_auth_token;
     boolean flag = false;
@@ -48,24 +58,22 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         btn_play = findViewById(R.id.btn_main_play);
         btn_pause = findViewById(R.id.btn_main_pause);
-        btn_login = findViewById(R.id.btn_main_login);
         tv_message = findViewById(R.id.tv_main_message);
         tv_artist = findViewById(R.id.tv_main_artist);
         tv_auth_token = findViewById(R.id.tv_main_auth_token);
         packageManager = getPackageManager();
 
+        // use sharedpreferences to determine first time launch
+        preferences = getSharedPreferences(APP_PACKAGE_NAME, MODE_PRIVATE);
 
-        // press this button to load the access token to mAccessToken
-        btn_login.setOnClickListener(view -> {
-            authenticate();
-            });
+
 
     }
 
     private void authenticate() {
         AuthorizationRequest.Builder builder = new AuthorizationRequest.Builder(CLIENT_ID,
                 AuthorizationResponse.Type.TOKEN, REDIRECT_URI);
-        builder.setScopes(new String[]{"playlist-read-private", "playlist-read-collaborative", "user-library-read"});
+        builder.setScopes(SCOPES);
 
         AuthorizationRequest request = builder.build();
         Log.d(TAG, request.toString());
@@ -93,14 +101,33 @@ public class MainActivity extends AppCompatActivity {
 
             // do what we want with the token
             Log.d(TAG, mAccessToken);
-            tv_auth_token.setText(mAccessToken);
+            // tv_auth_token.setText(mAccessToken);
+            // store the access token
+            preferences.edit().putString("accessToken", response.getAccessToken()).commit();
         }
+
+    }
+
+    /**
+     * Dispatch onResume() to fragments.  Note that for better inter-operation
+     * with older versions of the platform, at the point of this call the
+     * fragments attached to the activity are <em>not</em> resumed.
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
 
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        // check if EyeMusic is launched for the first time
+        if(!isFirstTimeLaunch()){
+            mAccessToken = preferences.getString("accessToken", "Access token not found");
+            tv_auth_token.setText(mAccessToken);
+
+        }
         // Check if Spotify is installed each time the app is launched. Requirement!
         if(!isSpotifyInstalled(packageManager)){
             // Send user to Play Store to install if available in current market
@@ -142,6 +169,7 @@ public class MainActivity extends AppCompatActivity {
         } else{
             // spotify is installed. Now try and connect
             // set the connection parameters
+
             ConnectionParams connectionParams = new ConnectionParams.Builder(CLIENT_ID)
                     .setRedirectUri(REDIRECT_URI)
                     .showAuthView(true)
@@ -233,6 +261,18 @@ public class MainActivity extends AppCompatActivity {
             packageManager.getPackageInfo(MainActivity.SPOTIFY_PACKAGE_NAME,0);
             return true;
         } catch (PackageManager.NameNotFoundException e){
+            return false;
+        }
+    }
+
+    private boolean isFirstTimeLaunch(){
+        if(preferences.getBoolean("firstTime", true)){
+            // Do authentication once
+            authenticate();
+            // set first time to false
+            preferences.edit().putBoolean("firstTime", false).commit();
+            return true;
+        } else{
             return false;
         }
     }
