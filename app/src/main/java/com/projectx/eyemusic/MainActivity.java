@@ -17,6 +17,12 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.Volley;
+import com.google.gson.JsonObject;
+import com.projectx.eyemusic.VolleyRequests.PlaylistRequest;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
@@ -26,6 +32,12 @@ import com.spotify.protocol.types.Track;
 import com.spotify.sdk.android.auth.AuthorizationRequest;
 import com.spotify.sdk.android.auth.AuthorizationResponse;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
     private static final String CLIENT_ID = "f23b98eceee94735bddd9bab5b2d8280";
     private static final String REDIRECT_URI = "http://com.projectx.eyemusic/callback";
@@ -34,9 +46,11 @@ public class MainActivity extends AppCompatActivity {
     private static final String PLAY_STORE_URI = "https://play.google.com/store/apps/details";
     private static final String REFERRER = "adjust_campaign=com.projectx.eyemusic&adjust_tracker=ndjczk&utm_source=adjust_preinstall";
     private static final int SPOTIFY_TOKEN_REQUEST_CODE = 777;
+    public static final int SPOTIFY_AUTH_CODE_REQUEST_CODE = 0x11;
     private final String TAG = MainActivity.class.getName();
     private SpotifyAppRemote mSpotifyAppRemote;
     private String mAccessToken;
+    private String mAccessCode;
     private final String[] SCOPES = {
             "playlist-read-private",
             "playlist-read-collaborative",
@@ -44,6 +58,9 @@ public class MainActivity extends AppCompatActivity {
             "app-remote-control"};
 
     SharedPreferences preferences = null;
+
+    // Create an array of playlists
+    ArrayList<Playlist> playlists;
 
     // Views
     Button btn_play, btn_pause;
@@ -66,7 +83,72 @@ public class MainActivity extends AppCompatActivity {
         // use sharedpreferences to determine first time launch
         preferences = getSharedPreferences(APP_PACKAGE_NAME, MODE_PRIVATE);
 
+        // call onStart
+        onStart();
 
+        // fetch playlists
+
+        // build a Volley JSON Object response listener
+        Response.Listener<JSONObject> playlistsRequestListener = new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    JSONArray playlistsJSONArray = response.getJSONArray("items");
+                    Log.d(TAG, "playlist request -> " + playlistsJSONArray.toString());
+                    // consume playlists
+                    // if the user has playlists
+                    if(playlistsJSONArray.length() > 0){
+                        playlists = new ArrayList<>(playlistsJSONArray.length());
+                        String playlistNameKey = "name";
+                        String playlistURIkey = "uri";
+
+                        for (int i = 0; i < playlistsJSONArray.length(); i++) {
+                            // create new playlist object for each playlist in JSON Array
+                            JSONObject playlistJSONObj = playlistsJSONArray.getJSONObject(i);
+                            String name = playlistJSONObj.getString("name");
+                            String uri = playlistJSONObj.getString("uri");
+                            Playlist playlist = new Playlist(name, uri);
+
+                            // add to playlists array
+                            playlists.add(i,playlist);
+                        }
+                        Log.d(TAG, "Playlists: " + playlists.toString());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.e(TAG, e.getMessage());
+                }
+
+            }
+
+        };
+
+        // build a Volley JSON Error listener
+        Response.ErrorListener errorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                Log.d(TAG, error.toString());
+            }
+        };
+
+        // build URL
+        String playlistRequestURL = getString(R.string.SpotifyPlaylistEndpoint);
+
+        // create headers as JSON object
+        JSONObject jsonHeader = new JSONObject();
+        try {
+            jsonHeader.put("Accept", "application/json");
+            jsonHeader.put("Content-Type", "application/json");
+            jsonHeader.put("Authorization", "Bearer " + mAccessToken);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        // create Volley request
+       PlaylistRequest playlistRequest = new PlaylistRequest(playlistRequestURL,null, playlistsRequestListener, errorListener, preferences);
+       RequestQueue requestQueue  = Volley.newRequestQueue(MainActivity.this);
+       requestQueue.add(playlistRequest);
 
     }
 
@@ -78,6 +160,18 @@ public class MainActivity extends AppCompatActivity {
         AuthorizationRequest request = builder.build();
         Log.d(TAG, request.toString());
         AuthorizationClient.openLoginActivity(MainActivity.this, SPOTIFY_TOKEN_REQUEST_CODE, request);
+        //authenticateCode();
+    }
+
+    private void authenticateCode(){
+        AuthorizationRequest.Builder builder = new AuthorizationRequest.Builder(CLIENT_ID,
+                AuthorizationResponse.Type.CODE, REDIRECT_URI);
+        builder.setScopes(SCOPES);
+
+        AuthorizationRequest request = builder.build();
+        Log.d(TAG, request.toString());
+        AuthorizationClient.openLoginActivity(MainActivity.this, SPOTIFY_AUTH_CODE_REQUEST_CODE, request);
+
     }
 
     /**
@@ -100,22 +194,17 @@ public class MainActivity extends AppCompatActivity {
             mAccessToken = response.getAccessToken();
 
             // do what we want with the token
-            Log.d(TAG, mAccessToken);
+            if (mAccessToken != null){Log.d(TAG, mAccessToken);}
+
             // tv_auth_token.setText(mAccessToken);
             // store the access token
             preferences.edit().putString("accessToken", response.getAccessToken()).commit();
+            Log.d(TAG, "response token: " + response.getAccessToken());
+        } else if(requestCode == SPOTIFY_AUTH_CODE_REQUEST_CODE){
+            mAccessCode = response.getCode();
+            if (mAccessCode != null){Log.d(TAG, mAccessCode);}
+            preferences.edit().putString("accessCode", mAccessCode).commit();
         }
-
-    }
-
-    /**
-     * Dispatch onResume() to fragments.  Note that for better inter-operation
-     * with older versions of the platform, at the point of this call the
-     * fragments attached to the activity are <em>not</em> resumed.
-     */
-    @Override
-    protected void onResume() {
-        super.onResume();
 
     }
 
@@ -125,8 +214,12 @@ public class MainActivity extends AppCompatActivity {
         // check if EyeMusic is launched for the first time
         if(!isFirstTimeLaunch()){
             mAccessToken = preferences.getString("accessToken", "Access token not found");
-            tv_auth_token.setText(mAccessToken);
+            mAccessCode = preferences.getString("accessCode", "Access code not found");
+            tv_auth_token.setText(mAccessCode);
+            Log.d(TAG, "Access Token: " + mAccessToken);
+            Log.d(TAG, "Access Code: " + mAccessCode);
 
+            // ------------------- perform error check for when the access is denied but launch is not first time ----------
         }
         // Check if Spotify is installed each time the app is launched. Requirement!
         if(!isSpotifyInstalled(packageManager)){
@@ -192,6 +285,7 @@ public class MainActivity extends AppCompatActivity {
 
                     // Interact with AppRemote
                     connected();
+                    Log.d(TAG, mAccessToken);
                 }
 
                 @Override
@@ -269,6 +363,7 @@ public class MainActivity extends AppCompatActivity {
         if(preferences.getBoolean("firstTime", true)){
             // Do authentication once
             authenticate();
+            //authenticateCode();
             // set first time to false
             preferences.edit().putBoolean("firstTime", false).commit();
             return true;
