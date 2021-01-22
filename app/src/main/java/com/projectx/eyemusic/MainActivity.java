@@ -30,8 +30,8 @@ import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
-import com.google.gson.JsonObject;
 import com.projectx.eyemusic.VolleyRequests.PlaylistRequest;
+import com.projectx.eyemusic.VolleyRequests.RefreshTokenStringRequest;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
@@ -45,10 +45,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     private static final String CLIENT_ID = "f23b98eceee94735bddd9bab5b2d8280";
+    private static final String CLIENT_SECRET = "2f4437817741458ba4e1ab2326141e66";
     private static final String REDIRECT_URI = "http://com.projectx.eyemusic/callback";
     private static final String SPOTIFY_PACKAGE_NAME = "com.spotify.music";
     private static final String APP_PACKAGE_NAME = "com.projectx.eyemusic";
@@ -61,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     private RequestQueue requestQueue;
     private String mAccessToken;
     private String mAccessCode;
+    private String mRefreshToken;
     private final String[] SCOPES = {
             "playlist-read-private",
             "playlist-read-collaborative",
@@ -102,11 +105,9 @@ public class MainActivity extends AppCompatActivity {
 
         packageManager = getPackageManager();
 
-        // use sharedpreferences to determine first time launch
+        // use sharedPreferences to determine first time launch
         preferences = getSharedPreferences(APP_PACKAGE_NAME, MODE_PRIVATE);
 
-        // call onStart
-        onStart();
 
         // create  singleton request queue
         requestQueue  = Volley.newRequestQueue(MainActivity.this);
@@ -165,13 +166,24 @@ public class MainActivity extends AppCompatActivity {
 
             // fetch playlists after getting token
             showProgressBar(true);
-            fetchPlaylists(requestQueue, mSpotifyAppRemote);
+            //fetchPlaylists(requestQueue, mSpotifyAppRemote);
 
 
         } else if(requestCode == SPOTIFY_AUTH_CODE_REQUEST_CODE){
             mAccessCode = response.getCode();
+
             if (mAccessCode != null){Log.d(TAG, mAccessCode);}
+            Toast.makeText(getApplicationContext(), "Access Code ====> " + mAccessCode, Toast.LENGTH_LONG);
+            // store Access code
             preferences.edit().putString("accessCode", mAccessCode).commit();
+
+            // fetch access token and refresh token and store them
+            Log.d(TAG, "Access Code before fetching token => " + mAccessCode);
+            fetchTokens(requestQueue);
+
+            // call om start after successfully authenticating
+            onStart();
+
         }
 
     }
@@ -183,9 +195,7 @@ public class MainActivity extends AppCompatActivity {
         if(!isFirstTimeLaunch()){
             mAccessToken = preferences.getString("accessToken", "Access token not found");
             mAccessCode = preferences.getString("accessCode", "Access code not found");
-//            tv_auth_token.setText(mAccessCode);
-            Log.d(TAG, "Access Token: " + mAccessToken);
-            Log.d(TAG, "Access Code: " + mAccessCode);
+
 
             // ------------------- perform error check for when the access is denied but launch is not first time ----------
         }
@@ -230,40 +240,44 @@ public class MainActivity extends AppCompatActivity {
         } else{
             // spotify is installed. Now try and connect
             // set the connection parameters
+            // only connect if authenticated
+            if(isAuthenticated()){
+                ConnectionParams connectionParams = new ConnectionParams.Builder(CLIENT_ID)
+                        .setRedirectUri(REDIRECT_URI)
+                        .showAuthView(true)
+                        .build();
+                // offline support is possible out of the box and doesn't require additional implementation
+                // if the following conditions are met:
+                // -> Application has successfully connected to Spotify over the last 24 hours
+                // -> The Application uses the same REDIRECT_URI, CLIENT_ID and scopes when connecting to
+                //    Spotify
+                // Use the SpotifyAppRemote.Connector to connect to Spotify and get an instance of
+                // SpotifyAppRemote
+                //SpotifyAppRemote.disconnect(mSpotifyAppRemote);
+                SpotifyAppRemote.connect(this, connectionParams, new Connector.ConnectionListener() {
+                    @Override
+                    public void onConnected(SpotifyAppRemote spotifyAppRemote) {
+                        mSpotifyAppRemote = spotifyAppRemote;
+                        // connection was successful
+                        Toast.makeText(getApplicationContext(), "Successfully Connected", Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "Connected Successfully");
 
-            ConnectionParams connectionParams = new ConnectionParams.Builder(CLIENT_ID)
-                    .setRedirectUri(REDIRECT_URI)
-                    .showAuthView(true)
-                    .build();
-            // offline support is possible out of the box and doesn't require additional implementation
-            // if the following conditions are met:
-            // -> Application has successfully connected to Spotify over the last 24 hours
-            // -> The Application uses the same REDIRECT_URI, CLIENT_ID and scopes when connecting to
-            //    Spotify
-            // Use the SpotifyAppRemote.Connector to connect to Spotify and get an instance of
-            // SpotifyAppRemote
-            //SpotifyAppRemote.disconnect(mSpotifyAppRemote);
-            SpotifyAppRemote.connect(this, connectionParams, new Connector.ConnectionListener() {
-                @Override
-                public void onConnected(SpotifyAppRemote spotifyAppRemote) {
-                    mSpotifyAppRemote = spotifyAppRemote;
-                    // connection was successful
-                    Toast.makeText(getApplicationContext(), "Successfully Connected", Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "Connected Successfully");
+                        // Interact with AppRemote
+                        //connected();
+                        //fetchPlaylists(requestQueue, mSpotifyAppRemote);
+                        //fetchTokens(requestQueue);
+                        //Log.d(TAG, mAccessToken);
+                    }
 
-                    // Interact with AppRemote
-                    //connected();
-                    fetchPlaylists(requestQueue, mSpotifyAppRemote);
-                    Log.d(TAG, mAccessToken);
-                }
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        // handle connection error here
+                        Toast.makeText(getApplicationContext(), "Couldn't connect", Toast.LENGTH_LONG).show();
+                        Log.e(TAG, throwable.getMessage(), throwable);
+                    }
+                });
+            }
 
-                @Override
-                public void onFailure(Throwable throwable) {
-                    // handle connection error here
-                    Toast.makeText(getApplicationContext(), "Couldn't connect", Toast.LENGTH_LONG).show();
-                    Log.e(TAG, throwable.getMessage(), throwable);
-                }
-            });
         }
 
     }
@@ -331,8 +345,8 @@ public class MainActivity extends AppCompatActivity {
     private boolean isFirstTimeLaunch(){
         if(preferences.getBoolean("firstTime", true)){
             // Do authentication once
-            authenticate();
-            //authenticateCode();
+            //authenticate();
+            authenticateCode();
             // set first time to false
             preferences.edit().putBoolean("firstTime", false).commit();
             return true;
@@ -438,6 +452,73 @@ public class MainActivity extends AppCompatActivity {
         PlaylistRequest playlistRequest = new PlaylistRequest(playlistRequestURL,null, playlistsRequestListener, errorListener, preferences);
         requestQueue.add(playlistRequest);
     }
+
+    private void fetchTokens(RequestQueue requestQueue) {
+        // in order to get access token and refresh token, we need to make a post request using the access code
+        mAccessCode = preferences.getString("accessCode", "No access code");
+
+        if(!mAccessCode.equals("No access code")){
+            // We got the access code in storage now use it to fetch auth token and refresh token
+            // Use Volley POST request with the following in the Body. As prescribed in Spotify docs:
+            // https://developer.spotify.com/documentation/general/guides/authorization-guide/#authorization-code-flow
+
+            // create a Response Listener and an Error Listener
+            Response.ErrorListener errorListener = new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    //--------------- use toast messages for now ----------------------
+                    if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+                        //This indicates that the request has either time out or there is no connection
+                        Toast.makeText(getApplicationContext(), "Internet Connection Error!", Toast.LENGTH_SHORT).show();
+
+                    } else if (error instanceof AuthFailureError) {
+                        // Error indicating that there was an Authentication Failure while performing the request
+                        Toast.makeText(getApplicationContext(), "Authentication Error!" +
+                                "\nWhile requesting for refresh tokens", Toast.LENGTH_SHORT).show();
+
+                    } else if (error instanceof ServerError) {
+                        //Indicates that the server responded with a error response
+                        Toast.makeText(getApplicationContext(), "Server Error!", Toast.LENGTH_SHORT).show();
+                        // Log error in console
+                        parseVolleyError(error);
+
+                    } else if (error instanceof NetworkError) {
+                        //Indicates that there was network error while performing the request
+                        Toast.makeText(getApplicationContext(), "Network Error!", Toast.LENGTH_SHORT).show();
+
+                    } else if (error instanceof ParseError) {
+                        // Indicates that the server response could not be parsed
+                        Toast.makeText(getApplicationContext(), "Parse Error!", Toast.LENGTH_SHORT).show();
+
+                    }
+                }
+            };
+            Response.Listener<String> tokenStringRequest = new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    Log.d(TAG, "Response=> " +response);
+                    try {
+                        JSONObject responseJson = new JSONObject(response);
+                        mAccessToken = responseJson.getString("access_token");
+                        mRefreshToken = responseJson.getString("refresh_token");
+
+                        // store the tokens
+                        preferences.edit().putString("accessToken", mAccessToken).commit();
+                        preferences.edit().putString("refreshToken", mRefreshToken).commit();
+
+                    } catch (JSONException jsonException) {
+                        jsonException.printStackTrace();
+                    }
+                }
+            };
+            String refreshTokenURL = getString(R.string.SpotifyTokenEndpoint);
+            RefreshTokenStringRequest stringRequest = new RefreshTokenStringRequest(refreshTokenURL, CLIENT_ID, CLIENT_SECRET, mAccessCode, REDIRECT_URI, tokenStringRequest, errorListener);
+            requestQueue.add(stringRequest);
+        } else{
+            Toast.makeText(getApplicationContext(), "No Access code stored, check authorization", Toast.LENGTH_SHORT).show();
+        }
+
+    }
     public void showProgressBar(Boolean show) {
         if (show) {
             rv_main_playlists.setVisibility(View.GONE);
@@ -447,5 +528,22 @@ public class MainActivity extends AppCompatActivity {
             pb_main.setVisibility(View.GONE);
         }
 
+    }
+
+    public boolean isAuthenticated(){
+        String tempAccessCode = preferences.getString("accessCode", "No Access Code");
+        return !tempAccessCode.equals("No Access Code");
+    }
+
+    public void parseVolleyError(VolleyError error){
+        try {
+          String responseBody = new String(error.networkResponse.data, StandardCharsets.UTF_8);
+          JSONObject data = new JSONObject(responseBody);
+          String errorType = data.getString("error");
+          String error_description = data.getString("error_description");
+          Log.e(TAG, "{Error Type: " + errorType + ",Error description: " + error_description + "}");
+        } catch (JSONException jsonException) {
+            jsonException.printStackTrace();
+        }
     }
 }
