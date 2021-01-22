@@ -5,10 +5,12 @@ import androidx.annotation.NonNull;
 class Playlist {
     private String name;
     private String spotifyURI;
+    private String imageURL;
 
-    public Playlist(String name, String spotifyURI) {
+    public Playlist(String name, String spotifyURI, String imageURL) {
         this.name = name;
         this.spotifyURI = spotifyURI;
+        this.imageURL = imageURL;
     }
 
     public String getName() {
@@ -27,9 +29,17 @@ class Playlist {
         this.spotifyURI = spotifyURI;
     }
 
+    public String getImageURL() {
+        return imageURL;
+    }
+
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
+    }
+
     @NonNull
     @Override
     public String toString() {
-        return "Playlist name: " + this.name + "\nSPotify URI: " + this.spotifyURI;
+        return "\nPlaylist name: " + this.name + "\nSPotify URI: " + this.spotifyURI + "\nImage URL: " + this.imageURL;
     }
 }
