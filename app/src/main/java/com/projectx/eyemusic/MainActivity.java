@@ -32,6 +32,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.projectx.eyemusic.VolleyRequests.PlaylistRequest;
 import com.projectx.eyemusic.VolleyRequests.RefreshTokenStringRequest;
+import com.projectx.eyemusic.VolleyRequests.RefreshedAccessTokenStringRequest;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
@@ -115,17 +116,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void authenticate() {
-        AuthorizationRequest.Builder builder = new AuthorizationRequest.Builder(CLIENT_ID,
-                AuthorizationResponse.Type.TOKEN, REDIRECT_URI);
-        builder.setScopes(SCOPES);
-
-        AuthorizationRequest request = builder.build();
-        Log.d(TAG, request.toString());
-        AuthorizationClient.openLoginActivity(MainActivity.this, SPOTIFY_TOKEN_REQUEST_CODE, request);
-        //authenticateCode();
-    }
-
     private void authenticateCode(){
         AuthorizationRequest.Builder builder = new AuthorizationRequest.Builder(CLIENT_ID,
                 AuthorizationResponse.Type.CODE, REDIRECT_URI);
@@ -134,7 +124,6 @@ public class MainActivity extends AppCompatActivity {
         AuthorizationRequest request = builder.build();
         Log.d(TAG, request.toString());
         AuthorizationClient.openLoginActivity(MainActivity.this, SPOTIFY_AUTH_CODE_REQUEST_CODE, request);
-
     }
 
     /**
@@ -264,7 +253,10 @@ public class MainActivity extends AppCompatActivity {
 
                         // Interact with AppRemote
                         //connected();
-                        //fetchPlaylists(requestQueue, mSpotifyAppRemote);
+                        // refresh Tokens before fetching playlists
+                        refreshTokens(requestQueue);
+
+                        fetchPlaylists(requestQueue, mSpotifyAppRemote);
                         //fetchTokens(requestQueue);
                         //Log.d(TAG, mAccessToken);
                     }
@@ -282,6 +274,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    // has code for using the spotify remote
     private void connected(){
         btn_play.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -505,6 +498,8 @@ public class MainActivity extends AppCompatActivity {
                         // store the tokens
                         preferences.edit().putString("accessToken", mAccessToken).commit();
                         preferences.edit().putString("refreshToken", mRefreshToken).commit();
+                        Log.d(TAG, "Access Token-> " + mAccessToken);
+                        Log.d(TAG, "Refresh Token-> " + mRefreshToken);
 
                     } catch (JSONException jsonException) {
                         jsonException.printStackTrace();
@@ -519,6 +514,63 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+    private void refreshTokens(RequestQueue requestQueue){
+        mRefreshToken = preferences.getString("refreshToken", "No refresh token");
+        if(!mRefreshToken.equals("No refresh token")){
+            // create a Response Listener and an Error Listener
+            Response.ErrorListener errorListener = error -> {
+                //--------------- use toast messages for now ----------------------
+                if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+                    //This indicates that the request has either time out or there is no connection
+                    Toast.makeText(getApplicationContext(), "Internet Connection Error!", Toast.LENGTH_SHORT).show();
+
+                } else if (error instanceof AuthFailureError) {
+                    // Error indicating that there was an Authentication Failure while performing the request
+                    Toast.makeText(getApplicationContext(), "Authentication Error!" +
+                            "\nWhile requesting for refresh tokens", Toast.LENGTH_SHORT).show();
+
+                } else if (error instanceof ServerError) {
+                    //Indicates that the server responded with a error response
+                    Toast.makeText(getApplicationContext(), "Server Error!", Toast.LENGTH_SHORT).show();
+                    // Log error in console
+                    parseVolleyError(error);
+
+                } else if (error instanceof NetworkError) {
+                    //Indicates that there was network error while performing the request
+                    Toast.makeText(getApplicationContext(), "Network Error!", Toast.LENGTH_SHORT).show();
+
+                } else if (error instanceof ParseError) {
+                    // Indicates that the server response could not be parsed
+                    Toast.makeText(getApplicationContext(), "Parse Error!", Toast.LENGTH_SHORT).show();
+
+                }
+            };
+            Response.Listener<String> refreshListener = new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    Log.d(TAG, "Response=> " +response);
+                    try {
+                        // get refreshed Access Token and store it
+                        JSONObject responseJSON = new JSONObject(response);
+                        mAccessToken = responseJSON.getString("access_token");
+
+                        // store the new access token
+                        preferences.edit().putString("accessToken", mAccessToken).commit();
+
+                        Log.d(TAG, "Refreshed Access Token-> " + mAccessToken);
+
+                    } catch (JSONException jsonException) {
+                        jsonException.printStackTrace();
+                    }
+                }
+            };
+            String refreshTokenURL = getString(R.string.SpotifyTokenEndpoint);
+            RefreshedAccessTokenStringRequest accessTokenStringRequest = new RefreshedAccessTokenStringRequest(refreshTokenURL, CLIENT_ID, CLIENT_SECRET, mRefreshToken, refreshListener, errorListener);
+            requestQueue.add(accessTokenStringRequest);
+        }else {Toast.makeText(getApplicationContext(), "No refresh Token stored, check authorization", Toast.LENGTH_SHORT).show();}
+    }
+
     public void showProgressBar(Boolean show) {
         if (show) {
             rv_main_playlists.setVisibility(View.GONE);
