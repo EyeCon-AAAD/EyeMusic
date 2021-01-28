@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="120dp"
+    android:layout_height="160dp"
     android:layout_gravity="center"
     app:cardElevation="4dp"
     app:cardUseCompatPadding="true"
@@ -13,26 +13,26 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <ImageView
-            android:layout_width="120dp"
-            android:layout_height="120sp"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
             android:layout_alignParentStart="true"
             android:id="@+id/iv_playlist_image">
         </ImageView>
 
         <TextView
             android:id="@+id/tv_playlist_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="227dp"
+            android:layout_height="62dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginStart="149dp"
+            android:layout_marginStart="173dp"
             android:layout_marginTop="44dp"
             android:layout_marginBottom="39dp"
             android:ellipsize="end"
-            android:text="Playlist Name"
+            android:text="@string/playlist_name"
             android:textSize="18sp" />
 
     </RelativeLayout>

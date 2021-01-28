@@ -6,5 +6,11 @@
     <string name="SpotifyPlaylistEndpoint">https://api.spotify.com/v1/me/playlists</string>
     <!-- Token endpoint for requesting refreshed Token -->
     <string name="SpotifyTokenEndpoint">https://accounts.spotify.com/api/token</string>
+    <string name="REDIRECT_URI">http://com.projectx.eyemusic/callback</string>
+    <string name="SPOTIFY_PACKAGE_NAME">com.spotify.music</string>
+    <string name="APP_PACKAGE_NAME">com.projectx.eyemusic</string>
+    <string name="PLAY_STORE_URI">https://play.google.com/store/apps/details</string>
+    <string name="REFERRER"><![CDATA[adjust_campaign=com.projectx.eyemusic&adjust_tracker=ndjczk&utm_source=adjust_preinstall]]></string>
+    <string name="playlist_name">Playlist Name</string>
 
 </resources>
