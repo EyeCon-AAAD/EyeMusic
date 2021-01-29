@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int SPOTIFY_TOKEN_REQUEST_CODE = 777;
     public static final int SPOTIFY_AUTH_CODE_REQUEST_CODE = 0x11;
     private final String TAG = MainActivity.class.getName();
-    private SpotifyAppRemote mSpotifyAppRemote;
+    public static SpotifyAppRemote mSpotifyAppRemote;
     private RequestQueue requestQueue;
     private String mAccessToken;
     private String mAccessCode;
@@ -327,7 +327,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
         // disconnect from AppRemote
         // add code for stopping play if playing
-        SpotifyAppRemote.disconnect(mSpotifyAppRemote);
+        //SpotifyAppRemote.disconnect(mSpotifyAppRemote);
     }
 
     private boolean isSpotifyInstalled(PackageManager packageManager){
@@ -365,6 +365,7 @@ public class MainActivity extends AppCompatActivity {
                     if(playlistsJSONArray.length() > 0){
                         playlists = new ArrayList<>(playlistsJSONArray.length());
                         String playlistNameKey = "name";
+                        String playlistIdKey = "id";
                         String playlistURIkey = "uri";
                         String playlistImagesKey = "images";
 
@@ -374,9 +375,10 @@ public class MainActivity extends AppCompatActivity {
                             JSONArray playlistImageArray = playlistJSONObj.getJSONArray(playlistImagesKey);
                             JSONObject imageObject = playlistImageArray.getJSONObject(0);
                             String name = playlistJSONObj.getString(playlistNameKey);
+                            String id = playlistJSONObj.getString(playlistIdKey);
                             String uri = playlistJSONObj.getString(playlistURIkey);
                             String imageURL = imageObject.getString("url");
-                            Playlist playlist = new Playlist(name, uri, imageURL);
+                            Playlist playlist = new Playlist(name, id, uri, imageURL);
 
                             // add to playlists array
                             playlists.add(i,playlist);
@@ -433,7 +435,7 @@ public class MainActivity extends AppCompatActivity {
         };
 
         // build URL
-        String playlistRequestURL = getString(R.string.SpotifyPlaylistEndpoint);
+        String playlistRequestURL = getString(R.string.SpotifyUserPlaylistsEndpoint);
 
         // create headers as JSON object
         JSONObject jsonHeader = new JSONObject();

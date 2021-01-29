@@ -3,14 +3,17 @@
     <string name="play">Play</string>
     <string name="pause">pause</string>
     <!-- The endpoint past is /me to get this user's playlists. No need for user id at this stage  -->
-    <string name="SpotifyPlaylistEndpoint">https://api.spotify.com/v1/me/playlists</string>
+    <string name="SpotifyUserPlaylistsEndpoint">https://api.spotify.com/v1/me/playlists</string>
     <!-- Token endpoint for requesting refreshed Token -->
     <string name="SpotifyTokenEndpoint">https://accounts.spotify.com/api/token</string>
+    <string name="SpotifyPlaylistItemsEndpoint">https://api.spotify.com/v1/playlists</string>
     <string name="REDIRECT_URI">http://com.projectx.eyemusic/callback</string>
     <string name="SPOTIFY_PACKAGE_NAME">com.spotify.music</string>
     <string name="APP_PACKAGE_NAME">com.projectx.eyemusic</string>
     <string name="PLAY_STORE_URI">https://play.google.com/store/apps/details</string>
     <string name="REFERRER"><![CDATA[adjust_campaign=com.projectx.eyemusic&adjust_tracker=ndjczk&utm_source=adjust_preinstall]]></string>
     <string name="playlist_name">Playlist Name</string>
+    <string name="track_name">Track name</string>
+    <string name="artist_name">Artist name</string>
 
 </resources>
