@@ -4,11 +4,13 @@ import androidx.annotation.NonNull;
 
 class Playlist {
     private String name;
+    private String id;
     private String spotifyURI;
     private String imageURL;
 
-    public Playlist(String name, String spotifyURI, String imageURL) {
+    public Playlist(String name, String id, String spotifyURI, String imageURL) {
         this.name = name;
+        this.id = id;
         this.spotifyURI = spotifyURI;
         this.imageURL = imageURL;
     }
@@ -19,6 +21,14 @@ class Playlist {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getSpotifyURI() {
@@ -40,6 +50,6 @@ class Playlist {
     @NonNull
     @Override
     public String toString() {
-        return "\nPlaylist name: " + this.name + "\nSPotify URI: " + this.spotifyURI + "\nImage URL: " + this.imageURL;
+        return "\nPlaylist name: " + this.name + "\nid: "+ this.id +  "\nSPotify URI: " + this.spotifyURI + "\nImage URL: " + this.imageURL;
     }
 }

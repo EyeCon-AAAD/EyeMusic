@@ -50,17 +50,17 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String CLIENT_ID = "f23b98eceee94735bddd9bab5b2d8280";
-    private static final String CLIENT_SECRET = "2f4437817741458ba4e1ab2326141e66";
-    private static final String REDIRECT_URI = "http://com.projectx.eyemusic/callback";
-    private static final String SPOTIFY_PACKAGE_NAME = "com.spotify.music";
-    private static final String APP_PACKAGE_NAME = "com.projectx.eyemusic";
-    private static final String PLAY_STORE_URI = "https://play.google.com/store/apps/details";
-    private static final String REFERRER = "adjust_campaign=com.projectx.eyemusic&adjust_tracker=ndjczk&utm_source=adjust_preinstall";
+    private String CLIENT_ID;
+    private String CLIENT_SECRET;
+    private String REDIRECT_URI;
+    private String SPOTIFY_PACKAGE_NAME;
+    private String APP_PACKAGE_NAME;
+    private String PLAY_STORE_URI;
+    private String REFERRER;
     private static final int SPOTIFY_TOKEN_REQUEST_CODE = 777;
     public static final int SPOTIFY_AUTH_CODE_REQUEST_CODE = 0x11;
     private final String TAG = MainActivity.class.getName();
-    private SpotifyAppRemote mSpotifyAppRemote;
+    public static SpotifyAppRemote mSpotifyAppRemote;
     private RequestQueue requestQueue;
     private String mAccessToken;
     private String mAccessCode;
@@ -91,11 +91,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        /*btn_play = findViewById(R.id.btn_main_play);
-        btn_pause = findViewById(R.id.btn_main_pause);
-        tv_message = findViewById(R.id.tv_main_message);
-        tv_artist = findViewById(R.id.tv_main_artist);
-        tv_auth_token = findViewById(R.id.tv_main_auth_token);*/
+        {
+            CLIENT_ID = getString(R.string.CLIENT_ID);
+            CLIENT_SECRET = getString(R.string.CLIENT_SECRET);
+            REDIRECT_URI = getString(R.string.REDIRECT_URI);
+            SPOTIFY_PACKAGE_NAME = getString(R.string.SPOTIFY_PACKAGE_NAME);
+            APP_PACKAGE_NAME = getString(R.string.APP_PACKAGE_NAME);
+            PLAY_STORE_URI = getString(R.string.PLAY_STORE_URI);
+            REFERRER = getString(R.string.REFERRER);
+        }
         pb_main = findViewById(R.id.pb_main);
 
         // setup recycler view
@@ -323,12 +327,12 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
         // disconnect from AppRemote
         // add code for stopping play if playing
-        SpotifyAppRemote.disconnect(mSpotifyAppRemote);
+        //SpotifyAppRemote.disconnect(mSpotifyAppRemote);
     }
 
     private boolean isSpotifyInstalled(PackageManager packageManager){
         try{
-            packageManager.getPackageInfo(MainActivity.SPOTIFY_PACKAGE_NAME,0);
+            packageManager.getPackageInfo(SPOTIFY_PACKAGE_NAME,0);
             return true;
         } catch (PackageManager.NameNotFoundException e){
             return false;
@@ -361,6 +365,7 @@ public class MainActivity extends AppCompatActivity {
                     if(playlistsJSONArray.length() > 0){
                         playlists = new ArrayList<>(playlistsJSONArray.length());
                         String playlistNameKey = "name";
+                        String playlistIdKey = "id";
                         String playlistURIkey = "uri";
                         String playlistImagesKey = "images";
 
@@ -370,9 +375,10 @@ public class MainActivity extends AppCompatActivity {
                             JSONArray playlistImageArray = playlistJSONObj.getJSONArray(playlistImagesKey);
                             JSONObject imageObject = playlistImageArray.getJSONObject(0);
                             String name = playlistJSONObj.getString(playlistNameKey);
+                            String id = playlistJSONObj.getString(playlistIdKey);
                             String uri = playlistJSONObj.getString(playlistURIkey);
                             String imageURL = imageObject.getString("url");
-                            Playlist playlist = new Playlist(name, uri, imageURL);
+                            Playlist playlist = new Playlist(name, id, uri, imageURL);
 
                             // add to playlists array
                             playlists.add(i,playlist);
@@ -429,7 +435,7 @@ public class MainActivity extends AppCompatActivity {
         };
 
         // build URL
-        String playlistRequestURL = getString(R.string.SpotifyPlaylistEndpoint);
+        String playlistRequestURL = getString(R.string.SpotifyUserPlaylistsEndpoint);
 
         // create headers as JSON object
         JSONObject jsonHeader = new JSONObject();
