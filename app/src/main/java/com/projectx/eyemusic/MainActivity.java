@@ -87,6 +87,8 @@ public class MainActivity extends AppCompatActivity {
     boolean flag = false;
     PackageManager packageManager;
 
+    private Authentication authentication;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,6 +118,9 @@ public class MainActivity extends AppCompatActivity {
 
         // create  singleton request queue
         requestQueue  = Volley.newRequestQueue(MainActivity.this);
+
+        // create Authentication Object
+        authentication = new Authentication(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, preferences, requestQueue, this);
 
 
     }
@@ -154,7 +159,8 @@ public class MainActivity extends AppCompatActivity {
 
             // tv_auth_token.setText(mAccessToken);
             // store the access token
-            preferences.edit().putString("accessToken", response.getAccessToken()).commit();
+            //preferences.edit().putString("accessToken", response.getAccessToken()).commit();
+            authentication.storeToken(mAccessToken);
             Log.d(TAG, "response token: " + response.getAccessToken());
 
             // fetch playlists after getting token
@@ -168,13 +174,14 @@ public class MainActivity extends AppCompatActivity {
             if (mAccessCode != null){Log.d(TAG, mAccessCode);}
             Toast.makeText(getApplicationContext(), "Access Code ====> " + mAccessCode, Toast.LENGTH_LONG);
             // store Access code
-            preferences.edit().putString("accessCode", mAccessCode).commit();
+            //preferences.edit().putString("accessCode", mAccessCode).commit();
+            authentication.storeAccessCode(mAccessCode);
 
             // fetch access token and refresh token and store them
             Log.d(TAG, "Access Code before fetching token => " + mAccessCode);
-            fetchTokens(requestQueue);
-
-            // call om start after successfully authenticating
+            //fetchTokens(requestQueue);
+            authentication.fetchTokens();
+            // call on start after successfully authenticating
             onStart();
 
         }
@@ -186,55 +193,24 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         // check if EyeMusic is launched for the first time
         if(!isFirstTimeLaunch()){
-            mAccessToken = preferences.getString("accessToken", "Access token not found");
-            mAccessCode = preferences.getString("accessCode", "Access code not found");
+            /*mAccessToken = preferences.getString("accessToken", "Access token not found");
+            mAccessCode = preferences.getString("accessCode", "Access code not found");*/
+            mAccessToken = authentication.getAccessToken();
+            mAccessCode = authentication.getAccessCode();
 
 
             // ------------------- perform error check for when the access is denied but launch is not first time ----------
         }
         // Check if Spotify is installed each time the app is launched. Requirement!
         if(!isSpotifyInstalled(packageManager)){
-            // Send user to Play Store to install if available in current market
-            // TO-DO: If Spotify is not in user's market --> potentially can't of our app
-            Log.w(TAG, "Spotify isn't installed! Going to play store");
-            // Alert Dialog for good UX
-            Context context;
-            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this); // look up context
-            builder.setMessage("Please install Spotify from Play Store then launch app again.")
-            .setCancelable(true) // may change this
-            .setPositiveButton("Install", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    try{
-                        Uri uri = Uri.parse("market://details")
-                                .buildUpon()
-                                .appendQueryParameter("id", SPOTIFY_PACKAGE_NAME)
-                                .appendQueryParameter("referrer", REFERRER)
-                                .build();
-                        startActivity(new Intent(Intent.ACTION_VIEW, uri));
-                    }catch (android.content.ActivityNotFoundException ignored){
-                        Uri uri = Uri.parse(PLAY_STORE_URI)
-                                .buildUpon()
-                                .appendQueryParameter("id", SPOTIFY_PACKAGE_NAME)
-                                .appendQueryParameter("referrer", REFERRER)
-                                .build();
-                        startActivity(new Intent(Intent.ACTION_VIEW, uri));
-                    }
-                }
-            })
-            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    dialogInterface.cancel();
-                }
-            })
-            .create().show();
+            directUserToPlayStore();
 
         } else{
             // spotify is installed. Now try and connect
             // set the connection parameters
             // only connect if authenticated
-            if(isAuthenticated()){
+            //if(isAuthenticated()){
+            if(authentication.isAuthenticated()){
                 ConnectionParams connectionParams = new ConnectionParams.Builder(CLIENT_ID)
                         .setRedirectUri(REDIRECT_URI)
                         .showAuthView(true)
@@ -258,8 +234,8 @@ public class MainActivity extends AppCompatActivity {
                         // Interact with AppRemote
                         //connected();
                         // refresh Tokens before fetching playlists
-                        refreshTokens(requestQueue);
-
+                        //refreshTokens(requestQueue);
+                        authentication.refreshAccessToken();
                         fetchPlaylists(requestQueue, mSpotifyAppRemote);
                         //fetchTokens(requestQueue);
                         //Log.d(TAG, mAccessToken);
@@ -276,6 +252,43 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+    }
+
+    private void directUserToPlayStore() {
+        // Send user to Play Store to install if available in current market
+        // TO-DO: If Spotify is not in user's market --> potentially can't of our app
+        Log.w(TAG, "Spotify isn't installed! Going to play store");
+        // Alert Dialog for good UX
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this); // look up context
+        builder.setMessage("Please install Spotify from Play Store then launch app again.")
+                .setCancelable(true) // may change this
+                .setPositiveButton("Install", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        try{
+                            Uri uri = Uri.parse("market://details")
+                                    .buildUpon()
+                                    .appendQueryParameter("id", SPOTIFY_PACKAGE_NAME)
+                                    .appendQueryParameter("referrer", REFERRER)
+                                    .build();
+                            startActivity(new Intent(Intent.ACTION_VIEW, uri));
+                        }catch (android.content.ActivityNotFoundException ignored){
+                            Uri uri = Uri.parse(PLAY_STORE_URI)
+                                    .buildUpon()
+                                    .appendQueryParameter("id", SPOTIFY_PACKAGE_NAME)
+                                    .appendQueryParameter("referrer", REFERRER)
+                                    .build();
+                            startActivity(new Intent(Intent.ACTION_VIEW, uri));
+                        }
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.cancel();
+                    }
+                })
+                .create().show();
     }
 
     // has code for using the spotify remote
@@ -343,7 +356,8 @@ public class MainActivity extends AppCompatActivity {
         if(preferences.getBoolean("firstTime", true)){
             // Do authentication once
             //authenticate();
-            authenticateCode();
+            //authenticateCode();
+            authentication.authenticate(MainActivity.this, SPOTIFY_AUTH_CODE_REQUEST_CODE);
             // set first time to false
             preferences.edit().putBoolean("firstTime", false).commit();
             return true;
@@ -448,7 +462,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // create Volley request
-        PlaylistRequest playlistRequest = new PlaylistRequest(playlistRequestURL,null, playlistsRequestListener, errorListener, preferences);
+        PlaylistRequest playlistRequest = new PlaylistRequest(playlistRequestURL,null, playlistsRequestListener, authentication.getErrorListener(), preferences);
         requestQueue.add(playlistRequest);
     }
 
