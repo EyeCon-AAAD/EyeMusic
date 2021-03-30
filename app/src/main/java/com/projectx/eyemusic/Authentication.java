@@ -12,6 +12,7 @@ import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
@@ -25,20 +26,23 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Calendar;
+import java.util.Date;
 
 public class Authentication implements AuthUtils{
 
-    private String CLIENT_ID;
-    private String CLIENT_SECRET;
-    private String REDIRECT_URI;
+    private final String CLIENT_ID;
+    private final String CLIENT_SECRET;
+    private final String REDIRECT_URI;
     private final String[] SCOPES = {
             "playlist-read-private",
             "playlist-read-collaborative",
             "user-library-read",
             "app-remote-control"};
-    private SharedPreferences preferences;
-    private RequestQueue requestQueue;
-    private Context context;
+    private final SharedPreferences preferences;
+    private final RequestQueue requestQueue;
+    private final Context context;
+    private final Calendar calendar;
     private Response.ErrorListener errorListener;
     private Response.Listener<String> tokenStringRequest, refreshedTokenRequest;
 
@@ -52,6 +56,7 @@ public class Authentication implements AuthUtils{
         this.errorListener = null;
         this.tokenStringRequest = null;
         this.refreshedTokenRequest = null;
+        this.calendar = Calendar.getInstance();
     }
 
     /**
@@ -97,7 +102,12 @@ public class Authentication implements AuthUtils{
                 JSONObject jsonResponse = new JSONObject(response);
                 String accessToken = jsonResponse.getString(context.getString(R.string.jsonAccessTokenKey));
                 String refreshToken = jsonResponse.getString(context.getString(R.string.jsonRefreshTokenKey));
-                storeToken(accessToken, refreshToken);
+                int accessTokenExpiresIn = jsonResponse.getInt(context.getString(R.string.jsonTokenExpiryKey));
+
+                Date currentTime = calendar.getTime();
+                currentTime.setTime(currentTime.getTime() + (accessTokenExpiresIn * 1000));
+                long expiryTime = currentTime.getTime();
+                storeToken(accessToken, refreshToken, expiryTime);
             }catch (JSONException jsonException){
                 jsonException.printStackTrace();
             }
@@ -113,9 +123,19 @@ public class Authentication implements AuthUtils{
             try {
                 JSONObject jsonResponse = new JSONObject(response);
                 String accessToken = jsonResponse.getString(context.getString(R.string.jsonAccessTokenKey));
+                // check if response has new refresh token and expiry time
+                if(jsonResponse.has(context.getString(R.string.jsonRefreshTokenKey)) && jsonResponse.has(context.getString(R.string.jsonTokenExpiryKey))){
+                    String refreshToken = jsonResponse.getString(context.getString(R.string.jsonRefreshTokenKey));
+                    int accessTokenExpiresIn = jsonResponse.getInt(context.getString(R.string.jsonTokenExpiryKey));
+                    Date currentTime = calendar.getTime();
+                    currentTime.setTime(currentTime.getTime() + (accessTokenExpiresIn * 1000));
+                    long expiryTime = currentTime.getTime();
+                    storeToken(accessToken, refreshToken, expiryTime);
+                }else{
+                    // store the new access token
+                    storeToken(accessToken);
+                }
 
-                // store the new access token
-                storeToken(accessToken);
             } catch (JSONException jsonException) {
                 jsonException.printStackTrace();
             }
@@ -147,9 +167,10 @@ public class Authentication implements AuthUtils{
     /**
      * Store Access Token and Refresh Token to the disk
      * */
-    private void storeToken(String accessToken, String refreshToken) {
+    private void storeToken(String accessToken, String refreshToken, long accessTokenExpiresIn) {
         preferences.edit().putString(context.getString(R.string.AccessTokenKey), accessToken).apply();
         preferences.edit().putString(context.getString(R.string.RefreshTokenKey), refreshToken).apply();
+        preferences.edit().putLong(context.getString(R.string.AccessTokenExpiryKey), accessTokenExpiresIn).apply();
     }
 
     /**
@@ -193,13 +214,24 @@ public class Authentication implements AuthUtils{
         return !tempAccessCode.equals(context.getString(R.string.Unauthenticated));
     }
 
+    /**
+     * Checks to see if the current time is 10 minutes before the expiry time
+     * */
+    @Override
+    public boolean isAccessTokenExpired() {
+        Date currentTime = calendar.getTime();
+        long expiryTime = preferences.getLong(context.getString(R.string.AccessTokenExpiryKey), -1);
+        Date expiryDate = new Date(expiryTime - 10000);
+        return !currentTime.before(expiryDate);
+    }
+
     private void parseVolleyError(VolleyError error){
         try {
             String responseBody = new String(error.networkResponse.data, StandardCharsets.UTF_8);
             JSONObject data = new JSONObject(responseBody);
             String errorType = data.getString("error");
             String error_description = data.getString("error_description");
-            Log.e(context.toString(), "{Error Type: " + errorType + ",Error description: " + error_description + "}");
+            Log.e(context.toString(), "{Error Type: " + errorType + ", Error description: " + error_description + "}");
         } catch (JSONException jsonException) {
             jsonException.printStackTrace();
         }
@@ -229,15 +261,17 @@ public class Authentication implements AuthUtils{
      * */
     @Override
     public void refreshAccessToken() {
-        String refreshToken = getRefreshToken();
-        if(!refreshToken.equals(context.getString(R.string.UnauthorizedError))){
-            String refreshTokenURL = context.getString(R.string.SpotifyTokenEndpoint);
+        if(isAccessTokenExpired()){
+            String refreshToken = getRefreshToken();
+            if(!refreshToken.equals(context.getString(R.string.UnauthorizedError))){
+                String refreshTokenURL = context.getString(R.string.SpotifyTokenEndpoint);
 
-            RefreshedAccessTokenStringRequest newAccessTokenRequest = new RefreshedAccessTokenStringRequest(refreshTokenURL, CLIENT_ID, CLIENT_SECRET, refreshToken, getRefreshedTokenRequest(), getErrorListener());
-            requestQueue.add(newAccessTokenRequest);
-        } else{
-            String errorMessage = context.getString(R.string.UnauthorizedError);
-            showError(errorMessage);
+                RefreshedAccessTokenStringRequest newAccessTokenRequest = new RefreshedAccessTokenStringRequest(refreshTokenURL, CLIENT_ID, CLIENT_SECRET, refreshToken, getRefreshedTokenRequest(), getErrorListener());
+                requestQueue.add(newAccessTokenRequest);
+            } else{
+                String errorMessage = context.getString(R.string.UnauthorizedError);
+                showError(errorMessage);
+            }
         }
     }
 

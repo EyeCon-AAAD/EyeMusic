@@ -25,5 +25,5 @@ public interface AuthUtils {
 
     boolean isAuthenticated();
 
-
+    boolean isAccessTokenExpired();
 }

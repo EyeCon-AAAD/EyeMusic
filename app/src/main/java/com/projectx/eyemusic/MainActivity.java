@@ -64,11 +64,6 @@ public class MainActivity extends AppCompatActivity {
     private RequestQueue requestQueue;
     private String mAccessToken;
     private String mAccessCode;
-    private final String[] SCOPES = {
-            "playlist-read-private",
-            "playlist-read-collaborative",
-            "user-library-read",
-            "app-remote-control"};
 
     SharedPreferences preferences = null;
 
@@ -154,9 +149,9 @@ public class MainActivity extends AppCompatActivity {
                 authentication.storeAccessCode(mAccessCode);
                 // fetch access token and refresh token and store them
                 authentication.fetchTokens();
-                // call on start after successfully authenticating
+                // call on start after successfully authenticating --> only happens on first launch
+                onStart();
             }
-            onStart();
         }
     }
 
@@ -165,8 +160,9 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         // check if EyeMusic is launched for the first time
         if(!isFirstTimeLaunch()){
-            mAccessToken = authentication.getAccessToken();
+            // order matters
             mAccessCode = authentication.getAccessCode();
+            mAccessToken = authentication.getAccessToken();
 
             // ------------------- perform error check for when the access is denied but launch is not first time ----------
         }
@@ -193,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
                         mSpotifyAppRemote = spotifyAppRemote;
                         // connection was successful
                         Toast.makeText(getApplicationContext(), "Successfully Connected", Toast.LENGTH_SHORT).show();
-                        // refresh access token before fetching playlists
+                        // refresh access token before fetching playlists if token has expired
                         authentication.refreshAccessToken();
                         fetchPlaylists(requestQueue, mSpotifyAppRemote);
                     }
@@ -290,10 +286,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
         // disconnect from AppRemote
-        // add code for stopping play if playing
+        // TODO add code for stopping play if playing
+        mSpotifyAppRemote.getPlayerApi().pause();
         SpotifyAppRemote.disconnect(mSpotifyAppRemote);
     }
 
@@ -311,7 +308,7 @@ public class MainActivity extends AppCompatActivity {
             // Do authentication once
             authentication.authenticate(MainActivity.this, SPOTIFY_AUTH_CODE_REQUEST_CODE);
             // set first time to false
-            preferences.edit().putBoolean("firstTime", false).commit();
+            preferences.edit().putBoolean("firstTime", false).apply();
             return true;
         } else{
             return false;
