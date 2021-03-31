@@ -19,6 +19,7 @@ public class RefreshTokenStringRequest extends StringRequest {
     String redirectURI;
     HashMap<String, String> params;
     HashMap<String, String> headers;
+    Priority priority;
 
     /**
      * Creates a new request with the given method.
@@ -34,6 +35,7 @@ public class RefreshTokenStringRequest extends StringRequest {
         this.client_secret = client_secret;
         this.mAccessCode = accessCode;
         this.redirectURI = rediectURI;
+        this.priority = Priority.IMMEDIATE;
     }
 
     /**
@@ -75,5 +77,13 @@ public class RefreshTokenStringRequest extends StringRequest {
         String auth = "Basic " + Base64.encodeToString(creds.getBytes(), Base64.NO_WRAP);
         headers.put("Authorization", auth);
         return headers;
+    }
+
+    /**
+     * Returns the {@link Priority} of this request; {@link Priority#NORMAL} by default.
+     */
+    @Override
+    public Priority getPriority() {
+        return super.getPriority();
     }
 }

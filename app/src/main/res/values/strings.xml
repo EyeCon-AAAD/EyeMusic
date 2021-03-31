@@ -15,5 +15,13 @@
     <string name="playlist_name">Playlist Name</string>
     <string name="track_name">Track name</string>
     <string name="artist_name">Artist name</string>
-
+    <string name="AccessCodeKey">accessCode</string>
+    <string name="AccessTokenKey">accessToken</string>
+    <string name="AccessTokenExpiryKey">expiresIn</string>
+    <string name="RefreshTokenKey">refreshToken</string>
+    <string name="Unauthenticated">noAccessCode</string>
+    <string name="jsonAccessTokenKey">access_token</string>
+    <string name="jsonRefreshTokenKey">refresh_token</string>
+    <string name="jsonTokenExpiryKey">expires_in</string>
+    <string name="UnauthorizedError">No Access code stored, check authorization</string>
 </resources>
