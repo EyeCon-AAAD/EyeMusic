@@ -22,7 +22,7 @@ public class OpencvActivity extends AppCompatActivity implements CvCameraViewLis
     // Add OpenCV Library initialization
      {
         if(OpenCVLoader.initDebug()){
-            Toast.makeText(getApplicationContext(), "Loaded succecfully", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "OpenCv Loaded succecfully", Toast.LENGTH_LONG).show();
         }
     }
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
