@@ -20,11 +20,7 @@ import org.opencv.core.Mat;
 public class OpencvActivity extends AppCompatActivity implements CvCameraViewListener2 {
     private final String TAG = OpencvActivity.class.getSimpleName();
     // Add OpenCV Library initialization
-     {
-        if(OpenCVLoader.initDebug()){
-            Toast.makeText(getApplicationContext(), "OpenCv Loaded succecfully", Toast.LENGTH_LONG).show();
-        }
-    }
+
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
@@ -92,7 +88,6 @@ public class OpencvActivity extends AppCompatActivity implements CvCameraViewLis
 
     public void onCameraViewStarted(int width, int height) {
         mRgba = new Mat(height, width, CvType.CV_8UC4);
-
     }
 
     public void onCameraViewStopped() {
