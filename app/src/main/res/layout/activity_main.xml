@@ -8,14 +8,31 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <androidx.recyclerview.widget.RecyclerView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="gone"
-        android:id="@+id/rv_main_playlists">
+        android:id="@+id/rv_main_wrapper"
+        android:layout_marginBottom="20dp">
 
-    </androidx.recyclerview.widget.RecyclerView>
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="60dp"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:id="@+id/rv_main_playlists">
+
+        </androidx.recyclerview.widget.RecyclerView>
+        <Button
+            android:id="@+id/btn_main_goto_eye"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Go to Eye Activity"
+            android:layout_alignParentBottom="true"
+            android:background="@color/colorAccent"
+            android:layout_gravity="center"
+            android:layout_margin="30dp"/>
+    </RelativeLayout>
 
     <ProgressBar
         android:id="@+id/pb_main"
@@ -24,4 +41,6 @@
         android:layout_gravity="center_horizontal"
         android:visibility="visible"
         android:layout_marginTop="60dp"/>
+
+
 </LinearLayout>
