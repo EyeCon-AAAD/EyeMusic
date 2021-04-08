@@ -1,3 +1,3 @@
 # EyeMusic
 
-a music player connected to spotify that can be controlled by eyes though normal fron facing phone camera.
+An Android music player connected to spotify that can be controlled by eyes though normal front facing phone camera.
