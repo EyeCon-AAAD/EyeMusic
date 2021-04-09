@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,33 +19,22 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkError;
-import com.android.volley.NoConnectionError;
-import com.android.volley.ParseError;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.ServerError;
-import com.android.volley.TimeoutError;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.projectx.eyemusic.VolleyRequests.PlaylistRequest;
-import com.projectx.eyemusic.VolleyRequests.RefreshTokenStringRequest;
-import com.projectx.eyemusic.VolleyRequests.RefreshedAccessTokenStringRequest;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.spotify.sdk.android.auth.*;
 
 import com.spotify.protocol.types.Track;
-import com.spotify.sdk.android.auth.AuthorizationRequest;
 import com.spotify.sdk.android.auth.AuthorizationResponse;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -71,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Playlist> playlists;
 
     // Views
-    Button btn_play, btn_pause;
+    Button btn_play, btn_pause, btn_goto_eye;
     TextView tv_message;
     TextView tv_artist, tv_auth_token;
     RecyclerView rv_main_playlists;
@@ -97,6 +85,11 @@ public class MainActivity extends AppCompatActivity {
             REFERRER = getString(R.string.REFERRER);
         }
         pb_main = findViewById(R.id.pb_main);
+        btn_goto_eye = findViewById(R.id.btn_main_goto_eye);
+        btn_goto_eye.setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, OpencvActivity.class);
+            startActivity(intent);
+        });
 
         // setup recycler view
         rv_main_playlists = findViewById(R.id.rv_main_playlists);
