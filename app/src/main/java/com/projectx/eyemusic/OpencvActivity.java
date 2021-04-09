@@ -9,35 +9,42 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.CameraActivity;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
+import org.opencv.android.InstallCallbackInterface;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 
-public class OpencvActivity extends AppCompatActivity implements CvCameraViewListener2 {
-    private final String TAG = OpencvActivity.class.getSimpleName();
-    // Add OpenCV Library initialization
+import java.util.Collections;
+import java.util.List;
 
+public class OpencvActivity extends CameraActivity implements CvCameraViewListener2 {
+    private final String TAG = OpencvActivity.class.getSimpleName();
+    // openCV variables
+    private Mat mRgba;
+    // define views
+    private CameraBridgeViewBase mOpenCVCameraView;
+
+    // Add OpenCV Library initialization
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
             if (status == LoaderCallbackInterface.SUCCESS) {
                 Log.i(TAG, "OpenCV Loaded successfully");
+
                 mOpenCVCameraView.enableView();
             } else {
                 super.onManagerConnected(status);
             }
         }
+
+
     };
-
-    // openCV variables
-    private Mat mRgba;
-
-    // define views
-    private CameraBridgeViewBase mOpenCVCameraView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,9 +80,15 @@ public class OpencvActivity extends AppCompatActivity implements CvCameraViewLis
      * fragments attached to the activity are <em>not</em> resumed.
      */
     @Override
-    protected void onResume() {
-        super.onResume();
-        OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION, this, mLoaderCallback);
+    public void onResume () {
+        super.onResume ();
+        if (! OpenCVLoader. initDebug ()) {
+            Log. d ( TAG , "Internal OpenCV library not found. Using OpenCV Manager for initialization");
+            OpenCVLoader. initAsync (OpenCVLoader. OPENCV_VERSION , this, mLoaderCallback);
+        } else {
+            Log. d ( TAG , "OpenCV library found inside package. Using it!");
+            mLoaderCallback.onManagerConnected (LoaderCallbackInterface.SUCCESS );
+        }
     }
 
     @Override
@@ -93,13 +106,27 @@ public class OpencvActivity extends AppCompatActivity implements CvCameraViewLis
     public void onCameraViewStopped() {
         mRgba.release();
     }
+
+
     /**
      * Implementation of CvCameraViewListener interface allows you to add processing steps after
      * frame grabbing from camera and before its rendering on screen.
      * The most important function is onCameraFrame.
      * It is callback function and it is called on retrieving frame from camera.
      * The callback input is object of CvCameraViewFrame class that represents frame from camera.*/
-    public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
-        return inputFrame.rgba();
+    @Override
+    public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame){
+
+        mRgba = inputFrame.rgba();
+        Core.flip(mRgba, mRgba, -1);
+        return mRgba;
+    }
+
+    /**
+     * override of Camera Activity class
+     */
+    @Override
+    protected List<?extends CameraBridgeViewBase> getCameraViewList () {
+        return Collections.singletonList(mOpenCVCameraView);
     }
 }
