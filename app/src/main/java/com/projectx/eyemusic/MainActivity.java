@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Playlist> playlists;
 
     // Views
-    Button btn_play, btn_pause, btn_goto_eye;
+    Button btn_play, btn_pause, btn_goto_eye, btn_startGazeCaptureThread;
     TextView tv_message;
     TextView tv_artist, tv_auth_token;
     RecyclerView rv_main_playlists;
@@ -89,6 +89,13 @@ public class MainActivity extends AppCompatActivity {
         btn_goto_eye.setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, OpencvActivity.class);
             startActivity(intent);
+        });
+
+        btn_startGazeCaptureThread = findViewById(R.id.btn_main_startGazeCaptureThread);
+        btn_startGazeCaptureThread.setOnClickListener(view -> {
+            GazeRunnable gaze_runnable = new GazeRunnable();
+            new Thread(gaze_runnable).start();
+
         });
 
         // setup recycler view

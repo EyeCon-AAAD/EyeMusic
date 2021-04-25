@@ -23,15 +23,28 @@
             android:id="@+id/rv_main_playlists">
 
         </androidx.recyclerview.widget.RecyclerView>
+
         <Button
             android:id="@+id/btn_main_goto_eye"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Go to Eye Activity"
             android:layout_alignParentBottom="true"
-            android:background="@color/colorAccent"
             android:layout_gravity="center"
-            android:layout_margin="30dp"/>
+            android:layout_margin="30dp"
+            android:background="@color/colorAccent"
+            android:text="Go to Open Activity" />
+
+        <Button
+            android:id="@+id/btn_main_startGazeCaptureThread"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="center"
+            android:layout_marginEnd="45dp"
+            android:layout_marginBottom="2dp"
+            android:background="@color/colorAccent"
+            android:text="start gaze thread" />
     </RelativeLayout>
 
     <ProgressBar
