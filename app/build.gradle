@@ -48,6 +48,7 @@ dependencies {
     implementation 'androidx.activity:activity:1.2.2'
     implementation 'androidx.fragment:fragment:1.3.2'
     implementation project(path: ':opencv')
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
     testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
@@ -59,13 +60,19 @@ dependencies {
 
     implementation 'com.google.guava:guava:27.1-android'
 
-    // CameraX
+    //// CameraX
     def camerax_version = "1.0.0-rc05"
     // The following line is optional, as the core library is included indirectly by camera-camera2
     implementation "androidx.camera:camera-core:${camerax_version}"
     implementation "androidx.camera:camera-camera2:${camerax_version}"
     implementation "androidx.camera:camera-lifecycle:${camerax_version}"
     //implementation "androidx.camera:camera-view:1.0.0-SNAPSHOT"
+
+    ////Fragments
+    def fragment_version = "1.3.3"
+    // Java language implementation
+    implementation "androidx.fragment:fragment:$fragment_version"
+
 
 
 }

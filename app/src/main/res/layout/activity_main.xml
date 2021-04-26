@@ -8,19 +8,28 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
+    <!-- reused fragment -->
+    <fragment
+        android:id="@+id/my_fragment"
+        android:name="com.projectx.eyemusic.CameraPreviewFragment"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="center" />
+
     <RelativeLayout
+        android:id="@+id/rv_main_wrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/rv_main_wrapper"
         android:layout_marginBottom="20dp">
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_main_playlists"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="60dp"
             android:orientation="vertical"
-            android:visibility="gone"
-            android:id="@+id/rv_main_playlists">
+            android:visibility="gone">
 
         </androidx.recyclerview.widget.RecyclerView>
 
@@ -45,6 +54,8 @@
             android:layout_marginBottom="2dp"
             android:background="@color/colorAccent"
             android:text="start gaze thread" />
+
+
     </RelativeLayout>
 
     <ProgressBar
@@ -52,8 +63,8 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_gravity="center_horizontal"
-        android:visibility="visible"
-        android:layout_marginTop="60dp"/>
+        android:layout_marginTop="60dp"
+        android:visibility="visible" />
 
 
 </LinearLayout>
