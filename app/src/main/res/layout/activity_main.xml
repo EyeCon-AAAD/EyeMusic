@@ -8,14 +8,14 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <!-- reused fragment -->
-    <fragment
-        android:id="@+id/my_fragment"
-        android:name="com.projectx.eyemusic.CameraPreviewFragment"
+    <!-- res/layout/example_activity.xml -->
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragment_container_view"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_alignParentTop="true"
         android:layout_gravity="center" />
+
 
     <RelativeLayout
         android:id="@+id/rv_main_wrapper"

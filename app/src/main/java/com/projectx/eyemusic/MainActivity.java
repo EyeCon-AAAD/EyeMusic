@@ -116,6 +116,15 @@ public class MainActivity extends AppCompatActivity {
         authentication = new Authentication(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, preferences, requestQueue, this);
 
         // TODO Improve UX flow of fetched playlists
+
+        // fragment
+//        getFragmentManager().beginTransaction().add(R.id.fragment_camera_preview, new CameraExtractionFragment()).commit();
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .setReorderingAllowed(true)
+                    .add(R.id.fragment_container_view, CameraExtractionFragment.class, null)
+                    .commit();
+        }
     }
 
     /**

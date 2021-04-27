@@ -27,9 +27,10 @@ public class OpencvActivity extends CameraActivity implements CvCameraViewListen
     private final String TAG = OpencvActivity.class.getSimpleName();
     // openCV variables
     private Mat mRgba;
+    private Mat mGray;
+
     // define views
     private CameraBridgeViewBase mOpenCVCameraView;
-    private Mat mGray;
 
 
     @Override
