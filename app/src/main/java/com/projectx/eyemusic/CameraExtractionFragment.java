@@ -5,11 +5,13 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 public class CameraExtractionFragment extends Fragment {
+    private static final String TAG = "CameraExtractionFragmen";
 
     private CameraExtraction mCameraExtraction;
     Camera mCamera;
@@ -20,6 +22,7 @@ public class CameraExtractionFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate: " + this.getActivity());
 
         mCameraExtraction = new CameraExtraction(
                 this.getActivity().getBaseContext(),
@@ -41,6 +44,7 @@ public class CameraExtractionFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)               {
+        Log.d(TAG, "onCreateView: ");
         return mCameraExtraction;
 //        View myLayout = inflater.inflate(R.layout.fragment_layout, container, false);
 //        return myLayout;
@@ -50,6 +54,7 @@ public class CameraExtractionFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        Log.d(TAG, "onResume: ");
 
         // Use mCurrentCamera to select the camera desired to safely restore
         // the fragment after the camera has been changed
@@ -60,6 +65,7 @@ public class CameraExtractionFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        Log.d(TAG, "onPause: ");
 
         if (mCamera != null)
         {

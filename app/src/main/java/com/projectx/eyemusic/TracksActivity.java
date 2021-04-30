@@ -64,6 +64,7 @@ public class TracksActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate: ");
         setContentView(R.layout.activity_tracks);
         toolbar = findViewById(R.id.tracks_actionbar);
         relativeLayout = findViewById(R.id.relativeLayoutTracks);
@@ -99,6 +100,8 @@ public class TracksActivity extends AppCompatActivity {
         preferences = getSharedPreferences(APP_PACKAGE_NAME, MODE_PRIVATE);
         RequestQueue requestQueue  = Volley.newRequestQueue(TracksActivity.this);
         fetchPlaylistTracks(playlistId, requestQueue);
+
+
     }
 
     public void showProgressBar(Boolean show) {
@@ -114,6 +117,7 @@ public class TracksActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        Log.d(TAG, "onOptionsItemSelected: ");
         if(item.getItemId() == android.R.id.home){
             onBackPressed();
         }

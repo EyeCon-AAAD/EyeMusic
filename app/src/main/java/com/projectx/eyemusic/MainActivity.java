@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,6 +14,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -74,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate: ");
         setContentView(R.layout.activity_main);
         {
             CLIENT_ID = getString(R.string.CLIENT_ID);
@@ -95,6 +98,23 @@ public class MainActivity extends AppCompatActivity {
         btn_startGazeCaptureThread.setOnClickListener(view -> {
             GazeRunnable gaze_runnable = new GazeRunnable();
             new Thread(gaze_runnable).start();
+
+        });
+        //
+
+        Activity mActivity = this;
+        findViewById(R.id.btn_main_stimulateTouch).setOnClickListener(view -> {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        SimulatedTouch.click(100, 700);
+                        //SimulatedTouch.swap(100 ,100,1000 ,500, 5);
+
+                    } catch ( Exception e) {
+                    }
+                }
+            }).start();
 
         });
 
@@ -122,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
-                    .add(R.id.fragment_container_view, CameraExtractionFragment.class, null)
+                    .add(R.id.fragment_container_view, new CameraExtractionFragment(), null)
                     .commit();
         }
     }
@@ -167,6 +187,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        Log.d(TAG, "onStart: ");
         // check if EyeMusic is launched for the first time
         if(!isFirstTimeLaunch()){
             // order matters
@@ -297,6 +318,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.d(TAG, "onDestroy: ");
         // disconnect from AppRemote
         // TODO add code for stopping play if playing
         mSpotifyAppRemote.getPlayerApi().pause();
@@ -379,5 +401,28 @@ public class MainActivity extends AppCompatActivity {
             rv_main_playlists.setVisibility(View.VISIBLE);
             pb_main.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        int X = (int) event.getX();
+        int Y = (int) event.getY();
+        int eventAction = event.getAction();
+        switch (eventAction) {
+            case MotionEvent.ACTION_DOWN:
+                Toast.makeText(this, "ACTION_DOWN "+"X: "+X+" Y: "+Y, Toast.LENGTH_SHORT).show();
+                Log.i(TAG, "action_down: "+ X+" "+Y);
+                break;
+            case MotionEvent.ACTION_MOVE:
+                Toast.makeText(this, "MOVE "+"X: "+X+" Y: "+Y,
+                        Toast.LENGTH_SHORT).show();
+                Log.i(TAG, "action_move: "+ X+" "+Y);
+                break;
+            case MotionEvent.ACTION_UP:
+                Toast.makeText(this, "ACTION_UP "+"X: "+X+" Y: "+Y, Toast.LENGTH_SHORT).show();
+                Log.i(TAG, "action_up: "+ X+" "+Y);
+                break;
+        }
+        return false;
     }
 }

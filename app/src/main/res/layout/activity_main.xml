@@ -8,7 +8,7 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <!-- res/layout/example_activity.xml -->
+    <!-- I didnt give the name -->
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_container_view"
         android:layout_width="100dp"
@@ -50,10 +50,22 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
             android:layout_gravity="center"
-            android:layout_marginEnd="45dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginEnd="124dp"
+            android:layout_marginBottom="0dp"
             android:background="@color/colorAccent"
-            android:text="start gaze thread" />
+            android:text="thread" />
+
+        <Button
+            android:id="@+id/btn_main_stimulateTouch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="center"
+            android:layout_marginEnd="22dp"
+            android:layout_marginBottom="0dp"
+            android:background="@color/colorAccent"
+            android:text="touch" />
 
 
     </RelativeLayout>
