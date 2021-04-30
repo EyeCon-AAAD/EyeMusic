@@ -110,8 +110,8 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         SimulatedTouch.click(100, 700);
                         //SimulatedTouch.swap(100 ,100,1000 ,500, 5);
-
                     } catch ( Exception e) {
+                        Log.e(TAG, "When pressed simulatedTouch btn: ", e);
                     }
                 }
             }).start();
