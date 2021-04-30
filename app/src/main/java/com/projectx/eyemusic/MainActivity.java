@@ -25,6 +25,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
 import com.projectx.eyemusic.VolleyRequests.PlaylistRequest;
+import com.projectx.eyemusic.graphics.DotGraphic;
+import com.projectx.eyemusic.graphics.GraphicOverlay;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
@@ -73,6 +75,9 @@ public class MainActivity extends AppCompatActivity {
 
     private Authentication authentication;
 
+    private GraphicOverlay graphicOverlayGazeLocation;
+    int[] graphicOverlayGazeLocationLocation = new int[2];
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,9 +101,8 @@ public class MainActivity extends AppCompatActivity {
 
         btn_startGazeCaptureThread = findViewById(R.id.btn_main_startGazeCaptureThread);
         btn_startGazeCaptureThread.setOnClickListener(view -> {
-            GazeRunnable gaze_runnable = new GazeRunnable();
+            GazeRunnable gaze_runnable = new GazeRunnable(findViewById(R.id.graphic_overlay_gaze_location), this);
             new Thread(gaze_runnable).start();
-
         });
         //
 
@@ -108,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     try {
-                        SimulatedTouch.click(100, 700);
+                        SimulatedTouch.click(mActivity,500, 500 );
                         //SimulatedTouch.swap(100 ,100,1000 ,500, 5);
                     } catch ( Exception e) {
                         Log.e(TAG, "When pressed simulatedTouch btn: ", e);
@@ -139,12 +143,34 @@ public class MainActivity extends AppCompatActivity {
 
         // fragment
 //        getFragmentManager().beginTransaction().add(R.id.fragment_camera_preview, new CameraExtractionFragment()).commit();
-        if (savedInstanceState == null) {
+
+
+        graphicOverlayGazeLocation = findViewById(R.id.graphic_overlay_gaze_location);
+        if (graphicOverlayGazeLocation == null) {
+            Log.d(TAG, "graphicOverlay is null");
+        }
+
+        //graphicOverlayGazeLocation.add(new DotGraphic(this, graphicOverlayGazeLocation, 500, 500));
+
+        /*if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
                     .add(R.id.fragment_container_view, new CameraExtractionFragment(), null)
                     .commit();
-        }
+        }*/
+
+
+    }
+
+
+    public int[] getGraphicOverlayGazeLocationLocation() {
+        return graphicOverlayGazeLocationLocation;
+    }
+
+    @Override
+    public void onWindowFocusChanged (boolean hasFocus) {
+        graphicOverlayGazeLocation.getLocationOnScreen(graphicOverlayGazeLocationLocation);
+        Log.i(TAG, "onWindowFocusChanged:Location of overlay " + graphicOverlayGazeLocationLocation[0] + " "+ graphicOverlayGazeLocationLocation[1]);
     }
 
     /**
