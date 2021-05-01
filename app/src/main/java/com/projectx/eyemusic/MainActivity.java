@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,6 +14,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -23,6 +25,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
 import com.projectx.eyemusic.VolleyRequests.PlaylistRequest;
+import com.projectx.eyemusic.graphics.DotGraphic;
+import com.projectx.eyemusic.graphics.GraphicOverlay;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
@@ -59,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Playlist> playlists;
 
     // Views
-    Button btn_play, btn_pause, btn_goto_eye;
+    Button btn_play, btn_pause, btn_goto_eye, btn_startGazeCaptureThread;
     TextView tv_message;
     TextView tv_artist, tv_auth_token;
     RecyclerView rv_main_playlists;
@@ -71,9 +75,13 @@ public class MainActivity extends AppCompatActivity {
 
     private Authentication authentication;
 
+    private static GraphicOverlay graphicOverlayGazeLocation;
+    static int[] graphicOverlayGazeLocationLocation = new int[2];
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate: ");
         setContentView(R.layout.activity_main);
         {
             CLIENT_ID = getString(R.string.CLIENT_ID);
@@ -89,6 +97,29 @@ public class MainActivity extends AppCompatActivity {
         btn_goto_eye.setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, OpencvActivity.class);
             startActivity(intent);
+        });
+
+        btn_startGazeCaptureThread = findViewById(R.id.btn_main_startGazeCaptureThread);
+        btn_startGazeCaptureThread.setOnClickListener(view -> {
+            GazeRunnable gaze_runnable = new GazeRunnable(findViewById(R.id.graphic_overlay_gaze_location), this);
+            new Thread(gaze_runnable).start();
+        });
+        //
+
+        Activity mActivity = this;
+        findViewById(R.id.btn_main_stimulateTouch).setOnClickListener(view -> {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        SimulatedTouch.click(mActivity,500, 500 );
+                        //SimulatedTouch.swap(100 ,100,1000 ,500, 5);
+                    } catch ( Exception e) {
+                        Log.e(TAG, "When pressed simulatedTouch btn: ", e);
+                    }
+                }
+            }).start();
+
         });
 
         // setup recycler view
@@ -109,6 +140,39 @@ public class MainActivity extends AppCompatActivity {
         authentication = new Authentication(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, preferences, requestQueue, this);
 
         // TODO Improve UX flow of fetched playlists
+
+        // fragment
+//        getFragmentManager().beginTransaction().add(R.id.fragment_camera_preview, new CameraExtractionFragment()).commit();
+
+
+        graphicOverlayGazeLocation = findViewById(R.id.graphic_overlay_gaze_location);
+        if (graphicOverlayGazeLocation == null) {
+            Log.d(TAG, "graphicOverlay is null");
+        }
+
+        graphicOverlayGazeLocation.add(new DotGraphic(this, graphicOverlayGazeLocation, 500, 500));
+
+        /*if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .setReorderingAllowed(true)
+                    .add(R.id.fragment_container_view, new CameraExtractionFragment(), null)
+                    .commit();
+        }*/
+
+
+    }
+
+    public GraphicOverlay getGraphicOverlayGazeLocation(){
+        return graphicOverlayGazeLocation;
+    }
+    public int[] getGraphicOverlayGazeLocationLocation() {
+        return graphicOverlayGazeLocationLocation;
+    }
+
+    @Override
+    public void onWindowFocusChanged (boolean hasFocus) {
+        graphicOverlayGazeLocation.getLocationOnScreen(graphicOverlayGazeLocationLocation);
+        Log.i(TAG, "onWindowFocusChanged:Location of overlay " + graphicOverlayGazeLocationLocation[0] + " "+ graphicOverlayGazeLocationLocation[1]);
     }
 
     /**
@@ -151,6 +215,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        Log.d(TAG, "onStart: ");
         // check if EyeMusic is launched for the first time
         if(!isFirstTimeLaunch()){
             // order matters
@@ -281,6 +346,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.d(TAG, "onDestroy: ");
         // disconnect from AppRemote
         // TODO add code for stopping play if playing
         mSpotifyAppRemote.getPlayerApi().pause();
@@ -363,5 +429,28 @@ public class MainActivity extends AppCompatActivity {
             rv_main_playlists.setVisibility(View.VISIBLE);
             pb_main.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        int X = (int) event.getX();
+        int Y = (int) event.getY();
+        int eventAction = event.getAction();
+        switch (eventAction) {
+            case MotionEvent.ACTION_DOWN:
+                Toast.makeText(this, "ACTION_DOWN "+"X: "+X+" Y: "+Y, Toast.LENGTH_SHORT).show();
+                Log.i(TAG, "action_down: "+ X+" "+Y);
+                break;
+            case MotionEvent.ACTION_MOVE:
+                Toast.makeText(this, "MOVE "+"X: "+X+" Y: "+Y,
+                        Toast.LENGTH_SHORT).show();
+                Log.i(TAG, "action_move: "+ X+" "+Y);
+                break;
+            case MotionEvent.ACTION_UP:
+                Toast.makeText(this, "ACTION_UP "+"X: "+X+" Y: "+Y, Toast.LENGTH_SHORT).show();
+                Log.i(TAG, "action_up: "+ X+" "+Y);
+                break;
+        }
+        return false;
     }
 }

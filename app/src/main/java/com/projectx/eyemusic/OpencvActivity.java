@@ -27,24 +27,11 @@ public class OpencvActivity extends CameraActivity implements CvCameraViewListen
     private final String TAG = OpencvActivity.class.getSimpleName();
     // openCV variables
     private Mat mRgba;
+    private Mat mGray;
+
     // define views
     private CameraBridgeViewBase mOpenCVCameraView;
 
-    // Add OpenCV Library initialization
-    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
-        @Override
-        public void onManagerConnected(int status) {
-            if (status == LoaderCallbackInterface.SUCCESS) {
-                Log.i(TAG, "OpenCV Loaded successfully");
-
-                mOpenCVCameraView.enableView();
-            } else {
-                super.onManagerConnected(status);
-            }
-        }
-
-
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +39,10 @@ public class OpencvActivity extends CameraActivity implements CvCameraViewListen
         setContentView(R.layout.activity_opencv);
         // keep screen on
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        Log.i(TAG, "OpenCVLoader.initDebug();");
+        OpenCVLoader.initDebug();
+
 
         // initialize views
         mOpenCVCameraView = findViewById(R.id.opencv_camera_view);
@@ -80,14 +71,16 @@ public class OpencvActivity extends CameraActivity implements CvCameraViewListen
      * fragments attached to the activity are <em>not</em> resumed.
      */
     @Override
-    public void onResume () {
-        super.onResume ();
-        if (! OpenCVLoader. initDebug ()) {
-            Log. d ( TAG , "Internal OpenCV library not found. Using OpenCV Manager for initialization");
-            OpenCVLoader. initAsync (OpenCVLoader. OPENCV_VERSION , this, mLoaderCallback);
+    public void onResume()
+    {
+        Log.i(TAG, "called onResume");
+        super.onResume();
+        if (!OpenCVLoader.initDebug()) {
+            Log.e(TAG, "Internal OpenCV library not found.");
         } else {
-            Log. d ( TAG , "OpenCV library found inside package. Using it!");
-            mLoaderCallback.onManagerConnected (LoaderCallbackInterface.SUCCESS );
+            Log.d(TAG, "OpenCV library found inside package. Using it!");
+
+            mOpenCVCameraView.enableView();
         }
     }
 
@@ -100,13 +93,14 @@ public class OpencvActivity extends CameraActivity implements CvCameraViewListen
     }
 
     public void onCameraViewStarted(int width, int height) {
+        mGray = new Mat(height, width, CvType.CV_8UC4);
         mRgba = new Mat(height, width, CvType.CV_8UC4);
     }
 
-    public void onCameraViewStopped() {
+    public void onCameraViewStopped(){
+        mGray.release();
         mRgba.release();
     }
-
 
     /**
      * Implementation of CvCameraViewListener interface allows you to add processing steps after

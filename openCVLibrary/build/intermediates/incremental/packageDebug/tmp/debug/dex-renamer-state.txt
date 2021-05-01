@@ -1,4 +1,0 @@
-#Wed Apr 07 12:09:29 EET 2021
-base.0=F\:\\_AisanManuallyCreated\\aisanWork\\_android_development\\EyeMusic\\openCVLibrary\\build\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
-path.0=classes.dex
-renamed.0=classes.dex
