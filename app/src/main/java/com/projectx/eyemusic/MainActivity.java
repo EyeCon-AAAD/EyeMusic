@@ -75,8 +75,8 @@ public class MainActivity extends AppCompatActivity {
 
     private Authentication authentication;
 
-    private GraphicOverlay graphicOverlayGazeLocation;
-    int[] graphicOverlayGazeLocationLocation = new int[2];
+    private static GraphicOverlay graphicOverlayGazeLocation;
+    static int[] graphicOverlayGazeLocationLocation = new int[2];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "graphicOverlay is null");
         }
 
-        //graphicOverlayGazeLocation.add(new DotGraphic(this, graphicOverlayGazeLocation, 500, 500));
+        graphicOverlayGazeLocation.add(new DotGraphic(this, graphicOverlayGazeLocation, 500, 500));
 
         /*if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -162,7 +162,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
+    public GraphicOverlay getGraphicOverlayGazeLocation(){
+        return graphicOverlayGazeLocation;
+    }
     public int[] getGraphicOverlayGazeLocationLocation() {
         return graphicOverlayGazeLocationLocation;
     }

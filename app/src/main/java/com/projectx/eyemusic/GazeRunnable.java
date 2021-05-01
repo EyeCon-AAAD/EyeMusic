@@ -11,17 +11,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.projectx.eyemusic.graphics.DotGraphic;
 import com.projectx.eyemusic.graphics.GraphicOverlay;
 
-public class GazeRunnable extends AppCompatActivity implements Runnable {
+public class GazeRunnable implements Runnable {
     private static final String TAG = "GazeRunnable";
 
     private GraphicOverlay graphicOverlayGazeLocation;
     private GazeModel model;
-    private Activity activity;
+    private MainActivity activity;
     //Button btn = findViewById(R.id.btn_main_startGazeCaptureThread);
 
-    GazeRunnable(GraphicOverlay overlayGaze, Activity activity){
+    GazeRunnable(GraphicOverlay overlayGaze, MainActivity activity){
         model = new GazeModel();
         graphicOverlayGazeLocation = overlayGaze;
+        this.activity =  activity;
     }
 
     @Override
@@ -29,6 +30,8 @@ public class GazeRunnable extends AppCompatActivity implements Runnable {
         int i = 0;
         while (true){
             try {
+
+
                 GazeModel.GazePoint prediction = model.predict();
                 graphicOverlayGazeLocation.add(new DotGraphic(activity, graphicOverlayGazeLocation, prediction.getX(), prediction.getY()));
                 Thread.sleep(10);

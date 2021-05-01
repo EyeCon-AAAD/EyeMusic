@@ -22,7 +22,9 @@ public class DotGraphic extends Graphic{
     private float x;
     private float y;
 
-    public DotGraphic(Activity activity, GraphicOverlay overlay, float x, float y){
+
+
+    public DotGraphic(MainActivity activity, GraphicOverlay overlay, float x, float y){
         super(overlay);
 
         paint = new Paint();
@@ -46,7 +48,7 @@ public class DotGraphic extends Graphic{
         Log.i(TAG, "DotGraphic:Location of overlay " + location[0] + " "+ location[1]);*/
 
         this.x = x;
-        this.y = y;
+        this.y = y - activity.getGraphicOverlayGazeLocationLocation()[1];
     }
 
     @Override
