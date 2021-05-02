@@ -2,7 +2,7 @@ package com.projectx.eyemusic.Music;
 
 // create MyTrack class synonymous to Track in the Spotify SDK
 // Easier for now, will setup for de/serialization later
-class MyTrack {
+public class MyTrack {
     private String artistName;
     private String trackName;
     private String imageURL;

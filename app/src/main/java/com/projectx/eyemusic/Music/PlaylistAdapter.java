@@ -11,13 +11,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.projectx.eyemusic.Fragments.TracksFragment;
+import com.projectx.eyemusic.MainActivity;
 import com.projectx.eyemusic.R;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHolder> {
     public ArrayList<Playlist> playlists;
@@ -116,12 +121,14 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
                     Toast.makeText(context, tv_playlist_name.getText(),Toast.LENGTH_SHORT).show();
                     Playlist playlist = playlists.get(getAdapterPosition());
                     //spotifyAppRemote.getPlayerApi().play(playlist.getSpotifyURI());
-                    // go to the Tracks activity
+                    // go to the Tracks Fragment
                     // Playlist id will be needed to fetch tracks of current album
-                    Intent intent = new Intent(context, TracksActivity.class);
-                    intent.putExtra("playlistName", playlist.getName());
-                    intent.putExtra("playlistId", playlist.getId());
-                    context.startActivity(intent);
+                    AppCompatActivity activity = (AppCompatActivity) view.getContext();
+                    Fragment fragment = TracksFragment.newInstance(playlist.getId());
+                    activity.getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.main_fragment_container, fragment, "Tracks Fragment")
+                            .addToBackStack(null) // on back pressed go back
+                            .commit();
                 }
             });
         }

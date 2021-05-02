@@ -3,16 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.PlaylistFragment">
-
+    tools:context=".Fragments.TracksFragment">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_playlists"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:visibility="gone">
-
+        android:visibility="gone"
+        android:id="@+id/rv_tracks">
     </androidx.recyclerview.widget.RecyclerView>
 
     <ProgressBar
@@ -21,7 +19,5 @@
         android:layout_height="50dp"
         android:layout_centerInParent="true"
         android:visibility="visible" />
-
-
 
 </RelativeLayout>

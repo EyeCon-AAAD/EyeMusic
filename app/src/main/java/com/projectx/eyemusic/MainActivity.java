@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
     TextView tv_message;
     TextView tv_artist, tv_auth_token;
     RecyclerView rv_main_playlists;
-    ProgressBar pb_main;
+    public ProgressBar pb_main;
     boolean flag = false;
     PackageManager packageManager;
 
@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
             PLAY_STORE_URI = getString(R.string.PLAY_STORE_URI);
             REFERRER = getString(R.string.REFERRER);
         }
-        pb_main = findViewById(R.id.pb_playlist_fragment);
+        pb_main = findViewById(R.id.pb_load_main);
         rv_main_playlists = findViewById(R.id.rv_playlists);
         btn_goto_eye = findViewById(R.id.btn_main_goto_eye);
         btn_goto_eye.setOnClickListener(view -> {
@@ -242,28 +242,37 @@ public class MainActivity extends AppCompatActivity {
                 // Use the SpotifyAppRemote.Connector to connect to Spotify and get an instance of
                 // SpotifyAppRemote
                 //SpotifyAppRemote.disconnect(mSpotifyAppRemote);
-                SpotifyAppRemote.connect(this, connectionParams, new Connector.ConnectionListener() {
-                    @Override
-                    public void onConnected(SpotifyAppRemote spotifyAppRemote) {
-                        mSpotifyAppRemote = spotifyAppRemote;
-                        // connection was successful
-                        Toast.makeText(getApplicationContext(), "Successfully Connected", Toast.LENGTH_SHORT).show();
-                        // refresh access token before fetching playlists if token has expired
-                        authentication.refreshAccessToken();
-                        // load playlist fragment
-                        getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment_container,
-                                new PlaylistFragment()).commit();
-                        // fetchPlaylists(requestQueue, mSpotifyAppRemote);
-                    }
-                    @Override
-                    public void onFailure(Throwable throwable) {
-                        // handle connection error here
-                        Toast.makeText(getApplicationContext(), "Couldn't connect", Toast.LENGTH_LONG).show();
-                        Log.e(TAG, throwable.getMessage(), throwable);
-                    }
-                });
+                if(mSpotifyAppRemote == null){
+                    connectSpotifyRemote(connectionParams);
+                } else if(!mSpotifyAppRemote.isConnected()){
+                    connectSpotifyRemote(connectionParams);
+                }
+
             }
         }
+    }
+
+    private void connectSpotifyRemote(ConnectionParams connectionParams) {
+        SpotifyAppRemote.connect(this, connectionParams, new Connector.ConnectionListener() {
+            @Override
+            public void onConnected(SpotifyAppRemote spotifyAppRemote) {
+                mSpotifyAppRemote = spotifyAppRemote;
+                // connection was successful
+                Toast.makeText(getApplicationContext(), "Successfully Connected", Toast.LENGTH_SHORT).show();
+                // refresh access token before fetching playlists if token has expired
+                authentication.refreshAccessToken();
+                // load playlist fragment
+                getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment_container,
+                        new PlaylistFragment()).commit();
+                // fetchPlaylists(requestQueue, mSpotifyAppRemote);
+            }
+            @Override
+            public void onFailure(Throwable throwable) {
+                // handle connection error here
+                Toast.makeText(getApplicationContext(), "Couldn't connect", Toast.LENGTH_LONG).show();
+                Log.e(TAG, throwable.getMessage(), throwable);
+            }
+        });
     }
 
     private void directUserToPlayStore() {
@@ -352,7 +361,6 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         Log.d(TAG, "onDestroy: ");
         // disconnect from AppRemote
-        // TODO add code for stopping play if playing
         mSpotifyAppRemote.getPlayerApi().pause();
         SpotifyAppRemote.disconnect(mSpotifyAppRemote);
     }
@@ -378,17 +386,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-
-    /*public void showProgressBar(Boolean show) {
-        if (show) {
-            rv_main_playlists.setVisibility(View.GONE);
-            pb_main.setVisibility(View.VISIBLE);
-        } else {
-            rv_main_playlists.setVisibility(View.VISIBLE);
-            pb_main.setVisibility(View.GONE);
-        }
-    }*/
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {

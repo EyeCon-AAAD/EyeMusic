@@ -18,7 +18,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.ViewHolder> {
+public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.ViewHolder> {
     public ArrayList<MyTrack> tracks;
     public Context context;
     SpotifyAppRemote mSpotifyRemote;

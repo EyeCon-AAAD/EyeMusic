@@ -1,6 +1,5 @@
 package com.projectx.eyemusic.Fragments;
 
-import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -52,7 +51,6 @@ public class PlaylistFragment extends Fragment {
      *
      * @return A new instance of fragment PlaylistFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static PlaylistFragment newInstance() {
         return new PlaylistFragment();
     }
@@ -74,12 +72,11 @@ public class PlaylistFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        progressBar = view.findViewById(R.id.pb_playlist_fragment);
-        initRecyclerView(view);
-
+        progressBar = view.findViewById(R.id.pb_load_main);
+        initPlaylistRecyclerView(view);
     }
 
-    private void initRecyclerView(View view) {
+    private void initPlaylistRecyclerView(View view) {
         RecyclerView rv_playlists = view.findViewById(R.id.rv_playlists);
         rv_playlists.setHasFixedSize(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
