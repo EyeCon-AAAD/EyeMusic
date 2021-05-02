@@ -1,4 +1,4 @@
-package com.projectx.eyemusic;
+package com.projectx.eyemusic.Music;
 
 // create MyTrack class synonymous to Track in the Spotify SDK
 // Easier for now, will setup for de/serialization later

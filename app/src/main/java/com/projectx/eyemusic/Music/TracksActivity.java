@@ -1,4 +1,4 @@
-package com.projectx.eyemusic;
+package com.projectx.eyemusic.Music;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -20,7 +20,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.RecyclerView.LayoutManager;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
@@ -33,11 +32,10 @@ import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.projectx.eyemusic.MainActivity;
+import com.projectx.eyemusic.R;
 import com.projectx.eyemusic.VolleyRequests.TracksRequest;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
-import com.spotify.protocol.types.Track;
 
 import org.json.JSONArray;
 import org.json.JSONException;

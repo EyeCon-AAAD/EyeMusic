@@ -1,8 +1,8 @@
-package com.projectx.eyemusic;
+package com.projectx.eyemusic.Music;
 
 import androidx.annotation.NonNull;
 
-class Playlist {
+public class Playlist {
     private String name;
     private String id;
     private String spotifyURI;

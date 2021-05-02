@@ -1,4 +1,4 @@
-package com.projectx.eyemusic;
+package com.projectx.eyemusic.Music;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,12 +13,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.projectx.eyemusic.R;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHolder> {
+public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHolder> {
     public ArrayList<Playlist> playlists;
     public Context context;
     SpotifyAppRemote spotifyAppRemote;

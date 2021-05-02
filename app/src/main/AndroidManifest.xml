@@ -19,7 +19,7 @@
 
         <activity android:name=".EyeDetectionActivity" />
         <activity
-            android:name=".TracksActivity"
+            android:name=".Music.TracksActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity android:name=".MainActivity">
             <intent-filter>

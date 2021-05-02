@@ -1,4 +1,4 @@
-package com.projectx.eyemusic;
+package com.projectx.eyemusic.Authentication;
 
 import android.app.Activity;
 import android.content.Context;
@@ -12,10 +12,10 @@ import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.RetryPolicy;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
+import com.projectx.eyemusic.R;
 import com.projectx.eyemusic.VolleyRequests.RefreshTokenStringRequest;
 import com.projectx.eyemusic.VolleyRequests.RefreshedAccessTokenStringRequest;
 import com.spotify.sdk.android.auth.AuthorizationClient;
