@@ -1,4 +1,4 @@
-package com.projectx.eyemusic;
+package com.projectx.eyemusic.Authentication;
 
 import android.app.Activity;
 import android.content.Context;

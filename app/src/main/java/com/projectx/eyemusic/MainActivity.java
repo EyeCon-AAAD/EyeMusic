@@ -24,6 +24,10 @@ import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
+import com.projectx.eyemusic.Authentication.Authentication;
+import com.projectx.eyemusic.Fragments.PlaylistFragment;
+import com.projectx.eyemusic.Music.Playlist;
+import com.projectx.eyemusic.Music.PlaylistAdapter;
 import com.projectx.eyemusic.VolleyRequests.PlaylistRequest;
 import com.projectx.eyemusic.graphics.DotGraphic;
 import com.projectx.eyemusic.graphics.GraphicOverlay;
@@ -53,27 +57,23 @@ public class MainActivity extends AppCompatActivity {
     public static final int SPOTIFY_AUTH_CODE_REQUEST_CODE = 0x11;
     private final String TAG = MainActivity.class.getName();
     public static SpotifyAppRemote mSpotifyAppRemote;
-    private RequestQueue requestQueue;
+    public RequestQueue requestQueue; // made this public to access from fragment
     private String mAccessToken;
     private String mAccessCode;
 
-    SharedPreferences preferences = null;
+    public SharedPreferences preferences = null; // made this public to access from fragment
 
-    // Create an array of playlists
-    ArrayList<Playlist> playlists;
 
     // Views
     Button btn_play, btn_pause, btn_goto_eye, btn_startGazeCaptureThread;
     TextView tv_message;
     TextView tv_artist, tv_auth_token;
     RecyclerView rv_main_playlists;
-    RecyclerView.LayoutManager layoutManager;
-    RecyclerView.Adapter rv_adapter;
-    ProgressBar pb_main;
+    public ProgressBar pb_main;
     boolean flag = false;
     PackageManager packageManager;
 
-    private Authentication authentication;
+    public Authentication authentication; // made this public to access from fragment
 
     private static GraphicOverlay graphicOverlayGazeLocation;
     static int[] graphicOverlayGazeLocationLocation = new int[2];
@@ -92,11 +92,13 @@ public class MainActivity extends AppCompatActivity {
             PLAY_STORE_URI = getString(R.string.PLAY_STORE_URI);
             REFERRER = getString(R.string.REFERRER);
         }
-        pb_main = findViewById(R.id.pb_main);
+        pb_main = findViewById(R.id.pb_load_main);
+        rv_main_playlists = findViewById(R.id.rv_playlists);
         btn_goto_eye = findViewById(R.id.btn_main_goto_eye);
         btn_goto_eye.setOnClickListener(view -> {
-            Intent intent = new Intent(MainActivity.this, OpencvActivity.class);
-            startActivity(intent);
+
+            //Intent intent = new Intent(MainActivity.this, OpencvActivity.class);
+            // startActivity(intent);
         });
 
         btn_startGazeCaptureThread = findViewById(R.id.btn_main_startGazeCaptureThread);
@@ -122,11 +124,11 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
-        // setup recycler view
+/*        // setup recycler view
         rv_main_playlists = findViewById(R.id.rv_main_playlists);
         rv_main_playlists.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(MainActivity.this);
-        rv_main_playlists.setLayoutManager(layoutManager);
+        rv_main_playlists.setLayoutManager(layoutManager);*/
 
         packageManager = getPackageManager();
 
@@ -139,7 +141,6 @@ public class MainActivity extends AppCompatActivity {
         // create Authentication Object
         authentication = new Authentication(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, preferences, requestQueue, this);
 
-        // TODO Improve UX flow of fetched playlists
 
         // fragment
 //        getFragmentManager().beginTransaction().add(R.id.fragment_camera_preview, new CameraExtractionFragment()).commit();
@@ -196,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
             if (mAccessToken != null) {
                 // store the access token
                 authentication.storeToken(mAccessToken);
-                showProgressBar(true);
+                Utilities.showProgressBar(pb_main, rv_main_playlists, true);
             }
         } else if(requestCode == SPOTIFY_AUTH_CODE_REQUEST_CODE){
             mAccessCode = response.getCode();
@@ -241,25 +242,37 @@ public class MainActivity extends AppCompatActivity {
                 // Use the SpotifyAppRemote.Connector to connect to Spotify and get an instance of
                 // SpotifyAppRemote
                 //SpotifyAppRemote.disconnect(mSpotifyAppRemote);
-                SpotifyAppRemote.connect(this, connectionParams, new Connector.ConnectionListener() {
-                    @Override
-                    public void onConnected(SpotifyAppRemote spotifyAppRemote) {
-                        mSpotifyAppRemote = spotifyAppRemote;
-                        // connection was successful
-                        Toast.makeText(getApplicationContext(), "Successfully Connected", Toast.LENGTH_SHORT).show();
-                        // refresh access token before fetching playlists if token has expired
-                        authentication.refreshAccessToken();
-                        fetchPlaylists(requestQueue, mSpotifyAppRemote);
-                    }
-                    @Override
-                    public void onFailure(Throwable throwable) {
-                        // handle connection error here
-                        Toast.makeText(getApplicationContext(), "Couldn't connect", Toast.LENGTH_LONG).show();
-                        Log.e(TAG, throwable.getMessage(), throwable);
-                    }
-                });
+                if(mSpotifyAppRemote == null){
+                    connectSpotifyRemote(connectionParams);
+                } else if(!mSpotifyAppRemote.isConnected()){
+                    connectSpotifyRemote(connectionParams);
+                }
+
             }
         }
+    }
+
+    private void connectSpotifyRemote(ConnectionParams connectionParams) {
+        SpotifyAppRemote.connect(this, connectionParams, new Connector.ConnectionListener() {
+            @Override
+            public void onConnected(SpotifyAppRemote spotifyAppRemote) {
+                mSpotifyAppRemote = spotifyAppRemote;
+                // connection was successful
+                Toast.makeText(getApplicationContext(), "Successfully Connected", Toast.LENGTH_SHORT).show();
+                // refresh access token before fetching playlists if token has expired
+                authentication.refreshAccessToken();
+                // load playlist fragment
+                getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment_container,
+                        new PlaylistFragment()).commit();
+                // fetchPlaylists(requestQueue, mSpotifyAppRemote);
+            }
+            @Override
+            public void onFailure(Throwable throwable) {
+                // handle connection error here
+                Toast.makeText(getApplicationContext(), "Couldn't connect", Toast.LENGTH_LONG).show();
+                Log.e(TAG, throwable.getMessage(), throwable);
+            }
+        });
     }
 
     private void directUserToPlayStore() {
@@ -348,7 +361,6 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         Log.d(TAG, "onDestroy: ");
         // disconnect from AppRemote
-        // TODO add code for stopping play if playing
         mSpotifyAppRemote.getPlayerApi().pause();
         SpotifyAppRemote.disconnect(mSpotifyAppRemote);
     }
@@ -374,62 +386,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void fetchPlaylists(RequestQueue requestQueue, SpotifyAppRemote mSpotifyAppRemote){
-        // build a Volley JSON Object response listener
-        Response.Listener<JSONObject> playlistsRequestListener = response -> {
-            try {
-                JSONArray playlistsJSONArray = response.getJSONArray("items");
-                // consume playlists
-                // if the user has playlists
-                if(playlistsJSONArray.length() > 0){
-                    playlists = new ArrayList<>(playlistsJSONArray.length());
-                    String playlistNameKey = "name";
-                    String playlistIdKey = "id";
-                    String playlistURIkey = "uri";
-                    String playlistImagesKey = "images";
-
-                    for (int i = 0; i < playlistsJSONArray.length(); i++) {
-                        // create new playlist object for each playlist in JSON Array
-                        JSONObject playlistJSONObj = playlistsJSONArray.getJSONObject(i);
-                        JSONArray playlistImageArray = playlistJSONObj.getJSONArray(playlistImagesKey);
-                        JSONObject imageObject = playlistImageArray.getJSONObject(0);
-                        String name = playlistJSONObj.getString(playlistNameKey);
-                        String id = playlistJSONObj.getString(playlistIdKey);
-                        String uri = playlistJSONObj.getString(playlistURIkey);
-                        String imageURL = imageObject.getString("url");
-                        Playlist playlist = new Playlist(name, id, uri, imageURL);
-
-                        // add to playlists array
-                        playlists.add(i,playlist);
-                    }
-                    showProgressBar(false);
-                    // set adapter for recycler view
-                    rv_adapter = new PlaylistAdapter(MainActivity.this, playlists, mSpotifyAppRemote);
-                    // set the adapter for the recycler view
-                    rv_main_playlists.setAdapter(rv_adapter);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-                Log.e(TAG, e.getMessage());
-            }
-        };
-        // build URL
-        String playlistRequestURL = getString(R.string.SpotifyUserPlaylistsEndpoint);
-
-        // create Volley request
-        PlaylistRequest playlistRequest = new PlaylistRequest(playlistRequestURL,null, playlistsRequestListener, authentication.getErrorListener(), preferences);
-        requestQueue.add(playlistRequest);
-    }
-
-    public void showProgressBar(Boolean show) {
-        if (show) {
-            rv_main_playlists.setVisibility(View.GONE);
-            pb_main.setVisibility(View.VISIBLE);
-        } else {
-            rv_main_playlists.setVisibility(View.VISIBLE);
-            pb_main.setVisibility(View.GONE);
-        }
-    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {

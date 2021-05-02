@@ -1,6 +1,7 @@
-package com.projectx.eyemusic;
+package com.projectx.eyemusic.Music;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,22 +11,28 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.projectx.eyemusic.Fragments.TracksFragment;
+import com.projectx.eyemusic.MainActivity;
+import com.projectx.eyemusic.R;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
-class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.ViewHolder> {
-    public ArrayList<MyTrack> tracks;
+public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHolder> {
+    public ArrayList<Playlist> playlists;
     public Context context;
-    SpotifyAppRemote mSpotifyRemote;
+    SpotifyAppRemote spotifyAppRemote;
 
-    public TracksAdapter(ArrayList<MyTrack> tracks, Context context, SpotifyAppRemote mSpotifyRemote) {
-        this.tracks = tracks;
+    public PlaylistAdapter(Context context, ArrayList<Playlist> playlists, SpotifyAppRemote spotifyAppRemote) {
+        this.playlists = playlists;
         this.context = context;
-        this.mSpotifyRemote = mSpotifyRemote;
+        this.spotifyAppRemote =spotifyAppRemote;
     }
 
     /**
@@ -37,7 +44,7 @@ class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.ViewHolder> {
      * layout file.
      * <p>
      * The new ViewHolder will be used to display items of the adapter using
-     * {@link //#onBindViewHolder(ViewHolder, int, List)}. Since it will be re-used to display
+     * {@link #//onBindViewHolder(ViewHolder, int, List)}. Since it will be re-used to display
      * different items in the data set, it is a good idea to cache references to sub views of
      * the View to avoid unnecessary {@link View#findViewById(int)} calls.
      *
@@ -50,9 +57,10 @@ class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.ViewHolder> {
      */
     @NonNull
     @Override
-    public TracksAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.track_item_view, parent, false);
-        return new ViewHolder(view, mSpotifyRemote, context);
+    public PlaylistAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        // inflate R.layout.playlist_item_view
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.playlist_item_view, parent, false);
+        return new ViewHolder(v, context, spotifyAppRemote);
     }
 
     /**
@@ -68,7 +76,7 @@ class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.ViewHolder> {
      * on (e.g. in a click listener), use {@link ViewHolder#getAdapterPosition()} which will
      * have the updated adapter position.
      * <p>
-     * Override {@link //#onBindViewHolder(ViewHolder, int, List)} instead if Adapter can
+     * Override {@link #//onBindViewHolder(ViewHolder, int, List)} instead if Adapter can
      * handle efficient partial bind.
      *
      * @param holder   The ViewHolder which should be updated to represent the contents of the
@@ -76,11 +84,12 @@ class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.ViewHolder> {
      * @param position The position of the item within the adapter's data set.
      */
     @Override
-    public void onBindViewHolder(@NonNull TracksAdapter.ViewHolder holder, int position) {
-        MyTrack track = tracks.get(position);
-        holder.tv_track_name.setText(track.getTrackName());
-        holder.tv_track_artist.setText(track.getArtistName());
-        Picasso.get().load(track.getImageURL()).into(holder.iv_track_image);
+    public void onBindViewHolder(@NonNull PlaylistAdapter.ViewHolder holder, int position) {
+        // get individual playlist position
+        Playlist playlist = playlists.get(position);
+        // update text and image
+        holder.tv_playlist_name.setText(playlist.getName());
+        Picasso.get().load(playlist.getImageURL()).into(holder.iv_playlist_image);
     }
 
     /**
@@ -90,28 +99,36 @@ class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.ViewHolder> {
      */
     @Override
     public int getItemCount() {
-        return this.tracks.size();
+        return playlists.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
-        public ImageView iv_track_image;
-        public TextView tv_track_name;
-        public TextView tv_track_artist;
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        public ImageView iv_playlist_image;
+        public TextView tv_playlist_name;
+        public Context context;
+        public SpotifyAppRemote spotifyAppRemote;
 
-
-        public ViewHolder(@NonNull View itemView, SpotifyAppRemote spotifyAppRemote, Context context) {
+        public ViewHolder(@NonNull View itemView, Context context, SpotifyAppRemote spotifyAppRemote) {
             super(itemView);
-            iv_track_image = itemView.findViewById(R.id.iv_track_image);
-            tv_track_artist = itemView.findViewById(R.id.tv_track_artist_name);
-            tv_track_name = itemView.findViewById(R.id.tv_track_name);
+            iv_playlist_image = itemView.findViewById(R.id.iv_playlist_image);
+            tv_playlist_name = itemView.findViewById(R.id.tv_playlist_name);
+            this.context = context;
+            this.spotifyAppRemote = spotifyAppRemote;
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    MyTrack track = tracks.get(getAdapterPosition());
-                    // play track
-                    spotifyAppRemote.getPlayerApi().play(track.getSpotifyURI());
-                    Toast.makeText(context, "Playing " + track.getTrackName(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, tv_playlist_name.getText(),Toast.LENGTH_SHORT).show();
+                    Playlist playlist = playlists.get(getAdapterPosition());
+                    //spotifyAppRemote.getPlayerApi().play(playlist.getSpotifyURI());
+                    // go to the Tracks Fragment
+                    // Playlist id will be needed to fetch tracks of current album
+                    AppCompatActivity activity = (AppCompatActivity) view.getContext();
+                    Fragment fragment = TracksFragment.newInstance(playlist.getId());
+                    activity.getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.main_fragment_container, fragment, "Tracks Fragment")
+                            .addToBackStack(null) // on back pressed go back
+                            .commit();
                 }
             });
         }
