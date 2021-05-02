@@ -95,8 +95,9 @@ public class MainActivity extends AppCompatActivity {
         pb_main = findViewById(R.id.pb_main);
         btn_goto_eye = findViewById(R.id.btn_main_goto_eye);
         btn_goto_eye.setOnClickListener(view -> {
-            Intent intent = new Intent(MainActivity.this, OpencvActivity.class);
-            startActivity(intent);
+
+            //Intent intent = new Intent(MainActivity.this, OpencvActivity.class);
+            // startActivity(intent);
         });
 
         btn_startGazeCaptureThread = findViewById(R.id.btn_main_startGazeCaptureThread);

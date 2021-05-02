@@ -16,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".OpencvActivity"/>
+
         <activity android:name=".EyeDetectionActivity" />
         <activity
             android:name=".TracksActivity"

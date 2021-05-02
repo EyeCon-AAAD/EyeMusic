@@ -1,4 +1,3 @@
-include ':opencv'
 include ':spotify-auth-release-1.2.1'
 include ':spotify-app-remote-release-0.7.0'
 include ':app'
