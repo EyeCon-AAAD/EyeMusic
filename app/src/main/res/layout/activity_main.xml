@@ -22,7 +22,8 @@
     <com.projectx.eyemusic.graphics.GraphicOverlay
         android:id="@+id/graphic_overlay_gaze_location"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:elevation="10dp"/>
 
 
     <FrameLayout
