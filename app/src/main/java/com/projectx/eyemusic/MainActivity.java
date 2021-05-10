@@ -94,12 +94,7 @@ public class MainActivity extends AppCompatActivity {
         }
         pb_main = findViewById(R.id.pb_load_main);
         rv_main_playlists = findViewById(R.id.rv_playlists);
-        btn_goto_eye = findViewById(R.id.btn_main_goto_eye);
-        btn_goto_eye.setOnClickListener(view -> {
 
-            //Intent intent = new Intent(MainActivity.this, OpencvActivity.class);
-            // startActivity(intent);
-        });
 
         btn_startGazeCaptureThread = findViewById(R.id.btn_main_startGazeCaptureThread);
         btn_startGazeCaptureThread.setOnClickListener(view -> {
@@ -152,15 +147,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         graphicOverlayGazeLocation.add(new DotGraphic(this, graphicOverlayGazeLocation, 500, 500));
-
-        /*if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .setReorderingAllowed(true)
-                    .add(R.id.fragment_container_view, new CameraExtractionFragment(), null)
-                    .commit();
-        }*/
-
-
     }
 
     public GraphicOverlay getGraphicOverlayGazeLocation(){
