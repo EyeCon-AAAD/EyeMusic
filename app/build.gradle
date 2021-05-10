@@ -60,16 +60,23 @@ dependencies {
 
 
     // Use this dependency to use dynamically downloaded model in Google Play Service: face detection
-    implementation 'com.google.android.gms:play-services-mlkit-face-detection:16.1.5'
+    //implementation 'com.google.android.gms:play-services-mlkit-face-detection:16.1.5'
+    //bundled version
+    implementation 'com.google.mlkit:face-detection:16.0.6'
 
     implementation 'com.google.guava:guava:27.1-android'
 
     //// CameraX
-    def camerax_version = "1.0.0-rc05"
+    //def camerax_version = "1.0.0-rc05"
     // The following line is optional, as the core library is included indirectly by camera-camera2
-    implementation "androidx.camera:camera-core:${camerax_version}"
-    implementation "androidx.camera:camera-camera2:${camerax_version}"
-    implementation "androidx.camera:camera-lifecycle:${camerax_version}"
+    //implementation "androidx.camera:camera-core:${camerax_version}"
+    //implementation "androidx.camera:camera-camera2:${camerax_version}"
+    //implementation "androidx.camera:camera-lifecycle:${camerax_version}"
+    //implementation "androidx.camera:camera-view:1.0.0-SNAPSHOT"
+
+    // CameraX
+    implementation "androidx.camera:camera-camera2:1.0.0-SNAPSHOT"
+    implementation "androidx.camera:camera-lifecycle:1.0.0-SNAPSHOT"
     implementation "androidx.camera:camera-view:1.0.0-SNAPSHOT"
 
     ////Fragments

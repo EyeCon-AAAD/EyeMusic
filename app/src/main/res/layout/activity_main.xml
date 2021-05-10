@@ -14,16 +14,27 @@
     <androidx.camera.view.PreviewView
         android:id="@+id/preview_view"
         android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_height="200dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.18"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.projectx.eyemusic.graphics.GraphicOverlay
+        android:id="@+id/graphic_overlay_face"
+        android:layout_width="100dp"
+        android:layout_height="200dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.659"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.projectx.eyemusic.graphics.GraphicOverlay
         android:id="@+id/graphic_overlay_gaze_location"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:elevation="10dp"/>
+        android:elevation="10dp"
+        />
 
 
     <FrameLayout
@@ -47,13 +58,6 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/btn_main_goto_eye"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/colorAccent"
-            android:text="Go to Open Activity" />
-
-        <Button
             android:id="@+id/btn_main_startGazeCaptureThread"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -67,9 +71,6 @@
             android:background="@color/colorAccent"
             android:text="touch" />
     </LinearLayout>
-
-
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
