@@ -119,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
     private int lensFacing = CameraSelector.LENS_FACING_FRONT; //the front camera
     private String selectedModel = "Face Detection";
     private CameraSelector cameraSelector;
+    private TextView textViewReport;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -187,6 +188,8 @@ public class MainActivity extends AppCompatActivity {
         gazeHandlerThread.start();
 
         // Camera and features
+        textViewReport = findViewById(R.id.text_view_report);
+
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             Toast.makeText(
                     getApplicationContext(),
@@ -222,6 +225,8 @@ public class MainActivity extends AppCompatActivity {
         if (!allPermissionsGranted()) {
             getRuntimePermissions();
         }
+
+
 
     }
 
@@ -560,7 +565,7 @@ public class MainActivity extends AppCompatActivity {
                         needUpdateGraphicOverlayImageSourceInfo = false;
                     }
                     try {
-                        imageProcessor.processImageProxy(imageProxy, graphicOverlayFace, gazeHandlerThread);
+                        imageProcessor.processImageProxy(imageProxy, graphicOverlayFace, gazeHandlerThread, textViewReport);
                     } catch (MlKitException e) {
                         Log.e(TAG, "Failed to process image. Error: " + e.getLocalizedMessage());
                         Toast.makeText(getApplicationContext(), e.getLocalizedMessage(), Toast.LENGTH_SHORT)

@@ -16,6 +16,7 @@
 
 package com.projectx.eyemusic.facedetection;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.ActivityManager.MemoryInfo;
 import android.content.Context;
@@ -23,6 +24,7 @@ import android.graphics.Bitmap;
 import android.os.Build.VERSION_CODES;
 import android.os.SystemClock;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.GuardedBy;
@@ -118,6 +120,7 @@ public abstract class VisionProcessorBase<T> implements VisionImageProcessor {
             /* originalCameraImage= */ null,
             /* shouldShowFps= */ false,
         frameStartMs,
+            null,
             null);
   }
 
@@ -164,6 +167,7 @@ public abstract class VisionProcessorBase<T> implements VisionImageProcessor {
             bitmap,
             /* shouldShowFps= */ true,
             frameStartMs,
+            null,
             null)
         .addOnSuccessListener(executor, results -> processLatestImage(graphicOverlay));
   }
@@ -172,7 +176,7 @@ public abstract class VisionProcessorBase<T> implements VisionImageProcessor {
   @Override
   @RequiresApi(VERSION_CODES.KITKAT)
   @ExperimentalGetImage
-  public void processImageProxy(ImageProxy image, GraphicOverlay graphicOverlay, GazeHandlerThread gazeHandlerThread) {
+  public void processImageProxy(ImageProxy image, GraphicOverlay graphicOverlay, GazeHandlerThread gazeHandlerThread, TextView textView) {
     long frameStartMs = SystemClock.elapsedRealtime();
     if (isShutdown) {
       image.close();
@@ -192,82 +196,90 @@ public abstract class VisionProcessorBase<T> implements VisionImageProcessor {
             /* originalCameraImage= */ bitmap,
             /* shouldShowFps= */ true,
             frameStartMs,
-            gazeHandlerThread)
+            gazeHandlerThread,
+            textView)
         // When the image is from CameraX analysis use case, must call image.close() on received
         // images when finished using them. Otherwise, new images may not be received or the camera
         // may stall.
         .addOnCompleteListener(results -> image.close());
   }
 
-  // -----------------Common processing logic-------------------------------------------------------
+  // ----------------------------------Common processing logic--------------------------------------
   private Task<T> requestDetectInImage(
           final InputImage image,
           final GraphicOverlay graphicOverlay,
           @Nullable final Bitmap originalCameraImage,
           boolean shouldShowFps,
           long frameStartMs,
-          GazeHandlerThread gazeHandlerThread) {
+          GazeHandlerThread gazeHandlerThread,
+          TextView textView) {
 
     final long detectorStartMs = SystemClock.elapsedRealtime(); //the time of start
     return detectInImage(image)
         .addOnSuccessListener( // QUESTION: how does the Task has a successListener -> when the task completes : the Task class is but the google and it has lots of listeners
             executor, //the activity
             results -> { // its the list of faces that is returned by the detectInImage
-              long endMs = SystemClock.elapsedRealtime();
-              long currentFrameLatencyMs = endMs - frameStartMs;
-              long currentDetectorLatencyMs = endMs - detectorStartMs;
-              if (numRuns >= 500) {
-                resetLatencyStats();
-              }
-              numRuns++;
-              frameProcessedInOneSecondInterval++;
-              totalFrameMs += currentFrameLatencyMs;
-              maxFrameMs = max(currentFrameLatencyMs, maxFrameMs);
-              minFrameMs = min(currentFrameLatencyMs, minFrameMs);
-              totalDetectorMs += currentDetectorLatencyMs;
-              maxDetectorMs = max(currentDetectorLatencyMs, maxDetectorMs);
-              minDetectorMs = min(currentDetectorLatencyMs, minDetectorMs);
+                  long endMs = SystemClock.elapsedRealtime();
+                  long currentFrameLatencyMs = endMs - frameStartMs;
+                  long currentDetectorLatencyMs = endMs - detectorStartMs;
+                  if (numRuns >= 500) {
+                    resetLatencyStats();
+                    }
+                  numRuns++;
+                  frameProcessedInOneSecondInterval++;
+                  totalFrameMs += currentFrameLatencyMs;
+                  maxFrameMs = max(currentFrameLatencyMs, maxFrameMs);
+                  minFrameMs = min(currentFrameLatencyMs, minFrameMs);
+                  totalDetectorMs += currentDetectorLatencyMs;
+                  maxDetectorMs = max(currentDetectorLatencyMs, maxDetectorMs);
+                  minDetectorMs = min(currentDetectorLatencyMs, minDetectorMs);
 
-              // Only log inference info once per second. When frameProcessedInOneSecondInterval is
-              // equal to 1, it means this is the first frame processed during the current second.
-              if (frameProcessedInOneSecondInterval == 1) {
-                Log.d(TAG, "Num of Runs: " + numRuns);
-                Log.d(
-                    TAG,
-                    "Frame latency: max="
-                        + maxFrameMs
-                        + ", min="
-                        + minFrameMs
-                        + ", avg="
-                        + totalFrameMs / numRuns);
-                Log.d(
-                    TAG,
-                    "Detector latency: max="
-                        + maxDetectorMs
-                        + ", min="
-                        + minDetectorMs
-                        + ", avg="
-                        + totalDetectorMs / numRuns);
-                MemoryInfo mi = new MemoryInfo();
-                activityManager.getMemoryInfo(mi);
-                long availableMegs = mi.availMem / 0x100000L;
-                Log.d(TAG, "Memory available in system: " + availableMegs + " MB");
-              }
+                  // Only log inference info once per second. When frameProcessedInOneSecondInterval is
+                  // equal to 1, it means this is the first frame processed during the current second.
+                  if (frameProcessedInOneSecondInterval == 1) {
+                    Log.d(TAG, "Num of Runs: " + numRuns);
+                    Log.d(
+                        TAG,
+                        "Frame latency: max="
+                            + maxFrameMs
+                            + ", min="
+                            + minFrameMs
+                            + ", avg="
+                            + totalFrameMs / numRuns);
+                    Log.d(
+                        TAG,
+                        "Detector latency: max="
+                            + maxDetectorMs
+                            + ", min="
+                            + minDetectorMs
+                            + ", avg="
+                            + totalDetectorMs / numRuns);
+                    MemoryInfo mi = new MemoryInfo();
+                    activityManager.getMemoryInfo(mi);
+                    long availableMegs = mi.availMem / 0x100000L;
+                    Log.d(TAG, "Memory available in system: " + availableMegs + " MB");
+                  }
 
-              //it shows the image on the overlay
-              graphicOverlay.clear();
-              //if (originalCameraImage != null) {
-                graphicOverlay.add(new CameraImageGraphic(graphicOverlay, originalCameraImage));
-              //}
+                  //it shows the image on the overlay
+                  graphicOverlay.clear();
+                  //if (originalCameraImage != null) {
+                    graphicOverlay.add(new CameraImageGraphic(graphicOverlay, originalCameraImage));
+                  //}
 
-              //TODO: show this on the text somewhre
-              // this shows the FPS and other details on the overlay
-              graphicOverlay.add(
-                  new InferenceInfoGraphic(
-                      graphicOverlay,
-                      currentFrameLatencyMs,
-                      currentDetectorLatencyMs,
-                      shouldShowFps ? framesPerSecond : null));
+
+                  textView.post(new Runnable() {
+                      @SuppressLint("DefaultLocale")
+                      @Override
+                      public void run() {
+                          textView.setText(String.format(
+                                  "Report\n" + "Overlay size: %dx%d\n" + "FPS: %d\n" +
+                                  "FrameLatency: %d\n" +
+                                  "DetectorLatency: %d",
+                                  graphicOverlay.getImageHeight(),
+                                  graphicOverlay.getImageWidth(),
+                                  framesPerSecond, currentFrameLatencyMs, currentDetectorLatencyMs));
+                      }
+              });
 
               //this shows the faces on the overlay
               VisionProcessorBase.this.onSuccess(results, graphicOverlay);
@@ -275,18 +287,33 @@ public abstract class VisionProcessorBase<T> implements VisionImageProcessor {
               graphicOverlay.postInvalidate();
 
               // GAZE FUNCTIONALITY IS ADDED HERE
+                 try{
+                     List<Face> faces = (List<Face>) results;
+                     if (faces.isEmpty()){
+                         Log.w(TAG, "requestDetectInImage: face is not detected");
+                         return;
+                     }
 
-              List<Face> faces = (List<Face>) results;
-              Face dominantFace = null;
-              if (faces.isEmpty()){
-                  Log.e(TAG, "requestDetectInImage: face is not detected");
-              }else{
-                  dominantFace =  faces.get(0); // TODO: check if the dominant one is at index 0
-                  Feature newFeature = new Feature(originalCameraImage, faces.get(0).getSmilingProbability());
-                  // TODO: complete the feature
+                     Face dominantFace =  faces.get(0); // TODO: check if the dominant one is at index 0
+                     if(dominantFace == null){
+                         Log.w(TAG, "requestDetectInImage: face is null");
+                         return;
+                     }
 
-                  gazeHandlerThread.getHandler().post(new GazeRunnable(newFeature));
-              }
+                     Object smileProb = dominantFace.getSmilingProbability();
+                     if (smileProb == null){
+                         Log.w(TAG, "requestDetectInImage: smileProb is null" );
+                         return;
+                     }
+
+                     Feature newFeature = new Feature(originalCameraImage,
+                             (Float) smileProb);
+                     // TODO: complete the feature
+                     gazeHandlerThread.getHandler().post(new GazeRunnable(newFeature));
+
+                 }catch (Exception e){
+                     Log.e(TAG, "requestDetectInImage: ", e);
+                 }
 
             })
         .addOnFailureListener(

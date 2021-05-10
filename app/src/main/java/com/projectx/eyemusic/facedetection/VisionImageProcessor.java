@@ -18,6 +18,7 @@ package com.projectx.eyemusic.facedetection;
 
 import android.graphics.Bitmap;
 import android.os.Build.VERSION_CODES;
+import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.camera.core.ImageProxy;
@@ -41,7 +42,7 @@ public interface VisionImageProcessor {
 
   /** Processes ImageProxy image data, e.g. used for CameraX live preview case. */
   @RequiresApi(VERSION_CODES.KITKAT)
-  void processImageProxy(ImageProxy image, GraphicOverlay graphicOverlay, GazeHandlerThread gazeHandlerThread) throws MlKitException;
+  void processImageProxy(ImageProxy image, GraphicOverlay graphicOverlay, GazeHandlerThread gazeHandlerThread, TextView textView) throws MlKitException;
 
   /** Stops the underlying machine learning model and release resources. */
   void stop();
