@@ -46,6 +46,13 @@
         android:elevation="10dp"
         />
 
+    <com.projectx.eyemusic.graphics.GraphicOverlay
+        android:id="@+id/graphic_overlay_calibration"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:elevation="11dp"
+        />
+
 
     <FrameLayout
         android:id="@+id/main_fragment_container"
@@ -68,11 +75,11 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/btn_main_startGazeCaptureThread"
+            android:id="@+id/btn_main_calibration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/colorAccent"
-            android:text="thread" />
+            android:text="calibration" />
 
         <Button
             android:id="@+id/btn_main_stimulateTouch"

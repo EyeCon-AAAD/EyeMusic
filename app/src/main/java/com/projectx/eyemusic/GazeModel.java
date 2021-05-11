@@ -9,12 +9,9 @@ import java.util.Random;
 
 public class GazeModel {
     private static final String TAG = "GazeModel";
-    private final int width = Utilities.getScreenWidth();
-    private final int height = Utilities.getScreenHeight();
-
+    private final int SCREEN_WIDTH = Utilities.getScreenWidth();
+    private final int SCREEN_HEIGHT = Utilities.getScreenHeight();
     Random rand;
-    DisplayMetrics displayMetrics;
-    Context context;
 
     GazeModel(){
         rand = new Random();
@@ -22,8 +19,8 @@ public class GazeModel {
 
     public  GazePoint predict(Feature feature){
 
-        int x = rand.nextInt(width);
-        int y = rand.nextInt(height);
+        int x = rand.nextInt(SCREEN_WIDTH);
+        int y = rand.nextInt(SCREEN_HEIGHT);
         return new GazePoint(x, y);
     }
 

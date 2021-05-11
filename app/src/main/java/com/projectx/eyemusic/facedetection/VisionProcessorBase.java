@@ -38,6 +38,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskExecutors;
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.face.Face;
+import com.projectx.eyemusic.CalibrationRunnable;
 import com.projectx.eyemusic.Feature;
 import com.projectx.eyemusic.GazeHandlerThread;
 import com.projectx.eyemusic.GazeHandlerThread.GazeRunnable;
@@ -121,7 +122,8 @@ public abstract class VisionProcessorBase<T> implements VisionImageProcessor {
             /* shouldShowFps= */ false,
         frameStartMs,
             null,
-            null);
+            null,
+            false);
   }
 
   // -----------------Code for processing live preview frame from Camera1 API-----------------------
@@ -168,7 +170,8 @@ public abstract class VisionProcessorBase<T> implements VisionImageProcessor {
             /* shouldShowFps= */ true,
             frameStartMs,
             null,
-            null)
+            null,
+            false)
         .addOnSuccessListener(executor, results -> processLatestImage(graphicOverlay));
   }
 
@@ -176,7 +179,7 @@ public abstract class VisionProcessorBase<T> implements VisionImageProcessor {
   @Override
   @RequiresApi(VERSION_CODES.KITKAT)
   @ExperimentalGetImage
-  public void processImageProxy(ImageProxy image, GraphicOverlay graphicOverlay, GazeHandlerThread gazeHandlerThread, TextView textView) {
+  public void processImageProxy(ImageProxy image, GraphicOverlay graphicOverlay, GazeHandlerThread gazeHandlerThread, TextView textView, boolean isCalibration) {
     long frameStartMs = SystemClock.elapsedRealtime();
     if (isShutdown) {
       image.close();
@@ -197,7 +200,8 @@ public abstract class VisionProcessorBase<T> implements VisionImageProcessor {
             /* shouldShowFps= */ true,
             frameStartMs,
             gazeHandlerThread,
-            textView)
+            textView,
+            isCalibration)
         // When the image is from CameraX analysis use case, must call image.close() on received
         // images when finished using them. Otherwise, new images may not be received or the camera
         // may stall.
@@ -212,7 +216,8 @@ public abstract class VisionProcessorBase<T> implements VisionImageProcessor {
           boolean shouldShowFps,
           long frameStartMs,
           GazeHandlerThread gazeHandlerThread,
-          TextView textView) {
+          TextView textView,
+          boolean isCalibration) {
 
     final long detectorStartMs = SystemClock.elapsedRealtime(); //the time of start
     return detectInImage(image)
@@ -309,7 +314,12 @@ public abstract class VisionProcessorBase<T> implements VisionImageProcessor {
                      Feature newFeature = new Feature(originalCameraImage,
                              (Float) smileProb);
                      // TODO: complete the feature
-                     gazeHandlerThread.getHandler().post(new GazeRunnable(newFeature));
+                     if (isCalibration){
+                         CalibrationRunnable.setNewFeature(newFeature);
+                     }else{
+                         gazeHandlerThread.getHandler().post(new GazeRunnable(newFeature));
+                     }
+
 
                  }catch (Exception e){
                      Log.e(TAG, "requestDetectInImage: ", e);

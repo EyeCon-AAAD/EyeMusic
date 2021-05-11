@@ -1,3 +1,18 @@
+/*
+* TODO: ISSUES:
+*
+* 1. when in calibration, when the configuration of the page changes then activities gets shut down and restarts again but the calibration is till
+* going on but the activity is not in the calibration phase case is calibration is set to false again.
+*
+* 2. synchronizing the x and y coordinates
+
+* 3. adding a white blank background for the calibration.
+*
+* 4. saving feature
+* */
+
+
+
 package com.projectx.eyemusic;
 
 import androidx.annotation.Nullable;
@@ -121,6 +136,13 @@ public class MainActivity extends AppCompatActivity {
     private CameraSelector cameraSelector;
     private TextView textViewReport;
 
+    //Calibration
+    private Button btn_calibration;
+    private GraphicOverlay graphicOverlayCalibration;
+    private CalibrationRunnable calibrationRunnable;
+    private Thread calibrationThread;
+    private boolean isCalibration;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -157,7 +179,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         // --------------------------------------------------------------------------------------------------------------------------
-
 
         //just for testing
         Activity mActivity = this;
@@ -226,8 +247,35 @@ public class MainActivity extends AppCompatActivity {
             getRuntimePermissions();
         }
 
+        //Calibration
+        isCalibration = false;
+        graphicOverlayCalibration = findViewById(R.id.graphic_overlay_calibration);
+        calibrationRunnable = new CalibrationRunnable(graphicOverlayCalibration, this);
+        btn_calibration = findViewById(R.id.btn_main_calibration);
+        btn_calibration.setOnClickListener (view -> {
+            isCalibration = true;
+            calibrationThread  = new Thread(calibrationRunnable);
+            calibrationThread.start();
+            graphicOverlayGazeLocation.clear();
+            /*try {
+                calibrationThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }*/
 
+            //just testing
 
+        });
+
+    }
+
+    public void calibrationFinished(){
+        Log.d("Calibration", "calibrationFinished: ");
+        isCalibration = false;
+        List<Feature> features = calibrationRunnable.getFeatures();
+        for (Feature feature: features){
+            Log.d("Calibration", "CALIBRATION RESULT: " + feature);
+        }
     }
 
     public GraphicOverlay getGraphicOverlayGazeLocation() {
@@ -345,6 +393,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         bindAllCameraUseCases();
     }
+
     //------------------------------------ SPOTIFY -------------------------------------------------
     private void connectSpotifyRemote(ConnectionParams connectionParams) {
         SpotifyAppRemote.connect(this, connectionParams, new Connector.ConnectionListener() {
@@ -565,7 +614,7 @@ public class MainActivity extends AppCompatActivity {
                         needUpdateGraphicOverlayImageSourceInfo = false;
                     }
                     try {
-                        imageProcessor.processImageProxy(imageProxy, graphicOverlayFace, gazeHandlerThread, textViewReport);
+                        imageProcessor.processImageProxy(imageProxy, graphicOverlayFace, gazeHandlerThread, textViewReport, isCalibration);
                     } catch (MlKitException e) {
                         Log.e(TAG, "Failed to process image. Error: " + e.getLocalizedMessage());
                         Toast.makeText(getApplicationContext(), e.getLocalizedMessage(), Toast.LENGTH_SHORT)
@@ -638,8 +687,8 @@ public class MainActivity extends AppCompatActivity {
         Log.i(TAG, "Permission NOT granted: " + permission);
         return false;
     }
-//--------------------------- PERMISSIONS FINISH ---------------------------------------------------
 
+//--------------------------- PERMISSIONS FINISH ---------------------------------------------------
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int X = (int) event.getX();
