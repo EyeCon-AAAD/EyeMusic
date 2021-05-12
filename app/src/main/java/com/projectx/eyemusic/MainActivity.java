@@ -54,6 +54,7 @@ import com.android.volley.toolbox.Volley;
 import com.google.mlkit.common.MlKitException;
 import com.google.mlkit.vision.face.FaceDetectorOptions;
 import com.projectx.eyemusic.Authentication.Authentication;
+import com.projectx.eyemusic.Fragments.CalibrationFragment;
 import com.projectx.eyemusic.Fragments.PlaylistFragment;
 import com.projectx.eyemusic.Music.Playlist;
 import com.projectx.eyemusic.Music.PlaylistAdapter;
@@ -405,8 +406,9 @@ public class MainActivity extends AppCompatActivity {
                 // refresh access token before fetching playlists if token has expired
                 authentication.refreshAccessToken();
                 // load playlist fragment
+                // changed PlaylistFragment to Calibrate\ionFragment
                 getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment_container,
-                        new PlaylistFragment()).commit();
+                        new CalibrationFragment()).commit();
                 // fetchPlaylists(requestQueue, mSpotifyAppRemote);
             }
 
