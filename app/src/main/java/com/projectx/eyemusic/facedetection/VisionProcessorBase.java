@@ -42,6 +42,7 @@ import com.projectx.eyemusic.CalibrationRunnable;
 import com.projectx.eyemusic.Feature;
 import com.projectx.eyemusic.GazeHandlerThread;
 import com.projectx.eyemusic.GazeHandlerThread.GazeRunnable;
+import com.projectx.eyemusic.MainActivity;
 import com.projectx.eyemusic.graphics.GraphicOverlay;
 
 import java.nio.ByteBuffer;
@@ -315,6 +316,7 @@ public abstract class VisionProcessorBase<T> implements VisionImageProcessor {
                              (Float) smileProb);
                      // TODO: complete the feature
                      if (isCalibration){
+                         MainActivity.graphicOverlayGazeLocation.clear();
                          CalibrationRunnable.setNewFeature(newFeature);
                      }else{
                          gazeHandlerThread.getHandler().post(new GazeRunnable(newFeature));

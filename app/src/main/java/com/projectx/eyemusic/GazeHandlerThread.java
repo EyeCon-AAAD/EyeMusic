@@ -45,10 +45,13 @@ public class GazeHandlerThread extends HandlerThread {
             GazeModel.GazePoint prediction = model.predict(feature);
             graphicOverlayGazeLocation.add(new DotGraphic(activity, graphicOverlayGazeLocation, prediction.getX(), prediction.getY()));
             graphicOverlayGazeLocation.postInvalidate();
-
             if(feature.smileProbability > 0.8)
                 SimulatedTouch.click(500, 800); //TODO: replace teh x and y by prediction.getX() and getY()
         }
 
+    }
+
+    public static GraphicOverlay getGraphicOverlayGazeLocation() {
+        return graphicOverlayGazeLocation;
     }
 }

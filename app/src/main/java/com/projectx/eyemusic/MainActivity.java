@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
 
     //graphics
     static int[] graphicOverlayGazeLocationLocation = new int[2];
-    private static GraphicOverlay graphicOverlayGazeLocation;
+    public static GraphicOverlay graphicOverlayGazeLocation;
 
     //Thread
     //TODO: replace new GazeModel() with the actual model
@@ -143,6 +143,8 @@ public class MainActivity extends AppCompatActivity {
     private CalibrationRunnable calibrationRunnable;
     private Thread calibrationThread;
     private boolean isCalibration;
+
+    Button btn_main_back, btn_main_reconnect_spotify;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -182,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
         // --------------------------------------------------------------------------------------------------------------------------
 
         //just for testing
-        Activity mActivity = this;
+        /*Activity mActivity = this;
         findViewById(R.id.btn_main_stimulateTouch).setOnClickListener(view -> {
             new Thread(new Runnable() {
                 @Override
@@ -196,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }).start();
 
-        });
+        });*/
 
         graphicOverlayGazeLocation = findViewById(R.id.graphic_overlay_gaze_location);
         if (graphicOverlayGazeLocation == null) {
@@ -224,12 +226,11 @@ public class MainActivity extends AppCompatActivity {
         cameraSelector = new CameraSelector.Builder().requireLensFacing(lensFacing).build();
 
         previewView = findViewById(R.id.preview_view);
-        previewView.setAlpha(0.5f);
+
         if (previewView == null) {
             Log.d(TAG, "previewView is null");
         }
         graphicOverlayFace = findViewById(R.id.graphic_overlay_face);
-        previewView.setAlpha(0.5f);
         if (graphicOverlayFace == null) {
             Log.d(TAG, "graphicOverlay is null");
         }
@@ -251,6 +252,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //Calibration
+        btn_main_back = findViewById(R.id.btn_main_back);
+        btn_main_reconnect_spotify = findViewById(R.id.btn_main_reconnect_spotify);
+
         isCalibration = false;
         graphicOverlayCalibration = findViewById(R.id.graphic_overlay_calibration);
         calibrationRunnable = new CalibrationRunnable(graphicOverlayCalibration, this);
@@ -259,14 +263,17 @@ public class MainActivity extends AppCompatActivity {
             isCalibration = true;
             calibrationThread  = new Thread(calibrationRunnable);
             calibrationThread.start();
-            graphicOverlayGazeLocation.clear();
-            /*try {
-                calibrationThread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }*/
+            // set the calibration fragment
 
-            //just testing
+            //change the buttons
+            //btn_calibration.setEnabled(false);
+            btn_calibration.setVisibility(View.INVISIBLE);
+            btn_main_back.setVisibility(View.INVISIBLE);
+            btn_main_reconnect_spotify.setVisibility(View.INVISIBLE);
+
+            //change the preview opacity
+            previewView.setVisibility(View.INVISIBLE);
+            graphicOverlayFace.setAlpha(0.4f);
 
         });
 
@@ -279,6 +286,10 @@ public class MainActivity extends AppCompatActivity {
         for (Feature feature: features){
             Log.d("Calibration", "CALIBRATION RESULT: " + feature);
         }
+        btn_calibration.setVisibility(View.VISIBLE);
+        btn_main_back.setVisibility(View.VISIBLE);
+        btn_main_reconnect_spotify.setVisibility(View.VISIBLE);
+
     }
 
     public GraphicOverlay getGraphicOverlayGazeLocation() {
