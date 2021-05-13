@@ -224,10 +224,12 @@ public class MainActivity extends AppCompatActivity {
         cameraSelector = new CameraSelector.Builder().requireLensFacing(lensFacing).build();
 
         previewView = findViewById(R.id.preview_view);
+        previewView.setAlpha(0.5f);
         if (previewView == null) {
             Log.d(TAG, "previewView is null");
         }
         graphicOverlayFace = findViewById(R.id.graphic_overlay_face);
+        previewView.setAlpha(0.5f);
         if (graphicOverlayFace == null) {
             Log.d(TAG, "graphicOverlay is null");
         }
