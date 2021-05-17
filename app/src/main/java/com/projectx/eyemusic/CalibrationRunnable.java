@@ -2,7 +2,6 @@ package com.projectx.eyemusic;
 
 import android.graphics.Color;
 import android.graphics.Point;
-import android.os.SystemClock;
 import android.util.Log;
 
 import com.projectx.eyemusic.graphics.DotGraphic;
@@ -15,11 +14,11 @@ public class CalibrationRunnable implements Runnable {
     private static final String TAG = "CalibrationRunnable";
     private GraphicOverlay graphicOverlayCalibration;
     private MainActivity activity;
-    private static Feature newFeature; //contains the the frames and all the landmarks and other things needed
+    private static RawFeature newRawFeature; //contains the the frames and all the landmarks and other things needed
     private static boolean newFeatureCaptured;
-    private Feature capturedFeature;
+    private RawFeature capturedFeature;
     private  List<Point> points;
-    private volatile List<Feature> features; //volatile -> so that two thread do not use the cashed value
+    private volatile List<RawFeature> rawFeatures; //volatile -> so that two thread do not use the cashed value
     private final static int SCREEN_WIDTH = Utilities.getScreenWidth();
     private final static int SCREEN_HEIGHT = Utilities.getScreenHeight();
 
@@ -28,9 +27,9 @@ public class CalibrationRunnable implements Runnable {
         graphicOverlayCalibration= overlayGaze;
         this.activity =  activity;
         this.newFeatureCaptured = true; // meaning that the new feature has not come
-        this.newFeature = null;
+        this.newRawFeature = null;
         this.points = new ArrayList<Point>();
-        this.features = new ArrayList<Feature>();
+        this.rawFeatures = new ArrayList<RawFeature>();
 
         produceDots(3, 6);
         printPoints();
@@ -58,15 +57,15 @@ public class CalibrationRunnable implements Runnable {
             while (newFeatureCaptured){
                 Log.d("Calibration", "run: the new feature has not been come yet" );
             }
-            while(newFeature == null){
+            while(newRawFeature == null){
                 Log.d("Calibration", "run: the new feature is null" );
             }
-            capturedFeature = newFeature;
+            capturedFeature = newRawFeature;
             newFeatureCaptured = true;
 
-            //TODO: save the features somewhere
+            //TODO: save the rawFeatures somewhere
             capturedFeature.setXY_coordinates(point.x, point.y);
-            features.add(capturedFeature);
+            rawFeatures.add(capturedFeature);
             Log.d("Calibration", "+++++run: the new feature is captured, run:" + i +"/" + size_points +" feature:"+ capturedFeature);
             i++;
         }
@@ -97,12 +96,12 @@ public class CalibrationRunnable implements Runnable {
 
     }
 
-    public List<Feature> getFeatures() {
-        return features;
+    public List<RawFeature> getRawFeatures() {
+        return rawFeatures;
     }
 
-    public static boolean setNewFeature(Feature f){
-        newFeature = f;
+    public static boolean setNewFeature(RawFeature f){
+        newRawFeature = f;
         newFeatureCaptured = false;
         Log.d("Calibration", "-----the new feature has arrived: ");
         return true;

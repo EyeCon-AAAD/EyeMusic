@@ -17,6 +17,7 @@
 package com.projectx.eyemusic.facedetection;
 
 import android.content.Context;
+import android.graphics.PointF;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -27,9 +28,11 @@ import com.google.mlkit.vision.face.Face;
 import com.google.mlkit.vision.face.FaceDetection;
 import com.google.mlkit.vision.face.FaceDetector;
 import com.google.mlkit.vision.face.FaceDetectorOptions;
+import com.google.mlkit.vision.face.FaceLandmark;
 import com.projectx.eyemusic.graphics.GraphicOverlay;
 
 import java.util.List;
+import java.util.Locale;
 
 /** Face Detector Demo. */
 public class FaceDetectorProcessor extends VisionProcessorBase<List<Face>> {
@@ -84,7 +87,7 @@ public class FaceDetectorProcessor extends VisionProcessorBase<List<Face>> {
       Log.v(MANUAL_TESTING_LOG, "face Euler Angle Y: " + face.getHeadEulerAngleY());
       Log.v(MANUAL_TESTING_LOG, "face Euler Angle Z: " + face.getHeadEulerAngleZ());
 
-     /* SO FAR DON'T NEED THEM
+
      // All landmarks
       int[] landMarkTypes =
           new int[] {
@@ -112,6 +115,7 @@ public class FaceDetectorProcessor extends VisionProcessorBase<List<Face>> {
             "LEFT_CHEEK",
             "NOSE_BASE"
           };
+
       for (int i = 0; i < landMarkTypes.length; i++) {
         FaceLandmark landmark = face.getLandmark(landMarkTypes[i]);
         if (landmark == null) {
@@ -130,7 +134,7 @@ public class FaceDetectorProcessor extends VisionProcessorBase<List<Face>> {
                   + landmarkPositionStr);
         }
       }
-      */
+
 
       Log.v(
           MANUAL_TESTING_LOG,

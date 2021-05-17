@@ -1,19 +1,28 @@
 package com.projectx.eyemusic;
 
 import android.graphics.Bitmap;
+import android.graphics.Rect;
+
+import com.google.mlkit.vision.face.Face;
+import com.google.mlkit.vision.face.FaceLandmark;
 
 //TODO: complete this class
-public class Feature {
+public class RawFeature {
     private int x_coordinate;
     private int y_coordinate;
     public Bitmap original;
+    private Face face;
     public float smileProbability;
 
-    public Feature(){};
+    public RawFeature(){};
 
-    public Feature(Bitmap b, float smileProbability) {
+    public RawFeature(Bitmap b, Face face) {
         this.original = b;
         this.smileProbability = smileProbability;
+        /*Rect faceBoundingBox = dominantFace.getBoundingBox();
+        FaceLandmark leftEyeLandmark = dominantFace.getLandmark(FaceLandmark.LEFT_EYE);
+        FaceLandmark rightEyeLandmark = dominantFace.getLandmark(FaceLandmark.RIGHT_EAR);*/
+
     }
     public String toString() {
         return "x:" + x_coordinate + " , " + "y:" + y_coordinate;

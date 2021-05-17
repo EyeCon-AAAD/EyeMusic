@@ -7,17 +7,17 @@ import android.os.Process;
 import com.projectx.eyemusic.graphics.DotGraphic;
 import com.projectx.eyemusic.graphics.GraphicOverlay;
 
-public class GazeHandlerThread extends HandlerThread {
+public class PredictionThread extends HandlerThread {
     private static GazeModel model;
     private static GraphicOverlay graphicOverlayGazeLocation;
     private static MainActivity activity;
 
     private Handler handler;
-    public GazeHandlerThread(GazeModel model, GraphicOverlay graphicOverlayGazeLocation, MainActivity activity) {
-        super("GazeHandlerThread", Process.THREAD_PRIORITY_DEFAULT); // TODO: later check the priority
-        GazeHandlerThread.model = model;
-        GazeHandlerThread.graphicOverlayGazeLocation = graphicOverlayGazeLocation;
-        GazeHandlerThread.activity = activity;
+    public PredictionThread(GazeModel model, GraphicOverlay graphicOverlayGazeLocation, MainActivity activity) {
+        super("PredictionThread", Process.THREAD_PRIORITY_DEFAULT); // TODO: later check the priority
+        PredictionThread.model = model;
+        PredictionThread.graphicOverlayGazeLocation = graphicOverlayGazeLocation;
+        PredictionThread.activity = activity;
     }
 
     @Override
@@ -33,9 +33,9 @@ public class GazeHandlerThread extends HandlerThread {
 
     public static class GazeRunnable implements Runnable {
         private static final String TAG = "GazeRunnable";
-        private final Feature feature; //contains the the frames and all the landmarks and other things needed
+        private final RawFeature feature; //contains the the frames and all the landmarks and other things needed
 
-        public GazeRunnable(Feature feature){
+        public GazeRunnable(RawFeature feature){
             this.feature = feature;
         }
 

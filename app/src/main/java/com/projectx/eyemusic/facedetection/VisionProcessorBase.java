@@ -39,9 +39,9 @@ import com.google.android.gms.tasks.TaskExecutors;
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.face.Face;
 import com.projectx.eyemusic.CalibrationRunnable;
-import com.projectx.eyemusic.Feature;
-import com.projectx.eyemusic.GazeHandlerThread;
-import com.projectx.eyemusic.GazeHandlerThread.GazeRunnable;
+import com.projectx.eyemusic.RawFeature;
+import com.projectx.eyemusic.PredictionThread;
+import com.projectx.eyemusic.PredictionThread.GazeRunnable;
 import com.projectx.eyemusic.MainActivity;
 import com.projectx.eyemusic.graphics.GraphicOverlay;
 
@@ -180,7 +180,7 @@ public abstract class VisionProcessorBase<T> implements VisionImageProcessor {
   @Override
   @RequiresApi(VERSION_CODES.KITKAT)
   @ExperimentalGetImage
-  public void processImageProxy(ImageProxy image, GraphicOverlay graphicOverlay, GazeHandlerThread gazeHandlerThread, TextView textView, boolean isCalibration) {
+  public void processImageProxy(ImageProxy image, GraphicOverlay graphicOverlay, PredictionThread predictionThread, TextView textView, boolean isCalibration) {
     long frameStartMs = SystemClock.elapsedRealtime();
     if (isShutdown) {
       image.close();
@@ -200,7 +200,7 @@ public abstract class VisionProcessorBase<T> implements VisionImageProcessor {
             /* originalCameraImage= */ bitmap,
             /* shouldShowFps= */ true,
             frameStartMs,
-            gazeHandlerThread,
+            predictionThread,
             textView,
             isCalibration)
         // When the image is from CameraX analysis use case, must call image.close() on received
@@ -216,7 +216,7 @@ public abstract class VisionProcessorBase<T> implements VisionImageProcessor {
           @Nullable final Bitmap originalCameraImage,
           boolean shouldShowFps,
           long frameStartMs,
-          GazeHandlerThread gazeHandlerThread,
+          PredictionThread predictionThread,
           TextView textView,
           boolean isCalibration) {
 
@@ -293,6 +293,8 @@ public abstract class VisionProcessorBase<T> implements VisionImageProcessor {
               graphicOverlay.postInvalidate();
 
               // GAZE FUNCTIONALITY IS ADDED HERE
+
+
                  try{
                      List<Face> faces = (List<Face>) results;
                      if (faces.isEmpty()){
@@ -312,16 +314,17 @@ public abstract class VisionProcessorBase<T> implements VisionImageProcessor {
                          return;
                      }
 
-                     Feature newFeature = new Feature(originalCameraImage,
-                             (Float) smileProb);
+                     RawFeature newRawFeature = new RawFeature(
+                             originalCameraImage,
+                             dominantFace);
+
                      // TODO: complete the feature
                      if (isCalibration){
                          MainActivity.graphicOverlayGazeLocation.clear();
-                         CalibrationRunnable.setNewFeature(newFeature);
+                         CalibrationRunnable.setNewFeature(newRawFeature);
                      }else{
-                         gazeHandlerThread.getHandler().post(new GazeRunnable(newFeature));
+                         predictionThread.getHandler().post(new GazeRunnable(newRawFeature));
                      }
-
 
                  }catch (Exception e){
                      Log.e(TAG, "requestDetectInImage: ", e);
@@ -368,4 +371,5 @@ public abstract class VisionProcessorBase<T> implements VisionImageProcessor {
   protected abstract void onSuccess(@NonNull T results, @NonNull GraphicOverlay graphicOverlay);
 
   protected abstract void onFailure(@NonNull Exception e);
+
 }

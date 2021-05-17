@@ -25,10 +25,8 @@ import androidx.camera.view.PreviewView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -49,16 +47,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
 import com.google.mlkit.common.MlKitException;
 import com.google.mlkit.vision.face.FaceDetectorOptions;
 import com.projectx.eyemusic.Authentication.Authentication;
 import com.projectx.eyemusic.Fragments.CalibrationFragment;
-import com.projectx.eyemusic.Fragments.PlaylistFragment;
-import com.projectx.eyemusic.Music.Playlist;
-import com.projectx.eyemusic.Music.PlaylistAdapter;
-import com.projectx.eyemusic.VolleyRequests.PlaylistRequest;
 import com.projectx.eyemusic.facedetection.CameraXViewModel;
 import com.projectx.eyemusic.facedetection.FaceDetectorProcessor;
 import com.projectx.eyemusic.facedetection.PreferenceUtils;
@@ -72,10 +65,6 @@ import com.spotify.sdk.android.auth.*;
 
 import com.spotify.protocol.types.Track;
 import com.spotify.sdk.android.auth.AuthorizationResponse;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -117,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
 
     //Thread
     //TODO: replace new GazeModel() with the actual model
-    private GazeHandlerThread gazeHandlerThread;
+    private PredictionThread predictionThread;
 
     // camera and features
     private static final int PERMISSION_REQUESTS = 1;
@@ -208,8 +197,8 @@ public class MainActivity extends AppCompatActivity {
         graphicOverlayGazeLocation.add(new DotGraphic(this, graphicOverlayGazeLocation, 500, 500));
 
         //Gaze thread
-        gazeHandlerThread = new GazeHandlerThread(new GazeModel(), graphicOverlayGazeLocation, this);
-        gazeHandlerThread.start();
+        predictionThread = new PredictionThread(new GazeModel(), graphicOverlayGazeLocation, this);
+        predictionThread.start();
 
         // Camera and features
         textViewReport = findViewById(R.id.text_view_report);
@@ -282,9 +271,9 @@ public class MainActivity extends AppCompatActivity {
     public void calibrationFinished(){
         Log.d("Calibration", "calibrationFinished: ");
         isCalibration = false;
-        List<Feature> features = calibrationRunnable.getFeatures();
-        for (Feature feature: features){
-            Log.d("Calibration", "CALIBRATION RESULT: " + feature);
+        List<RawFeature> rawFeatures = calibrationRunnable.getRawFeatures();
+        for (RawFeature rawFeature : rawFeatures){
+            Log.d("Calibration", "CALIBRATION RESULT: " + rawFeature);
         }
         btn_calibration.setVisibility(View.VISIBLE);
         btn_main_back.setVisibility(View.VISIBLE);
@@ -389,7 +378,7 @@ public class MainActivity extends AppCompatActivity {
         // disconnect from AppRemote
         mSpotifyAppRemote.getPlayerApi().pause();
         SpotifyAppRemote.disconnect(mSpotifyAppRemote);
-        gazeHandlerThread.quit(); // it will destroy all the messages that has not been started yet and are in the message queue
+        predictionThread.quit(); // it will destroy all the messages that has not been started yet and are in the message queue
         if (imageProcessor != null) {
             imageProcessor.stop();}
     }
@@ -629,7 +618,7 @@ public class MainActivity extends AppCompatActivity {
                         needUpdateGraphicOverlayImageSourceInfo = false;
                     }
                     try {
-                        imageProcessor.processImageProxy(imageProxy, graphicOverlayFace, gazeHandlerThread, textViewReport, isCalibration);
+                        imageProcessor.processImageProxy(imageProxy, graphicOverlayFace, predictionThread, textViewReport, isCalibration);
                     } catch (MlKitException e) {
                         Log.e(TAG, "Failed to process image. Error: " + e.getLocalizedMessage());
                         Toast.makeText(getApplicationContext(), e.getLocalizedMessage(), Toast.LENGTH_SHORT)

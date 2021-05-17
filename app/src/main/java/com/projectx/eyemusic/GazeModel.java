@@ -1,10 +1,5 @@
 package com.projectx.eyemusic;
 
-import android.content.Context;
-import android.content.res.Resources;
-import android.util.DisplayMetrics;
-import android.util.Log;
-
 import java.util.Random;
 
 public class GazeModel {
@@ -17,7 +12,7 @@ public class GazeModel {
         rand = new Random();
     }
 
-    public  GazePoint predict(Feature feature){
+    public  GazePoint predict(RawFeature feature){
 
         int x = rand.nextInt(SCREEN_WIDTH);
         int y = rand.nextInt(SCREEN_HEIGHT);
