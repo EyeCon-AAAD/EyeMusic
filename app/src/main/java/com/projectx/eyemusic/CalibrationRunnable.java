@@ -27,7 +27,7 @@ public class CalibrationRunnable implements Runnable {
     private Feature1 capturedFeature;
 
     private  List<GazePoint> points;
-    private volatile List<RawFeature> features; //volatile -> so that two thread do not use the cashed value
+    private volatile List<Feature1> features; //volatile -> so that two thread do not use the cashed value
     private final static int SCREEN_WIDTH = Utilities.getScreenWidth();
     private final static int SCREEN_HEIGHT = Utilities.getScreenHeight();
 
@@ -36,7 +36,7 @@ public class CalibrationRunnable implements Runnable {
         this.activity =  activity;
         this.newFeatureCaptured = true; // meaning that the new feature has not come
         this.newFeature = null;
-        this.features = new ArrayList<RawFeature>();
+        this.features = new ArrayList<Feature1>();
 
         this.points = produceDots(3, 6);
         printPoints();
@@ -79,10 +79,14 @@ public class CalibrationRunnable implements Runnable {
 
         //finishing the calibration
         graphicOverlayCalibration.clear();
-        Toast.makeText(activity.getApplicationContext(), "Wait for the model to be trained", Toast.LENGTH_LONG);
+        //Toast.makeText(activity.getApplicationContext(), "Wait for the model to be trained", Toast.LENGTH_LONG);
 
             //updating the model
             GazeModelManager.updateCalibratedModel(features);
+
+            //Show the training error
+
+            //make other runtime error
 
         FeatureExtractor.setCalibrationMode(false);
         activity.calibrationFinished(features);

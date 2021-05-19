@@ -58,9 +58,11 @@ import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.common.Feature;
 import com.google.mlkit.common.MlKitException;
 import com.google.mlkit.vision.face.FaceDetectorOptions;
 import com.projectx.eyemusic.Authentication.Authentication;
+import com.projectx.eyemusic.Features.Feature1;
 import com.projectx.eyemusic.Features.FeatureExtractor;
 import com.projectx.eyemusic.Features.RawFeature;
 import com.projectx.eyemusic.Fragments.CalibrationFragment;
@@ -282,11 +284,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void calibrationFinished(List<RawFeature> rawData){
+    public void calibrationFinished(List<Feature1> features){
         Log.d("Calibration", "calibrationFinished: ");
         isCalibration = false;
-        for (RawFeature raw : rawData){
-            Log.d("Calibration", "CALIBRATION RESULT: " + raw);
+        for (Feature1 feature : features){
+            Log.d("Calibration", "CALIBRATION RESULT: " + feature);
         }
         btn_calibration.post( () -> {btn_calibration.setVisibility(View.VISIBLE);} );
         btn_main_back.post( () -> {btn_main_back.setVisibility(View.VISIBLE);} );
