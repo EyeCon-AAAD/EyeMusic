@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.projectx.eyemusic.facedetection;
+package com.projectx.eyemusic.FaceDetection;
 
 import android.content.Context;
 import android.graphics.PointF;
@@ -29,7 +29,7 @@ import com.google.mlkit.vision.face.FaceDetection;
 import com.google.mlkit.vision.face.FaceDetector;
 import com.google.mlkit.vision.face.FaceDetectorOptions;
 import com.google.mlkit.vision.face.FaceLandmark;
-import com.projectx.eyemusic.graphics.GraphicOverlay;
+import com.projectx.eyemusic.Graphics.GraphicOverlay;
 
 import java.util.List;
 import java.util.Locale;

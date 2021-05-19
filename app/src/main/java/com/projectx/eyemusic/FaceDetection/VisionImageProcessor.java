@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.projectx.eyemusic.facedetection;
+package com.projectx.eyemusic.FaceDetection;
 
 import android.graphics.Bitmap;
 import android.os.Build.VERSION_CODES;
@@ -25,7 +25,7 @@ import androidx.camera.core.ImageProxy;
 
 import com.google.mlkit.common.MlKitException;
 import com.projectx.eyemusic.PredictionThread;
-import com.projectx.eyemusic.graphics.GraphicOverlay;
+import com.projectx.eyemusic.Graphics.GraphicOverlay;
 
 import java.nio.ByteBuffer;
 

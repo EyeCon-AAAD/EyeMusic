@@ -1,17 +1,11 @@
-package com.projectx.eyemusic.graphics;
+package com.projectx.eyemusic.Graphics;
 
-import android.app.Activity;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
-import android.view.View;
 
 import com.projectx.eyemusic.MainActivity;
-import com.projectx.eyemusic.graphics.GraphicOverlay;
-import com.projectx.eyemusic.graphics.GraphicOverlay.Graphic;
+import com.projectx.eyemusic.Graphics.GraphicOverlay.Graphic;
 
 public class DotGraphic extends Graphic{
     private static final String TAG = "DotGraphic";

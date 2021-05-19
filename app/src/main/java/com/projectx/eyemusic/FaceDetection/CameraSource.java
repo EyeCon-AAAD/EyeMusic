@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.projectx.eyemusic.facedetection;
+package com.projectx.eyemusic.FaceDetection;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -33,7 +33,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresPermission;
 
 import com.google.android.gms.common.images.Size;
-import com.projectx.eyemusic.graphics.GraphicOverlay;
+import com.projectx.eyemusic.Graphics.GraphicOverlay;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

@@ -9,6 +9,16 @@
 * 3. adding a white blank background for the calibration.
 *
 * 4. saving feature
+*
+* 5. performance: look at the object leakage
+*
+* 6. better coding: change the static variables to object ones
+*
+* 7. performace: make the feature extraction in another thread
+*
+* 8. clean the code for warning: the variables, the extra code from facedetection
+*
+* 9. thread managment: add locks or synchronizations when neccessary
 * */
 
 
@@ -51,13 +61,16 @@ import com.android.volley.toolbox.Volley;
 import com.google.mlkit.common.MlKitException;
 import com.google.mlkit.vision.face.FaceDetectorOptions;
 import com.projectx.eyemusic.Authentication.Authentication;
+import com.projectx.eyemusic.Features.FeatureExtractor;
+import com.projectx.eyemusic.Features.RawFeature;
 import com.projectx.eyemusic.Fragments.CalibrationFragment;
-import com.projectx.eyemusic.facedetection.CameraXViewModel;
-import com.projectx.eyemusic.facedetection.FaceDetectorProcessor;
-import com.projectx.eyemusic.facedetection.PreferenceUtils;
-import com.projectx.eyemusic.facedetection.VisionImageProcessor;
-import com.projectx.eyemusic.graphics.DotGraphic;
-import com.projectx.eyemusic.graphics.GraphicOverlay;
+import com.projectx.eyemusic.FaceDetection.CameraXViewModel;
+import com.projectx.eyemusic.FaceDetection.FaceDetectorProcessor;
+import com.projectx.eyemusic.FaceDetection.PreferenceUtils;
+import com.projectx.eyemusic.FaceDetection.VisionImageProcessor;
+import com.projectx.eyemusic.Graphics.DotGraphic;
+import com.projectx.eyemusic.Graphics.GraphicOverlay;
+import com.projectx.eyemusic.Model.GazeModelManager;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
@@ -102,10 +115,10 @@ public class MainActivity extends AppCompatActivity {
 
     //graphics
     static int[] graphicOverlayGazeLocationLocation = new int[2];
-    public static GraphicOverlay graphicOverlayGazeLocation;
+    public static volatile GraphicOverlay graphicOverlayGazeLocation;
 
     //Thread
-    //TODO: replace new GazeModel() with the actual model
+    //TODO: replace new GazeModelManager() with the actual model
     private PredictionThread predictionThread;
 
     // camera and features
@@ -197,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
         graphicOverlayGazeLocation.add(new DotGraphic(this, graphicOverlayGazeLocation, 500, 500));
 
         //Gaze thread
-        predictionThread = new PredictionThread(new GazeModel(), graphicOverlayGazeLocation, this);
+        predictionThread = new PredictionThread(new GazeModelManager(), graphicOverlayGazeLocation, this);
         predictionThread.start();
 
         // Camera and features
@@ -250,6 +263,7 @@ public class MainActivity extends AppCompatActivity {
         btn_calibration = findViewById(R.id.btn_main_calibration);
         btn_calibration.setOnClickListener (view -> {
             isCalibration = true;
+            FeatureExtractor.setCalibrationMode(isCalibration);
             calibrationThread  = new Thread(calibrationRunnable);
             calibrationThread.start();
             // set the calibration fragment
@@ -268,20 +282,18 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void calibrationFinished(){
+    public void calibrationFinished(List<RawFeature> rawData){
         Log.d("Calibration", "calibrationFinished: ");
         isCalibration = false;
-        List<RawFeature> rawFeatures = calibrationRunnable.getRawFeatures();
-        for (RawFeature rawFeature : rawFeatures){
-            Log.d("Calibration", "CALIBRATION RESULT: " + rawFeature);
+        for (RawFeature raw : rawData){
+            Log.d("Calibration", "CALIBRATION RESULT: " + raw);
         }
-        btn_calibration.setVisibility(View.VISIBLE);
-        btn_main_back.setVisibility(View.VISIBLE);
-        btn_main_reconnect_spotify.setVisibility(View.VISIBLE);
-
+        btn_calibration.post( () -> {btn_calibration.setVisibility(View.VISIBLE);} );
+        btn_main_back.post( () -> {btn_main_back.setVisibility(View.VISIBLE);} );
+        btn_main_reconnect_spotify.post( () -> {btn_main_reconnect_spotify.setVisibility(View.VISIBLE);} );
     }
 
-    public GraphicOverlay getGraphicOverlayGazeLocation() {
+    public static GraphicOverlay getGraphicOverlayGazeLocation() {
         return graphicOverlayGazeLocation;
     }
 

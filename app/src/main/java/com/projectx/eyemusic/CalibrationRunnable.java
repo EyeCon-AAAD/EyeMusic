@@ -3,9 +3,16 @@ package com.projectx.eyemusic;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.util.Log;
+import android.widget.Toast;
 
-import com.projectx.eyemusic.graphics.DotGraphic;
-import com.projectx.eyemusic.graphics.GraphicOverlay;
+import com.google.android.gms.common.Feature;
+import com.projectx.eyemusic.Features.Feature1;
+import com.projectx.eyemusic.Features.FeatureExtractor;
+import com.projectx.eyemusic.Features.RawFeature;
+import com.projectx.eyemusic.Graphics.DotGraphic;
+import com.projectx.eyemusic.Graphics.GraphicOverlay;
+import com.projectx.eyemusic.Model.GazeModelManager;
+import com.projectx.eyemusic.Model.GazePoint;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,24 +21,24 @@ public class CalibrationRunnable implements Runnable {
     private static final String TAG = "CalibrationRunnable";
     private GraphicOverlay graphicOverlayCalibration;
     private MainActivity activity;
-    private static RawFeature newRawFeature; //contains the the frames and all the landmarks and other things needed
+
     private static boolean newFeatureCaptured;
-    private RawFeature capturedFeature;
-    private  List<Point> points;
-    private volatile List<RawFeature> rawFeatures; //volatile -> so that two thread do not use the cashed value
+    private static Feature1 newFeature; //contains the the frames and all the landmarks and other things needed
+    private Feature1 capturedFeature;
+
+    private  List<GazePoint> points;
+    private volatile List<RawFeature> features; //volatile -> so that two thread do not use the cashed value
     private final static int SCREEN_WIDTH = Utilities.getScreenWidth();
     private final static int SCREEN_HEIGHT = Utilities.getScreenHeight();
-
 
     CalibrationRunnable(GraphicOverlay overlayGaze, MainActivity activity){
         graphicOverlayCalibration= overlayGaze;
         this.activity =  activity;
         this.newFeatureCaptured = true; // meaning that the new feature has not come
-        this.newRawFeature = null;
-        this.points = new ArrayList<Point>();
-        this.rawFeatures = new ArrayList<RawFeature>();
+        this.newFeature = null;
+        this.features = new ArrayList<RawFeature>();
 
-        produceDots(3, 6);
+        this.points = produceDots(3, 6);
         printPoints();
     }
 
@@ -39,9 +46,9 @@ public class CalibrationRunnable implements Runnable {
     public void run() {
         int i = 1;
         int size_points = points.size();
-        for(Point point : points){
+        for(GazePoint point : points){
             graphicOverlayCalibration.clear();
-            DotGraphic dot = new DotGraphic(activity, graphicOverlayCalibration, point.x, point.y);
+            DotGraphic dot = new DotGraphic(activity, graphicOverlayCalibration, point.getX(), point.getY());
             dot.setColor(Color.BLUE);
             dot.setRadius(50f);
             graphicOverlayCalibration.add(dot);
@@ -49,7 +56,7 @@ public class CalibrationRunnable implements Runnable {
 
             //giving time to the user to look at the dot
             try {
-                Thread.sleep(3000);
+                Thread.sleep(0);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -57,25 +64,33 @@ public class CalibrationRunnable implements Runnable {
             while (newFeatureCaptured){
                 Log.d("Calibration", "run: the new feature has not been come yet" );
             }
-            while(newRawFeature == null){
+            while(newFeature == null){
                 Log.d("Calibration", "run: the new feature is null" );
             }
-            capturedFeature = newRawFeature;
+            capturedFeature = newFeature;
             newFeatureCaptured = true;
 
-            //TODO: save the rawFeatures somewhere
-            capturedFeature.setXY_coordinates(point.x, point.y);
-            rawFeatures.add(capturedFeature);
+            //TODO: save the rawData somewhere
+            capturedFeature.setCoordinate(point);
+            features.add(capturedFeature);
             Log.d("Calibration", "+++++run: the new feature is captured, run:" + i +"/" + size_points +" feature:"+ capturedFeature);
             i++;
         }
+
+        //finishing the calibration
         graphicOverlayCalibration.clear();
-        //calibration is finished
+        Toast.makeText(activity.getApplicationContext(), "Wait for the model to be trained", Toast.LENGTH_LONG);
+
+            //updating the model
+            GazeModelManager.updateCalibratedModel(features);
+
+        FeatureExtractor.setCalibrationMode(false);
+        activity.calibrationFinished(features);
         Log.d("Calibration", "run: finished");
-        activity.calibrationFinished();
     }
 
-    private void produceDots(int no_x, int no_y){
+    private static List<GazePoint> produceDots(int no_x, int no_y){
+        List<GazePoint> points = new ArrayList<GazePoint>();
         double margin_x = SCREEN_WIDTH * 0.05;
         double margin_y = SCREEN_HEIGHT * 0.05;
 
@@ -90,26 +105,23 @@ public class CalibrationRunnable implements Runnable {
             for (int j = 0; j < no_y; j++) {
                 x = start_x + step_x * i;
                 y = start_y + step_y * j;
-                points.add(new Point((int) x, (int) y));
+                points.add(new GazePoint((float) x,(float) y));
             }
         }
-
+        return points;
     }
 
-    public List<RawFeature> getRawFeatures() {
-        return rawFeatures;
-    }
-
-    public static boolean setNewFeature(RawFeature f){
-        newRawFeature = f;
+    public static boolean setNewFeature(Feature1 f){
+        newFeature = f;
         newFeatureCaptured = false;
         Log.d("Calibration", "-----the new feature has arrived: ");
         return true;
     }
 
     public void printPoints(){
-        for(Point point: points){
-            Log.d("Calibration", "stored point: " + point);
+        for(GazePoint point: points){
+            Log.d("Calibration", "stored point: " + point.getX() + " " + point.getY());
         }
     }
+
 }

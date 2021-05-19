@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.projectx.eyemusic.facedetection;
+package com.projectx.eyemusic.FaceDetection;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -29,7 +29,7 @@ import androidx.camera.core.CameraSelector;
 import com.google.android.gms.common.images.Size;
 import com.google.common.base.Preconditions;
 import com.projectx.eyemusic.R;
-import com.projectx.eyemusic.facedetection.CameraSource.SizePair;
+import com.projectx.eyemusic.FaceDetection.CameraSource.SizePair;
 
 // TODO: delete the parts you don't need
 // TODO: check the R.string.pref_ ....

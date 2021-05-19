@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.projectx.eyemusic.facedetection;
+package com.projectx.eyemusic.FaceDetection;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
-import com.projectx.eyemusic.graphics.GraphicOverlay;
-import com.projectx.eyemusic.graphics.GraphicOverlay.Graphic;
+import com.projectx.eyemusic.Graphics.GraphicOverlay;
+import com.projectx.eyemusic.Graphics.GraphicOverlay.Graphic;
 
 /** Draw camera image to background. */
 public class CameraImageGraphic extends Graphic {

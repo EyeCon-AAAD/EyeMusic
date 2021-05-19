@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.projectx.eyemusic.facedetection;
+package com.projectx.eyemusic.FaceDetection;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
@@ -38,12 +38,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskExecutors;
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.face.Face;
-import com.projectx.eyemusic.CalibrationRunnable;
-import com.projectx.eyemusic.RawFeature;
+import com.projectx.eyemusic.Features.FeatureExtractor;
+import com.projectx.eyemusic.Features.RawFeature;
 import com.projectx.eyemusic.PredictionThread;
-import com.projectx.eyemusic.PredictionThread.GazeRunnable;
-import com.projectx.eyemusic.MainActivity;
-import com.projectx.eyemusic.graphics.GraphicOverlay;
+import com.projectx.eyemusic.Graphics.GraphicOverlay;
 
 import java.nio.ByteBuffer;
 import java.util.List;
@@ -122,9 +120,7 @@ public abstract class VisionProcessorBase<T> implements VisionImageProcessor {
             /* originalCameraImage= */ null,
             /* shouldShowFps= */ false,
         frameStartMs,
-            null,
-            null,
-            false);
+            null);
   }
 
   // -----------------Code for processing live preview frame from Camera1 API-----------------------
@@ -170,9 +166,7 @@ public abstract class VisionProcessorBase<T> implements VisionImageProcessor {
             bitmap,
             /* shouldShowFps= */ true,
             frameStartMs,
-            null,
-            null,
-            false)
+            null)
         .addOnSuccessListener(executor, results -> processLatestImage(graphicOverlay));
   }
 
@@ -200,9 +194,7 @@ public abstract class VisionProcessorBase<T> implements VisionImageProcessor {
             /* originalCameraImage= */ bitmap,
             /* shouldShowFps= */ true,
             frameStartMs,
-            predictionThread,
-            textView,
-            isCalibration)
+            textView)
         // When the image is from CameraX analysis use case, must call image.close() on received
         // images when finished using them. Otherwise, new images may not be received or the camera
         // may stall.
@@ -216,9 +208,7 @@ public abstract class VisionProcessorBase<T> implements VisionImageProcessor {
           @Nullable final Bitmap originalCameraImage,
           boolean shouldShowFps,
           long frameStartMs,
-          PredictionThread predictionThread,
-          TextView textView,
-          boolean isCalibration) {
+          TextView textView) {
 
     final long detectorStartMs = SystemClock.elapsedRealtime(); //the time of start
     return detectInImage(image)
@@ -292,44 +282,7 @@ public abstract class VisionProcessorBase<T> implements VisionImageProcessor {
 
               graphicOverlay.postInvalidate();
 
-              // GAZE FUNCTIONALITY IS ADDED HERE
-
-
-                 try{
-                     List<Face> faces = (List<Face>) results;
-                     if (faces.isEmpty()){
-                         Log.w(TAG, "requestDetectInImage: face is not detected");
-                         return;
-                     }
-
-                     Face dominantFace =  faces.get(0); // TODO: check if the dominant one is at index 0
-                     if(dominantFace == null){
-                         Log.w(TAG, "requestDetectInImage: face is null");
-                         return;
-                     }
-
-                     Object smileProb = dominantFace.getSmilingProbability();
-                     if (smileProb == null){
-                         Log.w(TAG, "requestDetectInImage: smileProb is null" );
-                         return;
-                     }
-
-                     RawFeature newRawFeature = new RawFeature(
-                             originalCameraImage,
-                             dominantFace);
-
-                     // TODO: complete the feature
-                     if (isCalibration){
-                         MainActivity.graphicOverlayGazeLocation.clear();
-                         CalibrationRunnable.setNewFeature(newRawFeature);
-                     }else{
-                         predictionThread.getHandler().post(new GazeRunnable(newRawFeature));
-                     }
-
-                 }catch (Exception e){
-                     Log.e(TAG, "requestDetectInImage: ", e);
-                 }
-
+              sendData(originalCameraImage, (List<Face>) results);
             })
         .addOnFailureListener(
             executor,
@@ -371,5 +324,31 @@ public abstract class VisionProcessorBase<T> implements VisionImageProcessor {
   protected abstract void onSuccess(@NonNull T results, @NonNull GraphicOverlay graphicOverlay);
 
   protected abstract void onFailure(@NonNull Exception e);
+
+  protected void sendData(Bitmap originalCameraImage, List<Face> faces){
+      try{
+          if (faces.isEmpty()){
+              Log.w(TAG, "sendData: face is not detected");
+              return;
+          }
+
+          Face dominantFace =  faces.get(0); // TODO: check if the dominant one is at index 0
+          if(dominantFace == null){
+              Log.w(TAG, "sendData: face is null");
+              return;
+          }
+
+          Object smileProb = dominantFace.getSmilingProbability();
+          if (smileProb == null){
+              Log.w(TAG, "sendData: smileProb is null" );
+              return;
+          }
+
+          FeatureExtractor.getData(new RawFeature(originalCameraImage, dominantFace));
+
+      }catch (Exception e){
+          Log.e(TAG, "sendData: ", e);
+      }
+  }
 
 }
