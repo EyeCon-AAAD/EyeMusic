@@ -14,4 +14,18 @@
         android:text="Next Fragment"
         android:background="@color/colorAccent"
         android:padding="5sp" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="222dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="133dp"
+        android:layout_marginTop="166dp"
+        android:layout_marginEnd="56dp"
+        android:text="Calibration"
+        android:textSize="30sp" />
 </RelativeLayout>

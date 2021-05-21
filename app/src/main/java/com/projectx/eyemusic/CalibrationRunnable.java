@@ -81,12 +81,12 @@ public class CalibrationRunnable implements Runnable {
         graphicOverlayCalibration.clear();
         //Toast.makeText(activity.getApplicationContext(), "Wait for the model to be trained", Toast.LENGTH_LONG);
 
-            //updating the model
-            GazeModelManager.updateCalibratedModel(features);
+        //updating the model
+        //GazeModelManager.updateCalibratedModel(features);
 
-            //Show the training error
+        //Show the training error
 
-            //make other runtime error
+        //make other runtime error
 
         FeatureExtractor.setCalibrationMode(false);
         activity.calibrationFinished(features);

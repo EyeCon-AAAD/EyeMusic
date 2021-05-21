@@ -277,8 +277,8 @@ public class MainActivity extends AppCompatActivity {
             btn_main_reconnect_spotify.setVisibility(View.INVISIBLE);
 
             //change the preview opacity
-            previewView.setVisibility(View.INVISIBLE);
-            graphicOverlayFace.setAlpha(0.4f);
+            //previewView.setVisibility(View.INVISIBLE);
+            //graphicOverlayFace.setAlpha(0.4f);
 
         });
 
