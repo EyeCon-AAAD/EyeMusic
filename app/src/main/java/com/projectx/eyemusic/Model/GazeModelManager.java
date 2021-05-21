@@ -57,5 +57,4 @@ public class GazeModelManager {
     public static CalibrationError getCalibrationTrainingError(){
         return calibratedModel.getTrainingError();
     }
-
 }

@@ -125,7 +125,8 @@ public class FaceGraphic extends Graphic {
               idPaints[colorID].measureText(
                   String.format(Locale.US, "Happiness: %.2f", face.getSmilingProbability())));
     }
-    if (face.getLeftEyeOpenProbability() != null) {
+    //ASIAN CHANGED
+    /*if (face.getLeftEyeOpenProbability() != null) {
       yLabelOffset -= lineHeight;
       textWidth =
           Math.max(
@@ -142,7 +143,7 @@ public class FaceGraphic extends Graphic {
               idPaints[colorID].measureText(
                   String.format(
                       Locale.US, "Right eye open: %.2f", face.getRightEyeOpenProbability())));
-    }
+    }*/
 
     yLabelOffset = yLabelOffset - 3 * lineHeight;
     textWidth =
@@ -160,6 +161,7 @@ public class FaceGraphic extends Graphic {
             textWidth,
             idPaints[colorID].measureText(
                 String.format(Locale.US, "EulerZ: %.2f", face.getHeadEulerAngleZ())));
+
     // Draw labels
     canvas.drawRect(
         left - BOX_STROKE_WIDTH,
@@ -169,6 +171,7 @@ public class FaceGraphic extends Graphic {
         labelPaints[colorID]);
     yLabelOffset += ID_TEXT_SIZE;
     canvas.drawRect(left, top, right, bottom, boxPaints[colorID]);
+
     if (face.getTrackingId() != null) {
       canvas.drawText("ID: " + face.getTrackingId(), left, top + yLabelOffset, idPaints[colorID]);
       yLabelOffset += lineHeight;
@@ -192,7 +195,8 @@ public class FaceGraphic extends Graphic {
       yLabelOffset += lineHeight;
     }
 
-    FaceLandmark leftEye = face.getLandmark(FaceLandmark.LEFT_EYE);
+    //AISAN CHANGED
+    /*FaceLandmark leftEye = face.getLandmark(FaceLandmark.LEFT_EYE);
     if (face.getLeftEyeOpenProbability() != null) {
       canvas.drawText(
           "Left eye open: " + String.format(Locale.US, "%.2f", face.getLeftEyeOpenProbability()),
@@ -241,15 +245,15 @@ public class FaceGraphic extends Graphic {
           idPaints[colorID]);
       yLabelOffset += lineHeight;
     }
-
+*/
     canvas.drawText(
-        "EulerX: " + face.getHeadEulerAngleX(), left, top + yLabelOffset, idPaints[colorID]);
+            String.format(Locale.US, "EulerX: %.2f", face.getHeadEulerAngleX()), left, top + yLabelOffset, idPaints[colorID]);
     yLabelOffset += lineHeight;
     canvas.drawText(
-        "EulerY: " + face.getHeadEulerAngleY(), left, top + yLabelOffset, idPaints[colorID]);
+            String.format(Locale.US, "EulerY: %.2f", face.getHeadEulerAngleY()), left, top + yLabelOffset, idPaints[colorID]);
     yLabelOffset += lineHeight;
     canvas.drawText(
-        "EulerZ: " + face.getHeadEulerAngleZ(), left, top + yLabelOffset, idPaints[colorID]);
+            String.format(Locale.US, "EulerZ: %.2f", face.getHeadEulerAngleZ()), left, top + yLabelOffset, idPaints[colorID]);
 
     // Draw facial landmarks
     drawFaceLandmark(canvas, FaceLandmark.LEFT_EYE);

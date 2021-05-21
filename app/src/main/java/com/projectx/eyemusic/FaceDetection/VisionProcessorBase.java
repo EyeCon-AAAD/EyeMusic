@@ -268,9 +268,9 @@ public abstract class VisionProcessorBase<T> implements VisionImageProcessor {
                       @Override
                       public void run() {
                           textView.setText(String.format(
-                                  "Report\n" + "Overlay size: %dx%d\n" + "FPS: %d\n" +
-                                  "FrameLatency: %d\n" +
-                                  "DetectorLatency: %d",
+                                  "ImageSize: %dx%d\n" + "FPS:\n%d\n" +
+                                  "FrameLatency: %d ms\n" +
+                                  "DetectorLatency: %d ms",
                                   graphicOverlay.getImageHeight(),
                                   graphicOverlay.getImageWidth(),
                                   framesPerSecond, currentFrameLatencyMs, currentDetectorLatencyMs));

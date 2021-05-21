@@ -258,6 +258,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Calibration
         btn_main_back = findViewById(R.id.btn_main_back);
+        btn_main_back.setVisibility(View.INVISIBLE);
         btn_main_reconnect_spotify = findViewById(R.id.btn_main_reconnect_spotify);
 
         isCalibration = false;
@@ -275,7 +276,7 @@ public class MainActivity extends AppCompatActivity {
             //change the buttons
             //btn_calibration.setEnabled(false);
             btn_calibration.setVisibility(View.INVISIBLE);
-            btn_main_back.setVisibility(View.INVISIBLE);
+            //btn_main_back.setVisibility(View.INVISIBLE);
             btn_main_reconnect_spotify.setVisibility(View.INVISIBLE);
 
             //change the preview opacity
@@ -292,8 +293,9 @@ public class MainActivity extends AppCompatActivity {
         for (Feature1 feature : features){
             Log.d("Calibration", "CALIBRATION RESULT: " + feature);
         }
+
         btn_calibration.post( () -> {btn_calibration.setVisibility(View.VISIBLE);} );
-        btn_main_back.post( () -> {btn_main_back.setVisibility(View.VISIBLE);} );
+        //btn_main_back.post( () -> {btn_main_back.setVisibility(View.VISIBLE);} );
         btn_main_reconnect_spotify.post( () -> {btn_main_reconnect_spotify.setVisibility(View.VISIBLE);} );
 
         // start the playlist fragment
@@ -551,7 +553,7 @@ public class MainActivity extends AppCompatActivity {
         if (cameraProvider != null) {
             // As required by CameraX API, unbinds all use cases before trying to re-bind any of them.
             cameraProvider.unbindAll();
-            bindPreviewUseCase();
+            //bindPreviewUseCase();
             bindAnalysisUseCase();
         }
     }
@@ -573,7 +575,8 @@ public class MainActivity extends AppCompatActivity {
 
         previewUseCase = builder.build();
         previewUseCase.setSurfaceProvider(previewView.getSurfaceProvider());
-        cameraProvider.bindToLifecycle(/* lifecycleOwner= */ this, cameraSelector, previewUseCase);
+        cameraProvider.bindToLifecycle(/* lifecycleOwner= */ this,
+                cameraSelector, previewUseCase);
     }
 
     private void bindAnalysisUseCase() {
@@ -595,7 +598,8 @@ public class MainActivity extends AppCompatActivity {
                             .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
                             .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
                             .build();
-            imageProcessor = (VisionImageProcessor) new FaceDetectorProcessor(this, faceDetectorOptions);
+            imageProcessor = (VisionImageProcessor) new FaceDetectorProcessor(
+                    this, faceDetectorOptions);
 
         }catch (Exception e) {
             Log.e(TAG, "Can not create image processor: " + selectedModel, e);
@@ -621,7 +625,8 @@ public class MainActivity extends AppCompatActivity {
 
         needUpdateGraphicOverlayImageSourceInfo = true;
         analysisUseCase.setAnalyzer(
-                // imageProcessor.processImageProxy will use another thread to run the detection underneath,
+                // imageProcessor.processImageProxy will use another thread to run the
+                // detection underneath,
                 // thus we can just runs the analyzer itself on main thread.
                 ContextCompat.getMainExecutor(this), //uses the main thread/UI thread
                 imageProxy -> {
@@ -638,7 +643,8 @@ public class MainActivity extends AppCompatActivity {
                         needUpdateGraphicOverlayImageSourceInfo = false;
                     }
                     try {
-                        imageProcessor.processImageProxy(imageProxy, graphicOverlayFace, predictionThread, textViewReport, isCalibration);
+                        imageProcessor.processImageProxy(imageProxy, graphicOverlayFace,
+                                predictionThread, textViewReport, isCalibration);
                     } catch (MlKitException e) {
                         Log.e(TAG, "Failed to process image. Error: " + e.getLocalizedMessage());
                         Toast.makeText(getApplicationContext(), e.getLocalizedMessage(), Toast.LENGTH_SHORT)
@@ -646,7 +652,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        cameraProvider.bindToLifecycle(/* lifecycleOwner= */ this, cameraSelector, analysisUseCase);
+        cameraProvider.bindToLifecycle(/* lifecycleOwner= */ this,
+                cameraSelector, analysisUseCase);
     }
     //-----------------------------CAMERA AND FEATURES FINISH --------------------------------------
 

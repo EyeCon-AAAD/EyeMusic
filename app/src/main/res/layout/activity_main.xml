@@ -31,10 +31,12 @@
         android:id="@+id/text_view_report"
         android:layout_width="120dp"
         android:layout_height="160dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="8dp"
+        android:text=""
+        android:textAlignment="textStart"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:text=""/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.projectx.eyemusic.Graphics.GraphicOverlay
         android:id="@+id/graphic_overlay_gaze_location"
@@ -77,11 +79,11 @@
         android:id="@+id/btn_main_back"
         android:layout_width="125dp"
         android:layout_height="68dp"
-        android:layout_marginTop="52dp"
-        android:layout_marginEnd="276dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="45dp"
         android:background="@color/colorAccent"
         android:text="go back"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <FrameLayout
