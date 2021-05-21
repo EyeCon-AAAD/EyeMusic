@@ -70,6 +70,7 @@ import com.projectx.eyemusic.FaceDetection.CameraXViewModel;
 import com.projectx.eyemusic.FaceDetection.FaceDetectorProcessor;
 import com.projectx.eyemusic.FaceDetection.PreferenceUtils;
 import com.projectx.eyemusic.FaceDetection.VisionImageProcessor;
+import com.projectx.eyemusic.Fragments.PlaylistFragment;
 import com.projectx.eyemusic.Graphics.DotGraphic;
 import com.projectx.eyemusic.Graphics.GraphicOverlay;
 import com.projectx.eyemusic.Model.GazeModelManager;
@@ -269,7 +270,8 @@ public class MainActivity extends AppCompatActivity {
             calibrationThread  = new Thread(calibrationRunnable);
             calibrationThread.start();
             // set the calibration fragment
-
+            getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment_container,
+                    new CalibrationFragment()).commit();
             //change the buttons
             //btn_calibration.setEnabled(false);
             btn_calibration.setVisibility(View.INVISIBLE);
@@ -293,6 +295,10 @@ public class MainActivity extends AppCompatActivity {
         btn_calibration.post( () -> {btn_calibration.setVisibility(View.VISIBLE);} );
         btn_main_back.post( () -> {btn_main_back.setVisibility(View.VISIBLE);} );
         btn_main_reconnect_spotify.post( () -> {btn_main_reconnect_spotify.setVisibility(View.VISIBLE);} );
+
+        // start the playlist fragment
+        getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment_container,
+                new PlaylistFragment()).commit();
     }
 
     public static GraphicOverlay getGraphicOverlayGazeLocation() {
@@ -424,7 +430,7 @@ public class MainActivity extends AppCompatActivity {
                 // load playlist fragment
                 // changed PlaylistFragment to Calibrate\ionFragment
                 getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment_container,
-                        new CalibrationFragment()).commit();
+                        new PlaylistFragment()).commit();
                 // fetchPlaylists(requestQueue, mSpotifyAppRemote);
             }
 
