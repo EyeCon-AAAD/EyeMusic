@@ -13,63 +13,89 @@
 
     <androidx.camera.view.PreviewView
         android:id="@+id/preview_view"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="120dp"
+        android:layout_height="160dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <com.projectx.eyemusic.graphics.GraphicOverlay
+    <com.projectx.eyemusic.Graphics.GraphicOverlay
+        android:id="@+id/graphic_overlay_face"
+        android:layout_width="120dp"
+        android:layout_height="160dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/text_view_report"
+        android:layout_width="120dp"
+        android:layout_height="160dp"
+        android:layout_marginStart="8dp"
+        android:text=""
+        android:textAlignment="textStart"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.projectx.eyemusic.Graphics.GraphicOverlay
         android:id="@+id/graphic_overlay_gaze_location"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:elevation="10dp"/>
+        android:elevation="10dp"
+        />
 
+    <com.projectx.eyemusic.Graphics.GraphicOverlay
+        android:id="@+id/graphic_overlay_calibration"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:elevation="11dp"
+        />
+
+
+    <Button
+        android:id="@+id/btn_main_calibration"
+        android:layout_width="125dp"
+        android:layout_height="68dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="8dp"
+        android:background="@color/colorAccent"
+        android:text="calibration"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_main_reconnect_spotify"
+        android:layout_width="125dp"
+        android:layout_height="68dp"
+        android:layout_marginTop="84dp"
+        android:layout_marginEnd="8dp"
+        android:background="@color/colorAccent"
+        android:text="reconnect spotify"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_main_back"
+        android:layout_width="125dp"
+        android:layout_height="68dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="45dp"
+        android:background="@color/colorAccent"
+        android:text="go back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <FrameLayout
         android:id="@+id/main_fragment_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/control"
+        app:layout_constraintBottom_toBottomOf ="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/preview_view">
 
-
     </FrameLayout>
-
-    <LinearLayout
-        android:id="@+id/control"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:background="#000"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/btn_main_goto_eye"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/colorAccent"
-            android:text="Go to Open Activity" />
-
-        <Button
-            android:id="@+id/btn_main_startGazeCaptureThread"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/colorAccent"
-            android:text="thread" />
-
-        <Button
-            android:id="@+id/btn_main_stimulateTouch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/colorAccent"
-            android:text="touch" />
-    </LinearLayout>
-
-
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

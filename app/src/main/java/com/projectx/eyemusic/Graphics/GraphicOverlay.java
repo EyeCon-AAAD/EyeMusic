@@ -1,4 +1,4 @@
-package com.projectx.eyemusic.graphics;
+package com.projectx.eyemusic.Graphics;
 
 import android.content.Context;
 import android.graphics.Canvas;
