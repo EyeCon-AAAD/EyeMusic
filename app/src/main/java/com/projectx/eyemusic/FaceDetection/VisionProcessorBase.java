@@ -325,6 +325,9 @@ public abstract class VisionProcessorBase<T> implements VisionImageProcessor {
 
   protected abstract void onFailure(@NonNull Exception e);
 
+
+  /*
+  * this function will send the raw feature to the Feature Extraction part*/
   protected void sendData(Bitmap originalCameraImage, List<Face> faces){
       try{
           if (faces.isEmpty()){

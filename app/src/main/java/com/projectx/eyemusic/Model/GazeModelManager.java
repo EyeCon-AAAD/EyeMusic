@@ -32,7 +32,7 @@ public class GazeModelManager {
         return new GazePoint(x, y);
     }
 
-    // TODO: complete
+
     public static GazePoint predictCalibrated(Feature1 feature){
         GazePoint originalPredict = predictOriginal(feature);
         if (isCalibratedAtAll)
@@ -43,7 +43,6 @@ public class GazeModelManager {
         }
     }
 
-    // TODO: complete
     public static void updateCalibratedModel(List<Feature1> features){
         List <GazePoint> predictions = new ArrayList<GazePoint>();
         List <GazePoint> coordinates = new ArrayList<GazePoint>();
