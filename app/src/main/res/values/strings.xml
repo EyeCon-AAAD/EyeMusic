@@ -44,4 +44,6 @@
     <string name="pref_title_camerax_front_camera_target_resolution">CameraX front camera target resolution</string>
     <string name="pref_title_camera_live_viewport">Enable live viewport</string>
     <string name="pref_summary_camera_live_viewport">Do not block camera preview drawing on detection</string>
+    <!-- Gaze prediction Model name in Firebase -->
+    <string name="GazeModelName">Gaze-Predictor</string>
 </resources>

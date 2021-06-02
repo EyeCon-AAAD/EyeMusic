@@ -74,6 +74,7 @@ import com.projectx.eyemusic.Fragments.PlaylistFragment;
 import com.projectx.eyemusic.Graphics.DotGraphic;
 import com.projectx.eyemusic.Graphics.GraphicOverlay;
 import com.projectx.eyemusic.Model.GazeModelManager;
+import com.projectx.eyemusic.Model.OriginalModel;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
@@ -148,6 +149,9 @@ public class MainActivity extends AppCompatActivity {
     private CalibrationRunnable calibrationRunnable;
     private Thread calibrationThread;
     private boolean isCalibration;
+
+    // Original Model
+    private OriginalModel gazePredictionModel = null;
 
     Button btn_main_back, btn_main_reconnect_spotify;
 
@@ -282,6 +286,11 @@ public class MainActivity extends AppCompatActivity {
             //change the preview opacity
             //previewView.setVisibility(View.INVISIBLE);
             //graphicOverlayFace.setAlpha(0.4f);
+
+
+//            Testing predict function with loaded model -> no functionality yet
+//            gazePredictionModel = OriginalModel.getInstance();
+//            gazePredictionModel.Predict(null);
 
         });
 
@@ -539,6 +548,11 @@ public class MainActivity extends AppCompatActivity {
         if (preferences.getBoolean("firstTime", true)) {
             // Do authentication once
             authentication.authenticate(MainActivity.this, SPOTIFY_AUTH_CODE_REQUEST_CODE);
+
+            // Do initial download of the model.
+            // TODO: initialization in it's own activity later on
+            gazePredictionModel = OriginalModel.getInstance();
+
             // set first time to false
             preferences.edit().putBoolean("firstTime", false).apply();
             return true;

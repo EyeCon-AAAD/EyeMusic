@@ -23,6 +23,23 @@ public class Feature1 extends RawFeature {
         super(b, face);
         faceBoundingBox = face.getBoundingBox();
         leftEyeLandmark = face.getLandmark(FaceLandmark.LEFT_EYE);
-        rightEyeLandmark = face.getLandmark(FaceLandmark.RIGHT_EAR);
+        rightEyeLandmark = face.getLandmark(FaceLandmark.RIGHT_EYE);
+    }
+
+    public Bitmap getFaceImage() {
+        return faceImage;
+    }
+
+    public Bitmap getFaceGrid() {
+        return faceGrid;
+    }
+
+    public Bitmap getEyeLeftImage() {
+        return eyeLeftImage;
+    }
+
+    public Bitmap getEyeRightImage() {
+        return eyeRightImage;
     }
 }
+
