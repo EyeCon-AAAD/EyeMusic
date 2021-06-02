@@ -2,13 +2,11 @@
  * Author: David T. Auna */
 package com.projectx.eyemusic.Model;
 
-import android.graphics.Bitmap;
-import android.graphics.Color;
+import android.content.res.Resources;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.camera.core.impl.CaptureProcessor;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -20,24 +18,9 @@ import com.projectx.eyemusic.App;
 import com.projectx.eyemusic.Features.Feature1;
 import com.projectx.eyemusic.R;
 
-import org.tensorflow.lite.DataType;
 import org.tensorflow.lite.Interpreter;
-import org.tensorflow.lite.Tensor;
-import org.tensorflow.lite.support.common.ops.NormalizeOp;
-import org.tensorflow.lite.support.image.ImageProcessor;
-import org.tensorflow.lite.support.image.TensorImage;
-import org.tensorflow.lite.support.image.ops.ResizeOp;
-import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
 
-import java.io.DataInputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-import java.util.HashMap;
-import java.util.Map;
 
 public class OriginalModel {
 
@@ -54,54 +37,23 @@ public class OriginalModel {
         this.isModelDownloaded = false;
 
         // can get model in constructor for now
-        // TODO: Add creation of Original Model Object and Model download when the
-        //  application launches the first time
         getModel();
     }
 
     public static OriginalModel getInstance(){
         if(gazePredictionModel == null)
             gazePredictionModel = new OriginalModel();
+
         return gazePredictionModel;
     }
 
-    public GazePoint Predict(Feature1 feature) throws IOException {
+    // TODO implement inference with multiple inputs
+    public GazePoint Predict(Feature1 feature){
         if(isModelDownloaded()){
             // DO prediction
-            // create byte buffers from bitmap image while pre-processing them
-
-            ByteBuffer eyeLeft = processBitmap(feature.getLeftEyeImage(), "left_eye");
-            ByteBuffer eyeRight = processBitmap(feature.getRightEyeImage(), "right_eye");
-            ByteBuffer face = processBitmap(feature.getFaceImage(), "face");
-            ByteBuffer faceMask = faceGridToByteBuffer(feature.getFaceGrid());
-
-            // create container for prediction result
-            TensorBuffer coordinateBuffer = TensorBuffer.createFixedSize(new int[]{1, 2},
-                    DataType.FLOAT32);
-
-            // order of inputs matters
-            Object[] inputs = new Object[]{eyeLeft,
-                    eyeRight,
-                    face,
-                    faceMask};
-            // outputs
-            Map<Integer, Object> output = new HashMap<>();
-            output.put(0, coordinateBuffer.getBuffer());
-
-            // infer
-            try{
-                interpreter.runForMultipleInputsOutputs(inputs, output);
-                // need to test inference
-                ByteBuffer out = coordinateBuffer.getBuffer();
-                out.rewind();
-                float x_coordinate = out.get(0);
-                float y_coordinate = out.get(1);
-                Log.d(TAG, String.format("Coordinates (x, y) : (%1.4f, %1.4f)", x_coordinate, y_coordinate));
-
-                return new GazePoint(x_coordinate, y_coordinate);
-            }catch (IllegalArgumentException e){
-                e.printStackTrace();
-            }
+            Toast.makeText(App.getContext(), "Model downloaded",
+                    Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "File: " + modelFile.getAbsolutePath());
             return null;
         }
         return null;
@@ -121,6 +73,8 @@ public class OriginalModel {
                         // The CustomModel object contains the local path of the model file,
                         // which you can use to instantiate a TensorFlow Lite interpreter.
                         Log.d(TAG, "Model downloaded!");
+                        Toast.makeText(App.getContext(), "Model downloaded",
+                                Toast.LENGTH_SHORT).show();
 
                         setModelDownloaded(true);
                         setModelFile(customModel.getFile());
@@ -148,73 +102,7 @@ public class OriginalModel {
         return isModelDownloaded;
     }
 
-    private void setModelDownloaded(Boolean modelDownloaded) {
+    public void setModelDownloaded(Boolean modelDownloaded) {
         isModelDownloaded = modelDownloaded;
-    }
-
-    // need to explicitly create ByteBuffer for face mask to match input shape for model
-    // used ALPHA_8 for gray-scale
-    private ByteBuffer faceGridToByteBuffer(int[][] faceGrid){
-        Bitmap bitmap = Bitmap.createBitmap(25, 25, Bitmap.Config.ALPHA_8);
-        ByteBuffer faceMaskInput = ByteBuffer.allocateDirect(25 * 25 * 4).order(ByteOrder.nativeOrder());
-        int c = 0;
-        for (int y = 0; y < 25; y++) {
-            for (int x = 0; x < 25; x++) {
-                bitmap.setPixel(x, y, Color.alpha(faceGrid[x][y]));
-                int px = bitmap.getPixel(x, y);
-                faceMaskInput.putFloat(px);
-            }
-        }
-        return faceMaskInput;
-    }
-
-    private ByteBuffer processBitmap(Bitmap image, String type) throws IOException {
-        // Bitmap should be size 64 * 64 * 3 = 12288 * 4 bytes(float32)
-        // read raw binary file containing means used during training
-        InputStream is = null;
-        switch (type){
-            case "left_eye":
-                is = App.getContext().getResources().openRawResource(R.raw.mean_eye_left);
-                break;
-            case "right_eye":
-                is = App.getContext().getResources().openRawResource(R.raw.mean_eye_right);
-                break;
-            case "face":
-                is = App.getContext().getResources().openRawResource(R.raw.mean_face);
-                break;
-            default:
-                break;
-        }
-        if(is == null){
-            throw new NullPointerException("InputStream for raw file is null");
-        }
-        DataInputStream meanInputStream = new DataInputStream(is);
-        ByteBuffer inputImage = ByteBuffer.allocateDirect(64 * 64 * 3 * 4).order(ByteOrder.nativeOrder());
-        for(int y = 0; y < 64; y++){
-            for (int x = 0; x < 64; x++) {
-                int px = image.getPixel(x, y);
-
-                // get channel values from the pixel value
-                int r = Color.red(px);
-                int g = Color.green(px);
-                int b = Color.blue(px);
-
-                // read from data input stream
-                float r_mean = meanInputStream.readFloat();
-                float g_mean = meanInputStream.readFloat();
-                float b_mean = meanInputStream.readFloat();
-
-                // pre-process
-                float rf = (r / 255.0f) - r_mean;
-                float gf = (g / 255.0f) - g_mean;
-                float bf = (b / 255.0f) - b_mean;
-
-                // add to byte buffer
-                inputImage.putFloat(rf);
-                inputImage.putFloat(gf);
-                inputImage.putFloat(bf);
-            }
-        }
-        return inputImage;
     }
 }
