@@ -155,7 +155,7 @@ public class OriginalModel {
         return isModelDownloaded;
     }
 
-    private void setModelDownloaded(Boolean modelDownloaded) {
+    public void setModelDownloaded(Boolean modelDownloaded) {
         isModelDownloaded = modelDownloaded;
     }
 
