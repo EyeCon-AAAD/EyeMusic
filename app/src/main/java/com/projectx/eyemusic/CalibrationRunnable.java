@@ -63,12 +63,11 @@ public class CalibrationRunnable implements Runnable {
 
             //capturing the feature
             while (newFeatureCaptured){ //goes through here when its true meaning the feature is used so wants for feature
-                Log.d("Calibration", "run: the new feature has not been come yet (in the while loop)" );
+                Log.d("Calibration", "run: the new feature has not been come yet" );
             }
             while(newFeature == null){
-                Log.d("Calibration", "run: the new feature is null (in the while loop)" );
+                Log.d("Calibration", "run: the new feature is null" );
             }
-
             capturedFeature = newFeature;
             setNewFeatureCaptured(true);
 
@@ -81,6 +80,7 @@ public class CalibrationRunnable implements Runnable {
 
         //finishing the calibration
         graphicOverlayCalibration.clear();
+        //Toast.makeText(activity.getApplicationContext(), "Wait for the model to be trained", Toast.LENGTH_LONG);
 
         //updating the model
         //GazeModelManager.updateCalibratedModel(features);

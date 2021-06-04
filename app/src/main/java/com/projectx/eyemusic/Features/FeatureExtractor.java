@@ -1,7 +1,5 @@
 package com.projectx.eyemusic.Features;
 
-import android.util.Log;
-
 import com.projectx.eyemusic.CalibrationRunnable;
 import com.projectx.eyemusic.MainActivity;
 import com.projectx.eyemusic.PredictionThread;
@@ -13,32 +11,24 @@ import com.projectx.eyemusic.PredictionThread;
 * when the calibration button is pressed.
 * */
 public class FeatureExtractor {
-    private static final String TAG = "FeatureExtractor";
+
     private static boolean calibrationMode = false;
 
     public static void getData(RawFeature rawFeature){
          Feature1 newFeature = new Feature1(rawFeature.getOriginal(), rawFeature.getFace());
 
-         // TODO: complete show the error message that the face is not in the image so fix it
-         if (!newFeature.isFaceInImage()){
-             return;
-         }
-
          if (calibrationMode){
              MainActivity.getGraphicOverlayGazeLocation().clear();
              CalibrationRunnable.setNewFeature(newFeature);
          }else{
-             Log.i(TAG, "getData: data sent to predict");
              PredictionThread.getHandler().post(new PredictionThread.GazeRunnable(newFeature));
-             /*
-             //wanted to make teh click slower
              if(rawFeature.getSmileProb() > 0.8){
                  try {
                      Thread.sleep(2000);
                  } catch (InterruptedException e) {
                      e.printStackTrace();
                  }
-             }*/
+             }
          }
     }
 
