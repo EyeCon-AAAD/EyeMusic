@@ -1,12 +1,10 @@
 package com.projectx.eyemusic.Model;
 
 import android.util.Log;
-
 import com.google.android.gms.common.Feature;
 import com.projectx.eyemusic.Features.Feature1;
 import com.projectx.eyemusic.Features.RawFeature;
 import com.projectx.eyemusic.Utilities;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;

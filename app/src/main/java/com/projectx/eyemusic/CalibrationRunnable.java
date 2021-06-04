@@ -56,24 +56,25 @@ public class CalibrationRunnable implements Runnable {
 
             //giving time to the user to look at the dot
             try {
-                Thread.sleep(0);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
             //capturing the feature
-            while (newFeatureCaptured){
+            while (newFeatureCaptured){ //goes through here when its true meaning the feature is used so wants for feature
                 Log.d("Calibration", "run: the new feature has not been come yet" );
             }
             while(newFeature == null){
                 Log.d("Calibration", "run: the new feature is null" );
             }
             capturedFeature = newFeature;
-            newFeatureCaptured = true;
+            setNewFeatureCaptured(true);
 
             //TODO: save the rawData somewhere
             capturedFeature.setCoordinate(point);
             features.add(capturedFeature);
-            Log.d("Calibration", "+++++run: the new feature is captured, run:" + i +"/" + size_points +" feature:"+ capturedFeature);
+            Log.d("Calibration", "+++++run: the new feature is added, run:" + i +"/" + size_points +" feature:"+ capturedFeature);
             i++;
         }
 
@@ -117,9 +118,13 @@ public class CalibrationRunnable implements Runnable {
 
     public static boolean setNewFeature(Feature1 f){
         newFeature = f;
-        newFeatureCaptured = false;
+        setNewFeatureCaptured(false);
         Log.d("Calibration", "-----the new feature has arrived: ");
         return true;
+    }
+
+    private static synchronized void setNewFeatureCaptured(boolean value){
+        newFeatureCaptured = value;
     }
 
     public void printPoints(){
