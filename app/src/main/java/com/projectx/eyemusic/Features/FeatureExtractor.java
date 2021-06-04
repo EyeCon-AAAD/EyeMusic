@@ -22,6 +22,13 @@ public class FeatureExtractor {
              CalibrationRunnable.setNewFeature(newFeature);
          }else{
              PredictionThread.getHandler().post(new PredictionThread.GazeRunnable(newFeature));
+             if(rawFeature.getSmileProb() > 0.8){
+                 try {
+                     Thread.sleep(2000);
+                 } catch (InterruptedException e) {
+                     e.printStackTrace();
+                 }
+             }
          }
     }
 
