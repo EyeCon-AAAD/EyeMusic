@@ -69,7 +69,6 @@ public class CalibrationRunnable implements Runnable {
             while(newFeature == null){
                 Log.d(TAG, "CalibrationRun: the new feature is null (in the while loop)" );
             }
-
             capturedFeature = newFeature;
             setNewFeatureCaptured(true);
 
@@ -82,6 +81,7 @@ public class CalibrationRunnable implements Runnable {
 
         //finishing the calibration
         graphicOverlayCalibration.clear();
+        //Toast.makeText(activity.getApplicationContext(), "Wait for the model to be trained", Toast.LENGTH_LONG);
 
         try{
             //updating the model
