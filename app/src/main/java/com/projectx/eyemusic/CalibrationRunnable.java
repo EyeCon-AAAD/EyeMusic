@@ -11,7 +11,6 @@ import com.projectx.eyemusic.Features.FeatureExtractor;
 import com.projectx.eyemusic.Features.RawFeature;
 import com.projectx.eyemusic.Graphics.DotGraphic;
 import com.projectx.eyemusic.Graphics.GraphicOverlay;
-import com.projectx.eyemusic.Model.CalibrationError;
 import com.projectx.eyemusic.Model.GazeModelManager;
 import com.projectx.eyemusic.Model.GazePoint;
 
@@ -64,45 +63,35 @@ public class CalibrationRunnable implements Runnable {
 
             //capturing the feature
             while (newFeatureCaptured){ //goes through here when its true meaning the feature is used so wants for feature
-                Log.d(TAG, "CalibrationRun: the new feature has not been come yet (in the while loop)" );
+                Log.d("Calibration", "run: the new feature has not been come yet" );
             }
             while(newFeature == null){
-                Log.d(TAG, "CalibrationRun: the new feature is null (in the while loop)" );
+                Log.d("Calibration", "run: the new feature is null" );
             }
-
             capturedFeature = newFeature;
             setNewFeatureCaptured(true);
 
             //TODO: save the rawData somewhere
             capturedFeature.setCoordinate(point);
             features.add(capturedFeature);
-            Log.d(TAG, "+++++CalibrationRun: the new feature is added, run:" + i +"/" + size_points +" feature:"+ capturedFeature);
+            Log.d("Calibration", "+++++run: the new feature is added, run:" + i +"/" + size_points +" feature:"+ capturedFeature);
             i++;
         }
 
         //finishing the calibration
         graphicOverlayCalibration.clear();
+        //Toast.makeText(activity.getApplicationContext(), "Wait for the model to be trained", Toast.LENGTH_LONG);
 
-        try{
-            //updating the model
-            GazeModelManager.updateCalibratedModel(features);
-            //Show the training error
-            CalibrationError calibError = GazeModelManager.getCalibrationTrainingError();
-            Log.d(TAG, "CalibrationRun: calibration training error (X Y XY): "
-                    + calibError.getX_error() + " " + calibError.getY_error() + " " + calibError.getXY_error());
-            Log.d(TAG, "CalibrationRun: the model is updated");
+        //updating the model
+        //GazeModelManager.updateCalibratedModel(features);
 
-        }catch (Exception e){
-            Log.e(TAG, "CalibrationRun: ", e);
-        }
-
-
+        //Show the training error
 
         //make other runtime error
 
         FeatureExtractor.setCalibrationMode(false);
         activity.calibrationFinished(features);
-        Log.d(TAG, "CalibrationRun: finished");
+        Log.d("Calibration", "run: finished");
     }
 
     private static List<GazePoint> produceDots(int no_x, int no_y){
