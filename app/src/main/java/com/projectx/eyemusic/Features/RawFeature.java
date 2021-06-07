@@ -19,6 +19,9 @@ public class RawFeature {
         this.smileProb = face.getSmilingProbability();
 
     }
+    public RawFeature(){
+
+    }
     public String toString() {
         return "x:" + coordinate.getX() + " , " + "y:" + coordinate.getY();
     }

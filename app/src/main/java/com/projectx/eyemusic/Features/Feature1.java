@@ -1,11 +1,20 @@
 package com.projectx.eyemusic.Features;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
 import android.graphics.Rect;
+
+import androidx.annotation.ColorInt;
 
 import com.google.mlkit.vision.face.Face;
 import com.google.mlkit.vision.face.FaceLandmark;
 import com.projectx.eyemusic.R;
+
+import java.util.Random;
 
 
 // TODO: complete the cropping
@@ -26,20 +35,42 @@ public class Feature1 extends RawFeature {
         rightEyeLandmark = face.getLandmark(FaceLandmark.RIGHT_EYE);
     }
 
+    public Feature1(){
+
+    }
+
+
+    // test for now with solid color bitmaps
     public Bitmap getFaceImage() {
-        return faceImage;
+        return createTestBitmap(64, 64, null);
     }
 
     public Bitmap getFaceGrid() {
-        return faceGrid;
+        return null;
     }
 
     public Bitmap getEyeLeftImage() {
-        return eyeLeftImage;
+        return createTestBitmap(64, 64, null);
     }
 
     public Bitmap getEyeRightImage() {
-        return eyeRightImage;
+        return createTestBitmap(64, 64,null);
+    }
+
+    // create bitmaps of solid color for testing inference
+    private Bitmap createTestBitmap(int w, int h, @ColorInt Integer color){
+        Bitmap bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+
+        if (color == null) {
+            int[] colors = new int[] { Color.BLUE, Color.GREEN, Color.RED,
+                    Color.YELLOW, Color.WHITE };
+            Random rgen = new Random();
+            color = colors[rgen.nextInt(colors.length - 1)];
+        }
+
+        canvas.drawColor(color);
+        return bitmap;
     }
 }
 
