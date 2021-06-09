@@ -7,7 +7,6 @@ import android.util.Log;
 
 import com.google.mlkit.vision.face.Face;
 import com.google.mlkit.vision.face.FaceLandmark;
-import com.projectx.eyemusic.R;
 
 import java.util.Locale;
 
@@ -24,7 +23,7 @@ public class Feature1 extends RawFeature {
     private Bitmap leftEyeImage;
     private Bitmap rightEyeImage;
 
-    private boolean isFaceInImage;
+    private boolean faceInImage;
 
     public Feature1(Bitmap b, Face face) {
         super(b, face);
@@ -37,17 +36,17 @@ public class Feature1 extends RawFeature {
         Log.i(TAG, "Feature1: rightEyeLandmark " + String.format(Locale.US, "x: %f , y: %f", rightEyeLandmark.getPosition().x, rightEyeLandmark.getPosition().y));
         Log.i(TAG, "Feature1: original picture" + String.format(Locale.US, "width: %d , height: %d", original.getWidth(), original.getHeight()));
         //initializing
-        isFaceInImage = true;
+        faceInImage = true;
 
         //checking of the bounding box is inside the picture
         if (faceBoundingBox.left < 0  ||  faceBoundingBox.right > original.getWidth()){
-            isFaceInImage = false;
+            faceInImage = false;
             Log.e(TAG, "Feature1: the faceBoundingBox is out of bounds on width");
             return;
         }
         if ( faceBoundingBox.top < 0  || faceBoundingBox.bottom > original.getHeight()){
             Log.e(TAG, "Feature1: the faceBoundingBox is out of bounds on height");
-            isFaceInImage = false;
+            faceInImage = false;
             return;
         }
 
@@ -68,12 +67,12 @@ public class Feature1 extends RawFeature {
 
         //checking of the bounding box is inside the picture
         if (faceBoundingBoxSquared.left < 0  || faceBoundingBoxSquared.right > original.getWidth()){
-            isFaceInImage = false;
+            faceInImage = false;
             Log.e(TAG, "Feature1: the squared faceBoundingBox is out of bounds on width");
             return;
         }
         if (faceBoundingBoxSquared.top<0 || faceBoundingBoxSquared.bottom > original.getHeight()){
-            isFaceInImage = false;
+            faceInImage = false;
             Log.e(TAG, "Feature1: the squared faceBoundingBox is out of bounds on height");
             return;
         }
@@ -149,26 +148,30 @@ public class Feature1 extends RawFeature {
 
 
     public Bitmap getFaceImage() {
-        if (isFaceInImage)
+        if (faceInImage)
             return faceImage;
         return null;
     }
 
     public Bitmap getLeftEyeImage() {
-        if (isFaceInImage)
+        if (faceInImage)
             return leftEyeImage;
         return null;
     }
 
     public Bitmap getRightEyeImage() {
-        if (isFaceInImage)
+        if (faceInImage)
             return rightEyeImage;
         return null;
     }
 
     public int[][] getFaceGrid() {
-        if (isFaceInImage)
+        if (faceInImage)
             return faceGrid;
         return null;
+    }
+
+    public boolean isFaceInImage() {
+        return faceInImage;
     }
 }
