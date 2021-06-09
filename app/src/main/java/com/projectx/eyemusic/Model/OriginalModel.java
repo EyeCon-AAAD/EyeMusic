@@ -73,9 +73,9 @@ public class OriginalModel {
             ByteBuffer faceMask = getFaceMask();
 
             // load and pre-process images
-            eyeLeftTensor = processAndLoadImage(feature.getEyeLeftImage(), eyeLeftTensor, false);
-            eyeRightTensor = processAndLoadImage(feature.getEyeRightImage(), eyeRightTensor, false);
-            faceTensor = processAndLoadImage(feature.getFaceImage(), faceTensor, false);
+            eyeLeftTensor = processAndLoadImage(feature.getEyeLeftImage(), eyeLeftTensor);
+            eyeRightTensor = processAndLoadImage(feature.getEyeRightImage(), eyeRightTensor);
+            faceTensor = processAndLoadImage(feature.getFaceImage(), faceTensor);
 
 
             // create container for prediction result
@@ -156,26 +156,18 @@ public class OriginalModel {
         isModelDownloaded = modelDownloaded;
     }
 
-    private TensorImage processAndLoadImage(Bitmap image, TensorImage tensorImage, boolean isFaceMask){
+    private TensorImage processAndLoadImage(Bitmap image, TensorImage tensorImage){
         // should be 64x64
         float mean = getMean(image);
         // pre-processing pipeline
         ImageProcessor imageProcessor;
-        if(!isFaceMask) {
-            imageProcessor = new ImageProcessor.Builder()
-                    // Resize with Bilinear method
-                    .add(new ResizeOp(64, 64, ResizeOp.ResizeMethod.BILINEAR))
-                    // not sure if this normalizes to [0.0 - 1.0]
-                    .add(new NormalizeOp(mean, 127.0f))
-                    .build();
-        }else{
-            imageProcessor = new ImageProcessor.Builder()
-                    // Resize with Bilinear method
-                    .add(new ResizeOp(625, 1, ResizeOp.ResizeMethod.BILINEAR))
-                    // not sure if this normalizes to [0.0 - 1.0]
-                    .add(new NormalizeOp(mean, 127.0f))
-                    .build();
-        }
+        imageProcessor = new ImageProcessor.Builder()
+                // Resize with Bilinear method
+                .add(new ResizeOp(64, 64, ResizeOp.ResizeMethod.BILINEAR))
+                // not sure if this normalizes to [0.0 - 1.0]
+                .add(new NormalizeOp(mean, 127.0f))
+                .build();
+
         // load bitmap image to tensor
         tensorImage.load(image);
 
@@ -205,7 +197,7 @@ public class OriginalModel {
     }
 
     // need to explicitly create ByteBuffer for face mask to match input shape for model
-    // used ALPHA_8
+    // used ALPHA_8 for gray-scale
     private ByteBuffer getFaceMask(){
         Bitmap bitmap = Bitmap.createBitmap(25, 25, Bitmap.Config.ALPHA_8);
         ByteBuffer faceMaskInput = ByteBuffer.allocateDirect(25 * 25 * 4).order(ByteOrder.nativeOrder());
