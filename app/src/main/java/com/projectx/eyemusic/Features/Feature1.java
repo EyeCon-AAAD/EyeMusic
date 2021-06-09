@@ -29,7 +29,7 @@ public class Feature1 extends RawFeature {
         super(b, face);
         faceBoundingBox = face.getBoundingBox();
         leftEyeLandmark = face.getLandmark(FaceLandmark.LEFT_EYE);
-        rightEyeLandmark = face.getLandmark(FaceLandmark.RIGHT_EAR);
+        rightEyeLandmark = face.getLandmark(FaceLandmark.RIGHT_EYE);
 
         Log.i(TAG, "Feature1: face box (left top right bottom)" + faceBoundingBox.flattenToString());
         Log.i(TAG, "Feature1: leftEyeLandmark " + String.format(Locale.US, "x: %f , y: %f", leftEyeLandmark.getPosition().x, leftEyeLandmark.getPosition().y));
@@ -94,8 +94,8 @@ public class Feature1 extends RawFeature {
         int rightEyeLeft = rightEyeCenterX-rightEyeWidth/2;
         int rightEyeTop = rightEyeCenterY-rightEyeHeight/2;
 
-        Log.i(TAG, "createBitmaps: right eye (left top width height)" + rightEyeLeft + " " + rightEyeTop + " " +  rightEyeWidth + " " +  rightEyeHeight);
-        rightEyeImage = Bitmap.createBitmap(original, rightEyeLeft, rightEyeTop, rightEyeWidth, rightEyeHeight);
+        Log.i(TAG, "createBitmaps: left eye (left top width height)" + rightEyeLeft + " " + rightEyeTop + " " +  rightEyeWidth + " " +  rightEyeHeight);
+        leftEyeImage = Bitmap.createBitmap(original, rightEyeLeft, rightEyeTop, rightEyeWidth, rightEyeHeight);
 
         //TODO: right left may get confused in the model
         //left eye
@@ -107,8 +107,9 @@ public class Feature1 extends RawFeature {
         int leftEyeLeft = leftEyeCenterX-leftEyeWidth/2;
         int leftEyeTop = leftEyeCenterY-leftEyeHeight/2;
 
-        Log.i(TAG, "createBitmaps: left eye (left top width height)" + leftEyeLeft + " " + leftEyeTop + " " +  leftEyeWidth + " " +  leftEyeHeight);
-        leftEyeImage = Bitmap.createBitmap(original, leftEyeLeft, leftEyeTop, leftEyeWidth, leftEyeHeight);
+        Log.i(TAG, "createBitmaps: right eye (left top width height)" + leftEyeLeft + " " + leftEyeTop + " " +  leftEyeWidth + " " +  leftEyeHeight);
+
+        rightEyeImage = Bitmap.createBitmap(original, leftEyeLeft, leftEyeTop, leftEyeWidth, leftEyeHeight);
 
 
         // the grid
@@ -122,11 +123,13 @@ public class Feature1 extends RawFeature {
 
         for (int i = grid_left; i <= grid_right; i++ ){
             for (int j = grid_top; j <= grid_bottom; j++){
+                if(i == 25) i =24;
+                if(j == 25) j =24;
                 faceGrid[i][j] = 1;
             }
         }
 
-        /*
+
         int i;
         for ( i = 0; i < 25; i++ ){
             StringBuilder strbul = new StringBuilder();
@@ -142,7 +145,7 @@ public class Feature1 extends RawFeature {
             Log.i(TAG, "createBitmaps: " + i);
         }
         Log.i(TAG, "createBitmaps: " + i);
-        */
+
 
     }
 
