@@ -273,9 +273,11 @@ public class MainActivity extends AppCompatActivity {
             FeatureExtractor.setCalibrationMode(isCalibration);
             calibrationThread  = new Thread(calibrationRunnable);
             calibrationThread.start();
+
             // set the calibration fragment
             getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment_container,
                     new CalibrationFragment()).commit();
+
             //change the buttons
             //btn_calibration.setEnabled(false);
             btn_calibration.setVisibility(View.INVISIBLE);
