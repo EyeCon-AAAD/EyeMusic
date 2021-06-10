@@ -41,11 +41,11 @@ public class Feature1 extends RawFeature {
         //checking of the bounding box is inside the picture
         if (faceBoundingBox.left < 0  ||  faceBoundingBox.right > original.getWidth()){
             faceInImage = false;
-            Log.e(TAG, "Feature1: the faceBoundingBox is out of bounds on width");
+            Log.i(TAG, "Feature1: the faceBoundingBox is out of bounds on width");
             return;
         }
         if ( faceBoundingBox.top < 0  || faceBoundingBox.bottom > original.getHeight()){
-            Log.e(TAG, "Feature1: the faceBoundingBox is out of bounds on height");
+            Log.i(TAG, "Feature1: the faceBoundingBox is out of bounds on height");
             faceInImage = false;
             return;
         }
@@ -68,12 +68,12 @@ public class Feature1 extends RawFeature {
         //checking of the bounding box is inside the picture
         if (faceBoundingBoxSquared.left < 0  || faceBoundingBoxSquared.right > original.getWidth()){
             faceInImage = false;
-            Log.e(TAG, "Feature1: the squared faceBoundingBox is out of bounds on width");
+            Log.i(TAG, "Feature1: the squared faceBoundingBox is out of bounds on width");
             return;
         }
         if (faceBoundingBoxSquared.top<0 || faceBoundingBoxSquared.bottom > original.getHeight()){
             faceInImage = false;
-            Log.e(TAG, "Feature1: the squared faceBoundingBox is out of bounds on height");
+            Log.i(TAG, "Feature1: the squared faceBoundingBox is out of bounds on height");
             return;
         }
 
@@ -93,11 +93,22 @@ public class Feature1 extends RawFeature {
         int rightEyeHeight =(int) (faceBoundingBoxSquared.height()/face2EyeRatio);
         int rightEyeLeft = rightEyeCenterX-rightEyeWidth/2;
         int rightEyeTop = rightEyeCenterY-rightEyeHeight/2;
+        int rightEyeRight = rightEyeLeft + rightEyeWidth;
+        int rightEyeBottom = rightEyeTop + rightEyeHeight;
 
-        Log.i(TAG, "createBitmaps: left eye (left top width height)" + rightEyeLeft + " " + rightEyeTop + " " +  rightEyeWidth + " " +  rightEyeHeight);
+        Log.i(TAG, "createBitmaps: right eye (left top width height)" + rightEyeLeft + " " + rightEyeTop + " " +  rightEyeWidth + " " +  rightEyeHeight);
+        if (rightEyeLeft < 0 || rightEyeRight >= original.getWidth()){
+            faceInImage = false;
+            Log.i(TAG, "Feature1: the right eye is out of bounds on width");
+            return;
+        }
+        if (rightEyeTop < 0 || rightEyeBottom >= original.getHeight()){
+            faceInImage = false;
+            Log.i(TAG, "Feature1: the right eye is out of bounds on heights");
+            return;
+        }
         leftEyeImage = Bitmap.createBitmap(original, rightEyeLeft, rightEyeTop, rightEyeWidth, rightEyeHeight);
 
-        //TODO: right left may get confused in the model
         //left eye
         PointF leftEyeCenter = leftEyeLandmark.getPosition();
         int leftEyeCenterX = ((int) leftEyeCenter.x);
@@ -106,9 +117,20 @@ public class Feature1 extends RawFeature {
         int leftEyeHeight = (int)(faceBoundingBoxSquared.height()/face2EyeRatio);
         int leftEyeLeft = leftEyeCenterX-leftEyeWidth/2;
         int leftEyeTop = leftEyeCenterY-leftEyeHeight/2;
+        int leftEyeRight = leftEyeLeft + leftEyeWidth;
+        int leftEyeBottom = leftEyeTop + leftEyeHeight;
 
-        Log.i(TAG, "createBitmaps: right eye (left top width height)" + leftEyeLeft + " " + leftEyeTop + " " +  leftEyeWidth + " " +  leftEyeHeight);
-
+        Log.i(TAG, "createBitmaps: left eye (left top width height)" + leftEyeLeft + " " + leftEyeTop + " " +  leftEyeWidth + " " +  leftEyeHeight);
+        if (leftEyeLeft < 0 || leftEyeRight >= original.getWidth()){
+            faceInImage = false;
+            Log.i(TAG, "Feature1: the left eye is out of bounds on width");
+            return;
+        }
+        if (leftEyeTop < 0 || leftEyeBottom >= original.getHeight()){
+            faceInImage = false;
+            Log.i(TAG, "Feature1: the left eye is out of bounds on heights");
+            return;
+        }
         rightEyeImage = Bitmap.createBitmap(original, leftEyeLeft, leftEyeTop, leftEyeWidth, leftEyeHeight);
 
 
@@ -121,32 +143,37 @@ public class Feature1 extends RawFeature {
         int grid_top = (int) (faceBoundingBoxSquared.top / height_step);
         int grid_bottom = (int) (faceBoundingBoxSquared.bottom / height_step);
 
-        for (int i = grid_left; i <= grid_right; i++ ){
-            for (int j = grid_top; j <= grid_bottom; j++){
-                if(i == 25) i =24;
-                if(j == 25) j =24;
+        Log.i(TAG, "createBitmaps: grid left right top bottom " + grid_left + " " +grid_right + " " + grid_top + " " + grid_bottom);
+        if(grid_bottom == 25) grid_bottom =24;
+        if(grid_right == 25) grid_right = 24;
+
+        for (int i = grid_top; i <= grid_bottom; i++ ){
+            for (int j = grid_left; j <= grid_right; j++){
                 faceGrid[i][j] = 1;
             }
         }
+        logFaceGrid();
+    }
 
-
+    private void logFaceGrid(){
         int i;
         for ( i = 0; i < 25; i++ ){
             StringBuilder strbul = new StringBuilder();
             for(int a : faceGrid[i])
             {
-                strbul.append(a);
+                if (a == 1)
+                    strbul.append('#');
+                else
+                    strbul.append('.');
                 //for adding comma between elements
                 strbul.append(",");
             }
 
             String str=strbul.toString();
-            Log.i(TAG, "createBitmaps: " + str);
+            Log.i(TAG, "logFaceGrid: " + str);
             Log.i(TAG, "createBitmaps: " + i);
         }
-        Log.i(TAG, "createBitmaps: " + i);
-
-
+        Log.i(TAG, "logFaceGrid: ---------------------------------------------------------------");
     }
 
 
