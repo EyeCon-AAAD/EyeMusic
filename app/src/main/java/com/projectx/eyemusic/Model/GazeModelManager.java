@@ -75,4 +75,5 @@ public class GazeModelManager {
             return calibratedModel.getTrainingError();
         else return null;
     }
+
 }
