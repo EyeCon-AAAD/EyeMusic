@@ -145,7 +145,7 @@ public class MatrixUtils {
         Float det = determinant(A, N, N);
         if (det == 0)
         {
-            System.out.print("Singular matrix, can't find its inverse");
+            Log.d(TAG, "inverseCal: Singular matrix, can't find its inverse");
             return false;
         }
 

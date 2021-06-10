@@ -33,6 +33,7 @@ public class LinearRegressionModel {
 
         if (mode == TRAIN_NORM_EQUATION){
             boolean success = trainNormEquation();
+            Log.d(TAG, "LinearRegressionModel: " + success);
             if (!success){
                 trained = trainGradientDescent();
             }
@@ -80,17 +81,19 @@ public class LinearRegressionModel {
                 feature1,
                 feature2
         };
-
+        showMatrix(XT, FEATURE_SIZE, SAMPLE_SIZE, "XT");
         //creating the X
 //        Float[][] X = new Float[SAMPLE_SIZE][FEATURE_SIZE];
 //        MatrixUtils.transpose(XT, X, FEATURE_SIZE, SAMPLE_SIZE);
 
         Float[][] X;
         X = MatrixUtils.transpose(XT, FEATURE_SIZE, SAMPLE_SIZE);
+        showMatrix(X, SAMPLE_SIZE, FEATURE_SIZE, "X");
 
         // creating X*XT
         Float[][] A1;
         A1 = MatrixUtils.multiplyMatrix(FEATURE_SIZE, SAMPLE_SIZE, XT, SAMPLE_SIZE, FEATURE_SIZE, X);
+        showMatrix(A1, FEATURE_SIZE, FEATURE_SIZE, "A1");
 
         //TODO: check the size of the A1 or test the function
 
@@ -98,7 +101,7 @@ public class LinearRegressionModel {
         Float[][] A2;
         A2 = MatrixUtils.inverse(A1, A1.length, A1[0].length);
         if (A2 == null){
-            Log.e(TAG, "trainNormEquation: the inverse does not exits");
+            Log.e(TAG, "trainNormEquation: the inverse is null");
             return false;
         }
 
@@ -149,5 +152,22 @@ public class LinearRegressionModel {
 
     public boolean isTrained() {
         return trained;
+    }
+
+    private void showMatrix(Float[][] A, int rows, int cols, String name){
+
+        for ( int i = 0; i < rows; i++ ){
+            StringBuilder strbul = new StringBuilder();
+            for(Float a : A[i])
+            {
+                strbul.append(a);
+                //for adding comma between elements
+                strbul.append(",");
+            }
+
+            String str=strbul.toString();
+            Log.i("NormalLinearRegression", name + ": " + str);
+            Log.i("nothing", ".");
+        }
     }
 }
