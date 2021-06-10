@@ -83,8 +83,8 @@ public class Feature1 extends RawFeature {
     // all the values are checked before hand so just the cropping
     private void createBitmaps(float face2EyeRatio){
         //the face
-        faceImage = Bitmap.createBitmap(original, faceBoundingBoxSquared.left, faceBoundingBoxSquared.top, faceBoundingBoxSquared.width(), faceBoundingBoxSquared.height());
-
+        Bitmap faceImageOriginal = Bitmap.createBitmap(original, faceBoundingBoxSquared.left, faceBoundingBoxSquared.top, faceBoundingBoxSquared.width(), faceBoundingBoxSquared.height());
+        faceImage = Bitmap.createScaledBitmap(faceImageOriginal, 64, 64, true); //true-> uses bilinear filter
         //right eye
         PointF rightEyeCenter = rightEyeLandmark.getPosition();
         int rightEyeCenterX = ((int) rightEyeCenter.x);
@@ -107,7 +107,8 @@ public class Feature1 extends RawFeature {
             Log.i(TAG, "Feature1: the right eye is out of bounds on heights");
             return;
         }
-        leftEyeImage = Bitmap.createBitmap(original, rightEyeLeft, rightEyeTop, rightEyeWidth, rightEyeHeight);
+        Bitmap leftEyeImageOriginal = Bitmap.createBitmap(original, rightEyeLeft, rightEyeTop, rightEyeWidth, rightEyeHeight);
+        leftEyeImage = Bitmap.createScaledBitmap(leftEyeImageOriginal, 64, 64, true); //true-> uses bilinear filter
 
         //left eye
         PointF leftEyeCenter = leftEyeLandmark.getPosition();
@@ -131,8 +132,8 @@ public class Feature1 extends RawFeature {
             Log.i(TAG, "Feature1: the left eye is out of bounds on heights");
             return;
         }
-        rightEyeImage = Bitmap.createBitmap(original, leftEyeLeft, leftEyeTop, leftEyeWidth, leftEyeHeight);
-
+        Bitmap rightEyeImageOriginal = Bitmap.createBitmap(original, leftEyeLeft, leftEyeTop, leftEyeWidth, leftEyeHeight);
+        rightEyeImage = Bitmap.createScaledBitmap(rightEyeImageOriginal, 64, 64, true); //true-> uses bilinear filter
 
         // the grid
         faceGrid = new int[25][25];
