@@ -11,7 +11,7 @@ import java.util.Random;
 
 public class GazeModelManager {
     private static Object originalModel;
-    private static CalibratedModel calibratedModel = new CalibratedModel();
+    private static CalibratedModel calibratedModel = null;
     private static final String TAG = "GazeModelManager";
     private final static int SCREEN_WIDTH = Utilities.getScreenWidth();
     private final static int SCREEN_HEIGHT = Utilities.getScreenHeight();
@@ -50,9 +50,13 @@ public class GazeModelManager {
         }
 
         calibratedModel = new CalibratedModel(predictions, coordinates);
+        isCalibratedAtAll = true;
+        Log.d(TAG, "updateCalibratedModel: finished");
     }
 
     public static CalibrationError getCalibrationTrainingError(){
-        return calibratedModel.getTrainingError();
+        if (isCalibratedAtAll)
+            return calibratedModel.getTrainingError();
+        else return null;
     }
 }

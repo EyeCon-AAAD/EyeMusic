@@ -35,7 +35,7 @@ public class CalibratedModel {
         y_model = new LinearRegressionModel(x_prediction_array, y_prediction_array, y_array, LinearRegressionModel.TRAIN_NORM_EQUATION);
 
         // predicting the predictions once again to find the error
-        List<GazePoint> calibPredictions = new ArrayList<GazePoint>();;
+        List<GazePoint> calibPredictions = new ArrayList<GazePoint>();
         for (GazePoint prediction: predictions){
             calibPredictions.add(predict(prediction));
         }
