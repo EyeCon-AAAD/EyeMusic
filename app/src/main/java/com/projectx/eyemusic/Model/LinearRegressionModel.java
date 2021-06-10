@@ -16,8 +16,8 @@ public class LinearRegressionModel {
     private  List<Float> Y_array; // result
     private static final int FEATURE_SIZE = 3;
 
-    public static final int TRAIN_NORM_EQUATION = 0;
-    public static final int TRAIN_GRADIENT_DESCENT = 1;
+    public static final Integer TRAIN_NORM_EQUATION = 0;
+    public static final Integer TRAIN_GRADIENT_DESCENT = 1;
 
     private float a2 = 0;
     private float a1 = 0;
@@ -26,7 +26,11 @@ public class LinearRegressionModel {
 
     public LinearRegressionModel(){ };
 
-    public LinearRegressionModel(List<Float> x1_array, List<Float> x2_array, List<Float> y_array, int mode) {
+    public LinearRegressionModel(List<Float> x1_array, List<Float> x2_array, List<Float> y_array, Integer mode) {
+        if (mode == null){
+            mode = TRAIN_NORM_EQUATION;
+        }
+
         X1_array = x1_array;
         X2_array = x2_array;
         Y_array = y_array;
@@ -57,9 +61,17 @@ public class LinearRegressionModel {
 
     private boolean trainNormEquation(){
         // ref: https://www.coursera.org/learn/machine-learning/supplement/bjjZW/normal-equation
+        if(X1_array == null || X2_array == null || Y_array == null){
+            Log.e(TAG, "trainNormEquation:none of the inputs should be null");
+            return false;
+        }
 
         if (X1_array.size() != X2_array.size()){
             Log.e(TAG, "trainNormEquation: the size of the features are not same");
+            return false;
+        }
+        if (X1_array.size() != Y_array.size()){
+            Log.e(TAG, "trainNormEquation: the size of the y is not same as the features.");
             return false;
         }
         int SAMPLE_SIZE = X1_array.size();
@@ -142,10 +154,23 @@ public class LinearRegressionModel {
 
     //TODO: complete
     private boolean trainGradientDescent(){
+        // ref: https://www.coursera.org/learn/machine-learning/supplement/bjjZW/normal-equation
+        if(X1_array == null || X2_array == null || Y_array == null){
+            Log.e(TAG, "trainNormEquation:none of the inputs should be null");
+            return false;
+        }
+
         if (X1_array.size() != X2_array.size()){
             Log.e(TAG, "trainNormEquation: the size of the features are not same");
             return false;
         }
+        if (X1_array.size() != Y_array.size()){
+            Log.e(TAG, "trainNormEquation: the size of the y is not same as the features.");
+            return false;
+        }
+        int SAMPLE_SIZE = X1_array.size();
+
+
         Log.e(TAG, "trainNormEquation: it is not implemented yet");
         return false;
     }
