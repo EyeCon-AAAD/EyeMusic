@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Random;
 
 public class GazeModelManager {
-    private static Object originalModel;
+    private static final OriginalModel gazePredictionModel = OriginalModel.getInstance();;
     private static CalibratedModel calibratedModel = null;
     private static final String TAG = "GazeModelManager";
     private final static int SCREEN_WIDTH = Utilities.getScreenWidth();
@@ -23,11 +23,13 @@ public class GazeModelManager {
         return isCalibratedAtAll;
     }
 
-    // TODO: complete
     public static GazePoint predictOriginal(Feature1 feature){
-        int x = rand.nextInt(SCREEN_WIDTH);
-        int y = rand.nextInt(SCREEN_HEIGHT);
-        return new GazePoint(x, y);
+        try{
+            return gazePredictionModel.Predict(feature);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
 

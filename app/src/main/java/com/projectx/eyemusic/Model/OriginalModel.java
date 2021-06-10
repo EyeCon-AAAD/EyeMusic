@@ -29,7 +29,10 @@ import org.tensorflow.lite.support.image.TensorImage;
 import org.tensorflow.lite.support.image.ops.ResizeOp;
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
 
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -51,41 +54,35 @@ public class OriginalModel {
         this.isModelDownloaded = false;
 
         // can get model in constructor for now
+        // TODO: Add creation of Original Model Object and Model download when the
+        //  application launches the first time
         getModel();
     }
 
     public static OriginalModel getInstance(){
         if(gazePredictionModel == null)
             gazePredictionModel = new OriginalModel();
-
         return gazePredictionModel;
     }
 
-    // TODO implement inference with multiple inputs
-    public GazePoint Predict(Feature1 feature){
+    public GazePoint Predict(Feature1 feature) throws IOException {
         if(isModelDownloaded()){
             // DO prediction
-            // declare tensors
-            
-            TensorImage eyeLeftTensor = new TensorImage(DataType.UINT8);
-            TensorImage eyeRightTensor = new TensorImage(DataType.UINT8);
-            TensorImage faceTensor = new TensorImage(DataType.UINT8);
-            ByteBuffer faceMask = getFaceMask();
+            // create byte buffers from bitmap image while pre-processing them
 
-            // load and pre-process images
-            eyeLeftTensor = processAndLoadImage(feature.getEyeLeftImage(), eyeLeftTensor, false);
-            eyeRightTensor = processAndLoadImage(feature.getEyeRightImage(), eyeRightTensor, false);
-            faceTensor = processAndLoadImage(feature.getFaceImage(), faceTensor, false);
-
+            ByteBuffer eyeLeft = processBitmap(feature.getLeftEyeImage(), "left_eye");
+            ByteBuffer eyeRight = processBitmap(feature.getRightEyeImage(), "right_eye");
+            ByteBuffer face = processBitmap(feature.getFaceImage(), "face");
+            ByteBuffer faceMask = faceGridToByteBuffer(feature.getFaceGrid());
 
             // create container for prediction result
             TensorBuffer coordinateBuffer = TensorBuffer.createFixedSize(new int[]{1, 2},
                     DataType.FLOAT32);
 
             // order of inputs matters
-            Object[] inputs = new Object[]{eyeLeftTensor.getBuffer(),
-                    eyeRightTensor.getBuffer(),
-                    faceTensor.getBuffer(),
+            Object[] inputs = new Object[]{eyeLeft,
+                    eyeRight,
+                    face,
                     faceMask};
             // outputs
             Map<Integer, Object> output = new HashMap<>();
@@ -104,7 +101,6 @@ public class OriginalModel {
                 return new GazePoint(x_coordinate, y_coordinate);
             }catch (IllegalArgumentException e){
                 e.printStackTrace();
-                Log.e(TAG, e.getMessage());
             }
             return null;
         }
@@ -156,79 +152,69 @@ public class OriginalModel {
         isModelDownloaded = modelDownloaded;
     }
 
-    private TensorImage processAndLoadImage(Bitmap image, TensorImage tensorImage, boolean isFaceMask){
-        // should be 64x64
-        float mean = getMean(image);
-        // pre-processing pipeline
-        ImageProcessor imageProcessor;
-        if(!isFaceMask) {
-            imageProcessor = new ImageProcessor.Builder()
-                    // Resize with Bilinear method
-                    .add(new ResizeOp(64, 64, ResizeOp.ResizeMethod.BILINEAR))
-                    // not sure if this normalizes to [0.0 - 1.0]
-                    .add(new NormalizeOp(mean, 127.0f))
-                    .build();
-        }else{
-            imageProcessor = new ImageProcessor.Builder()
-                    // Resize with Bilinear method
-                    .add(new ResizeOp(625, 1, ResizeOp.ResizeMethod.BILINEAR))
-                    // not sure if this normalizes to [0.0 - 1.0]
-                    .add(new NormalizeOp(mean, 127.0f))
-                    .build();
-        }
-        // load bitmap image to tensor
-        tensorImage.load(image);
-
-        // resize and normalize image
-
-        tensorImage = imageProcessor.process(tensorImage);
-        return tensorImage;
-    }
-
-    private float getMean(Bitmap image) {
-        float sum = 0.0f, mean;
-        float totalPixels = 64.0f * 64.0f * 3.0f;
-        for (int y = 0; y < image.getWidth(); y++) {
-            for (int x = 0; x < image.getHeight(); x++) {
-                int px = image.getPixel(x, y);
-
-                // get channel values fom the pixel value
-                int r = Color.red(px);
-                int g = Color.green(px);
-                int b = Color.blue(px);
-
-                sum += ((r / 255.0f) + (g / 255.0f) + (b / 255.0f));
-            }
-        }
-        mean = sum / totalPixels;
-        return mean;
-    }
-
     // need to explicitly create ByteBuffer for face mask to match input shape for model
-    // used ALPHA_8
-    private ByteBuffer getFaceMask(){
+    // used ALPHA_8 for gray-scale
+    private ByteBuffer faceGridToByteBuffer(int[][] faceGrid){
         Bitmap bitmap = Bitmap.createBitmap(25, 25, Bitmap.Config.ALPHA_8);
         ByteBuffer faceMaskInput = ByteBuffer.allocateDirect(25 * 25 * 4).order(ByteOrder.nativeOrder());
         int c = 0;
         for (int y = 0; y < 25; y++) {
             for (int x = 0; x < 25; x++) {
-                if(x % 2 == 0 && y % 2 == 0){
-                    bitmap.setPixel(x, y, Color.alpha(50));
-                    Log.d(TAG, "pixel val: " + bitmap.getPixel(x, y));
-                }
-                else{
-                    bitmap.setPixel(x, y, Color.alpha(255));
-                    Log.d(TAG, "pixel val: " + bitmap.getPixel(x, y));
-                }
-
+                bitmap.setPixel(x, y, Color.alpha(faceGrid[x][y]));
                 int px = bitmap.getPixel(x, y);
-                int a = Color.alpha(px);
-                // Log.d(TAG, "Face mask px: " + px);
                 faceMaskInput.putFloat(px);
-                c++;
             }
         }
-        Log.d(TAG, "pixel count: " + c);
         return faceMaskInput;
+    }
+
+    private ByteBuffer processBitmap(Bitmap image, String type) throws IOException {
+        // Bitmap should be size 64 * 64 * 3 = 12288 * 4 bytes(float32)
+        // read raw binary file containing means used during training
+        InputStream is = null;
+        switch (type){
+            case "left_eye":
+                is = App.getContext().getResources().openRawResource(R.raw.mean_eye_left);
+                break;
+            case "right_eye":
+                is = App.getContext().getResources().openRawResource(R.raw.mean_eye_right);
+                break;
+            case "face":
+                is = App.getContext().getResources().openRawResource(R.raw.mean_face);
+                break;
+            default:
+                break;
+        }
+        if(is == null){
+            throw new NullPointerException("InputStream for raw file is null");
+        }
+        DataInputStream meanInputStream = new DataInputStream(is);
+        ByteBuffer inputImage = ByteBuffer.allocateDirect(64 * 64 * 3 * 4).order(ByteOrder.nativeOrder());
+        for(int y = 0; y < 64; y++){
+            for (int x = 0; x < 64; x++) {
+                int px = image.getPixel(x, y);
+
+                // get channel values from the pixel value
+                int r = Color.red(px);
+                int g = Color.green(px);
+                int b = Color.blue(px);
+
+                // read from data input stream
+                float r_mean = meanInputStream.readFloat();
+                float g_mean = meanInputStream.readFloat();
+                float b_mean = meanInputStream.readFloat();
+
+                // pre-process
+                float rf = (r / 255.0f) - r_mean;
+                float gf = (g / 255.0f) - g_mean;
+                float bf = (b / 255.0f) - b_mean;
+
+                // add to byte buffer
+                inputImage.putFloat(rf);
+                inputImage.putFloat(gf);
+                inputImage.putFloat(bf);
+            }
+        }
+        return inputImage;
     }
 }
