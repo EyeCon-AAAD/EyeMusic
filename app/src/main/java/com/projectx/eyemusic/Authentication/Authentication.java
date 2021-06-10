@@ -31,6 +31,7 @@ import java.util.Date;
 
 public class Authentication implements AuthUtils{
 
+    private final String TAG = "Authentication";
     private final String CLIENT_ID;
     private final String CLIENT_SECRET;
     private final String REDIRECT_URI;
@@ -62,32 +63,40 @@ public class Authentication implements AuthUtils{
     /**
      *  Create the Volley Error Listener
      * */
-    public Response.ErrorListener getErrorListener() {
+    public Response.ErrorListener getErrorListener(String request) {
         errorListener = error -> {
             //--------------- use toast messages for now ----------------------
             if (error instanceof TimeoutError || error instanceof NoConnectionError) {
                 //This indicates that the request has either time out or there is no connection
                 Toast.makeText(context, "Internet Connection Error!", Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Internet Connection Error! From: " + request);
+                parseVolleyError(error);
 
             } else if (error instanceof AuthFailureError) {
                 // Error indicating that there was an Authentication Failure while performing the request
                 Toast.makeText(context, "Authentication Error!" +
                         "\nWhile requesting for refresh tokens", Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Authentication Error! From: " + request);
+                parseVolleyError(error);
 
             } else if (error instanceof ServerError) {
                 //Indicates that the server responded with a error response
                 Toast.makeText(context, "Server Error!", Toast.LENGTH_SHORT).show();
                 // Log error in console
+                Log.e(TAG, "Server Error! From: " + request);
                 parseVolleyError(error);
 
             } else if (error instanceof NetworkError) {
                 //Indicates that there was network error while performing the request
                 Toast.makeText(context, "Network Error!", Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Network Error! From: " + request);
+                parseVolleyError(error);
 
             } else if (error instanceof ParseError) {
                 // Indicates that the server response could not be parsed
                 Toast.makeText(context, "Parse Error!", Toast.LENGTH_SHORT).show();
-
+                Log.e(TAG, "Parse Error! From: " + request);
+                parseVolleyError(error);
             }
         };
         return errorListener;
@@ -248,7 +257,10 @@ public class Authentication implements AuthUtils{
             String refreshTokenURL = context.getString(R.string.SpotifyTokenEndpoint);
             String accessCode = getAccessCode();
 
-            RefreshTokenStringRequest stringRequest = new RefreshTokenStringRequest(refreshTokenURL, CLIENT_ID, CLIENT_SECRET, accessCode, REDIRECT_URI, getTokenStringRequest(), getErrorListener());
+            RefreshTokenStringRequest stringRequest =
+                    new RefreshTokenStringRequest(refreshTokenURL, CLIENT_ID, CLIENT_SECRET,
+                            accessCode, REDIRECT_URI, getTokenStringRequest(),
+                            getErrorListener("Request Access & Refresh Token"));
             requestQueue.add(stringRequest);
         } else{
             String errorMessage = context.getString(R.string.UnauthorizedError);
@@ -266,7 +278,10 @@ public class Authentication implements AuthUtils{
             if(!refreshToken.equals(context.getString(R.string.UnauthorizedError))){
                 String refreshTokenURL = context.getString(R.string.SpotifyTokenEndpoint);
 
-                RefreshedAccessTokenStringRequest newAccessTokenRequest = new RefreshedAccessTokenStringRequest(refreshTokenURL, CLIENT_ID, CLIENT_SECRET, refreshToken, getRefreshedTokenRequest(), getErrorListener());
+                RefreshedAccessTokenStringRequest newAccessTokenRequest =
+                        new RefreshedAccessTokenStringRequest(refreshTokenURL, CLIENT_ID,
+                                CLIENT_SECRET, refreshToken, getRefreshedTokenRequest(),
+                                getErrorListener("Refresh Token Request"));
                 requestQueue.add(newAccessTokenRequest);
             } else{
                 String errorMessage = context.getString(R.string.UnauthorizedError);

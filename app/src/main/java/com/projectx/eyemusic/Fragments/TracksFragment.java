@@ -150,7 +150,7 @@ public class TracksFragment extends Fragment {
         String URL = getString(R.string.SpotifyPlaylistItemsEndpoint) + "/" + playlistId
                 + "/tracks?offset=0&limit=100&market=from_token";
         TracksRequest tracksRequest = new TracksRequest(Request.Method.GET, URL, mainActivity.preferences,
-                null, listener,mainActivity.authentication.getErrorListener());
+                null, listener,mainActivity.authentication.getErrorListener("Fetch Tracks"));
         Utilities.showProgressBar(progressBar, rv_tracks, true);
         requestQueue.add(tracksRequest);
 

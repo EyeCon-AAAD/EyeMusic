@@ -19,6 +19,7 @@ import com.google.firebase.ml.modeldownloader.FirebaseModelDownloader;
 import com.projectx.eyemusic.App;
 import com.projectx.eyemusic.Features.Feature1;
 import com.projectx.eyemusic.R;
+import com.projectx.eyemusic.ml.GazePredictorModel;
 
 import org.tensorflow.lite.DataType;
 import org.tensorflow.lite.Interpreter;
@@ -47,67 +48,90 @@ public class OriginalModel {
     private static String TAG = "OriginalModel";
 
     private static OriginalModel gazePredictionModel = null;
-
-    private OriginalModel() {
+    private GazePredictorModel model;
+    private OriginalModel() throws IOException {
         this.modelFile = null;
         this.interpreter = null;
         this.isModelDownloaded = false;
-
+        this.model = GazePredictorModel.newInstance(App.getContext());
         // can get model in constructor for now
         // TODO: Add creation of Original Model Object and Model download when the
         //  application launches the first time
-        getModel();
+        // getModel();
     }
 
     public static OriginalModel getInstance(){
-        if(gazePredictionModel == null)
-            gazePredictionModel = new OriginalModel();
+        if(gazePredictionModel == null) {
+            try {
+                gazePredictionModel = new OriginalModel();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         return gazePredictionModel;
     }
 
     public GazePoint Predict(Feature1 feature) throws IOException {
-        if(isModelDownloaded()){
-            // DO prediction
-            // create byte buffers from bitmap image while pre-processing them
 
-            ByteBuffer eyeLeft = processBitmap(feature.getLeftEyeImage(), "left_eye");
-            ByteBuffer eyeRight = processBitmap(feature.getRightEyeImage(), "right_eye");
-            ByteBuffer face = processBitmap(feature.getFaceImage(), "face");
-            ByteBuffer faceMask = faceGridToByteBuffer(feature.getFaceGrid());
+    //if(isModelDownloaded()){
+        // DO prediction
+        // create byte buffers from bitmap image while pre-processing them
+        ByteBuffer eyeLeft = processBitmap(feature.getLeftEyeImage(), "left_eye");
+        ByteBuffer eyeRight = processBitmap(feature.getRightEyeImage(), "right_eye");
+        ByteBuffer face = processBitmap(feature.getFaceImage(), "face");
+        ByteBuffer faceMask = faceGridToByteBuffer(feature.getFaceGrid());
 
-            // create container for prediction result
-            TensorBuffer coordinateBuffer = TensorBuffer.createFixedSize(new int[]{1, 2},
-                    DataType.FLOAT32);
+        // Add offline setup of TFLite
+        // Creates inputs for reference.
+        TensorBuffer eyeLeftTensor = TensorBuffer.createFixedSize(new int[]{1, 64, 64, 3}, DataType.FLOAT32);
+        eyeLeftTensor.loadBuffer(eyeLeft);
+        TensorBuffer eyeRightTensor = TensorBuffer.createFixedSize(new int[]{1, 64, 64, 3}, DataType.FLOAT32);
+        eyeRightTensor.loadBuffer(eyeRight);
+        TensorBuffer faceTensor = TensorBuffer.createFixedSize(new int[]{1, 64, 64, 3}, DataType.FLOAT32);
+        faceTensor.loadBuffer(face);
+        TensorBuffer faceMaskTensor = TensorBuffer.createFixedSize(new int[]{1, 625}, DataType.FLOAT32);
+        faceMaskTensor.loadBuffer(faceMask);
 
-            // order of inputs matters
-            Object[] inputs = new Object[]{eyeLeft,
-                    eyeRight,
-                    face,
-                    faceMask};
-            // outputs
-            Map<Integer, Object> output = new HashMap<>();
-            output.put(0, coordinateBuffer.getBuffer());
+        /*// create container for prediction result
+        TensorBuffer coordinateBuffer = TensorBuffer.createFixedSize(new int[]{1, 2},
+                DataType.FLOAT32);*/
 
-            // infer
-            try{
-                interpreter.runForMultipleInputsOutputs(inputs, output);
-                // need to test inference
-                ByteBuffer out = coordinateBuffer.getBuffer();
-                out.rewind();
-                float x_coordinate = out.get(0);
-                float y_coordinate = out.get(1);
-                Log.d(TAG, String.format("Coordinates (x, y) : (%1.4f, %1.4f)", x_coordinate, y_coordinate));
+        // Runs model inference and gets result.
+        GazePredictorModel.Outputs outputs = model.process(eyeLeftTensor, eyeRightTensor, faceTensor, faceMaskTensor);
+        TensorBuffer outputFeatures = outputs.getOutputFeature0AsTensorBuffer();
+        /*// order of inputs matters
+        Object[] inputs = new Object[]{eyeLeft,
+                eyeRight,
+                face,
+                faceMask};*/
+        // outputs
+        /*Map<Integer, Object> output = new HashMap<>();
+        output.put(0, coordinateBuffer.getBuffer());*/
+        ByteBuffer out = outputFeatures.getBuffer();
+        out.rewind();
+        float x_coordinate = out.get(0);
+        float y_coordinate = out.get(1);
+        Log.d(TAG, String.format("Coordinates (x, y) : (%1.4f, %1.4f)", x_coordinate, y_coordinate));
+        return new GazePoint(x_coordinate, y_coordinate);
 
-                return new GazePoint(x_coordinate, y_coordinate);
-            }catch (IllegalArgumentException e){
-                e.printStackTrace();
-            }
-            return null;
-        }
-        return null;
+        // infer
+        /*try{
+            interpreter.runForMultipleInputsOutputs(inputs, output);
+            // need to test inference
+            ByteBuffer out = coordinateBuffer.getBuffer();
+            out.rewind();
+            float x_coordinate = out.get(0);
+            float y_coordinate = out.get(1);
+            Log.d(TAG, String.format("Coordinates (x, y) : (%1.4f, %1.4f)", x_coordinate, y_coordinate));
+
+            return new GazePoint(x_coordinate, y_coordinate);
+        }catch (IllegalArgumentException e){
+            e.printStackTrace();
+        }*/
     }
+    //}
 
-    private void getModel(){
+    /*private void getModel(){
         CustomModelDownloadConditions conditions = new CustomModelDownloadConditions.Builder()
                 .build(); // can add .requireWifi() but model isn't too big (13 MB)
 
@@ -132,13 +156,13 @@ public class OriginalModel {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.d(TAG, "Error " + e.toString());
+                        Log.e(TAG, "Error " + e.toString());
                         // Show Toast for now
                         Toast.makeText(App.getContext(), "Error Downloading Model",
                                 Toast.LENGTH_LONG).show();
                     }
                 });
-    }
+    }*/
 
     public void setModelFile(File modelFile) {
         this.modelFile = modelFile;
@@ -205,9 +229,10 @@ public class OriginalModel {
                 float b_mean = meanInputStream.readFloat();
 
                 // pre-process
-                float rf = (r / 255.0f) - r_mean;
-                float gf = (g / 255.0f) - g_mean;
-                float bf = (b / 255.0f) - b_mean;
+                // TODO: Need to add (- mean) appropriately
+                float rf = (r / 255.0f) ;
+                float gf = (g / 255.0f) ;
+                float bf = (b / 255.0f) ;
 
                 // add to byte buffer
                 inputImage.putFloat(rf);

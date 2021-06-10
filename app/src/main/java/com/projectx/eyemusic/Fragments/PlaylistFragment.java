@@ -133,7 +133,7 @@ public class PlaylistFragment extends Fragment {
 
         // create Volley request
         PlaylistRequest playlistRequest = new PlaylistRequest(playlistRequestURL,null,
-                playlistsRequestListener, mainActivity.authentication.getErrorListener(), mainActivity.preferences);
+                playlistsRequestListener, mainActivity.authentication.getErrorListener("Fetch Playlists"), mainActivity.preferences);
         requestQueue.add(playlistRequest);
     }
 

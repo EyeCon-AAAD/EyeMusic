@@ -403,7 +403,7 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         Log.d(TAG, "onDestroy: ");
         // disconnect from AppRemote
-        mSpotifyAppRemote.getPlayerApi().pause();
+        // mSpotifyAppRemote.getPlayerApi().pause();
         SpotifyAppRemote.disconnect(mSpotifyAppRemote);
         predictionThread.quit(); // it will destroy all the messages that has not been started yet and are in the message queue
         if (imageProcessor != null) {

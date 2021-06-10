@@ -57,7 +57,7 @@ public class CalibrationRunnable implements Runnable {
 
             //giving time to the user to look at the dot
             try {
-                Thread.sleep(1000);
+                Thread.sleep(3000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -103,6 +103,7 @@ public class CalibrationRunnable implements Runnable {
         FeatureExtractor.setCalibrationMode(false);
         activity.calibrationFinished(features);
         Log.d(TAG, "CalibrationRun: finished");
+
     }
 
     private static List<GazePoint> produceDots(int no_x, int no_y){
