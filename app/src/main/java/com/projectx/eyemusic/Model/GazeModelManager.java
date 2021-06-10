@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Random;
 
 public class GazeModelManager {
-    private static final OriginalModel gazePredictionModel = OriginalModel.getInstance();;
+    private static Object originalModel;
     private static CalibratedModel calibratedModel = null;
     private static final String TAG = "GazeModelManager";
     private final static int SCREEN_WIDTH = Utilities.getScreenWidth();
@@ -23,32 +23,21 @@ public class GazeModelManager {
         return isCalibratedAtAll;
     }
 
+    // TODO: complete
     public static GazePoint predictOriginal(Feature1 feature){
-        try{
-            GazePoint p = gazePredictionModel.Predict(feature);
-            Log.d(TAG, "predictOriginal: " + p.getX() + " " + p.getY());
-            Log.d(TAG, "Screen (w x h) : (" + SCREEN_WIDTH + ", " + SCREEN_HEIGHT + ")");
-            return p;
-
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-        return null;
+        int x = rand.nextInt(SCREEN_WIDTH);
+        int y = rand.nextInt(SCREEN_HEIGHT);
+        return new GazePoint(x, y);
     }
 
 
     public static GazePoint predictCalibrated(Feature1 feature){
         GazePoint originalPredict = predictOriginal(feature);
-        Log.d(TAG, "predictCalibrated: original " + originalPredict.getX() + " " + originalPredict.getY());
-        if (isCalibratedAtAll){
-            GazePoint calibPredict = calibratedModel.predict(originalPredict);
-            Log.d(TAG, "predictCalibrated: calibrated " + calibPredict.getX() + " " + calibPredict.getY());
-            return calibPredict;
-        }
-
+        if (isCalibratedAtAll)
+            return calibratedModel.predict(originalPredict);
         else{
             Log.e(TAG, "predictCalibrated: there is no calibrated model");
-            return new GazePoint(500,500);
+            return null;
         }
     }
 
@@ -60,16 +49,8 @@ public class GazeModelManager {
             coordinates.add(feature.getCoordinate());
         }
 
-        CalibratedModel newCalibratedModel = new CalibratedModel(predictions, coordinates);
-        if (newCalibratedModel.isTrained()) {
-            isCalibratedAtAll = true;
-            calibratedModel = newCalibratedModel;
-            Log.d(TAG, "updateCalibratedModel: calibrated model is updated successfully.");
-        }else{
-            Log.d(TAG, "updateCalibratedModel: calibrated model is not updated successfully.");
-        }
-
-
+        calibratedModel = new CalibratedModel(predictions, coordinates);
+        isCalibratedAtAll = true;
         Log.d(TAG, "updateCalibratedModel: finished");
     }
 
