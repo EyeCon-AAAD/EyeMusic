@@ -8,18 +8,15 @@ import com.projectx.eyemusic.Model.GazePoint;
 
 //TODO: complete this class
 public class RawFeature {
-    private GazePoint coordinate;
-    private Bitmap original;
-    private Face face;
-    private float smileProb;
+    protected GazePoint coordinate;
+    protected Bitmap original;
+    protected Face face;
+    protected float smileProb;
 
     public RawFeature(Bitmap b, Face face) {
         this.original = b;
         this.face = face;
         this.smileProb = face.getSmilingProbability();
-
-    }
-    public RawFeature(){
 
     }
     public String toString() {

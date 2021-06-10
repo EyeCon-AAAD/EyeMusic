@@ -269,7 +269,7 @@ public class MainActivity extends AppCompatActivity {
         calibrationRunnable = new CalibrationRunnable(graphicOverlayCalibration, this);
         btn_calibration = findViewById(R.id.btn_main_calibration);
         btn_calibration.setOnClickListener (view -> {
-            /*isCalibration = true;
+            isCalibration = true;
             FeatureExtractor.setCalibrationMode(isCalibration);
             calibrationThread  = new Thread(calibrationRunnable);
             calibrationThread.start();
@@ -284,13 +284,7 @@ public class MainActivity extends AppCompatActivity {
 
             //change the preview opacity
             //previewView.setVisibility(View.INVISIBLE);
-            //graphicOverlayFace.setAlpha(0.4f);*/
-
-
-//            Testing predict function with loaded model -> no functionality yet
-            // created default constructors in Feature1 and RawFeature Classes for testing, can delete later
-            Feature1 feature1 = new Feature1();
-            GazePoint coordinates = gazePredictionModel.Predict(feature1);
+            //graphicOverlayFace.setAlpha(0.4f);
 
         });
 
@@ -607,8 +601,8 @@ public class MainActivity extends AppCompatActivity {
         try {
             FaceDetectorOptions faceDetectorOptions =
                     new FaceDetectorOptions.Builder()
-                            .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_NONE)
-                            .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
+                            .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
+                            .setContourMode(FaceDetectorOptions.CONTOUR_MODE_NONE)
                             .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
                             .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
                             .build();

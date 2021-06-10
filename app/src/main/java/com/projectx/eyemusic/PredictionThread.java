@@ -56,8 +56,9 @@ public class PredictionThread extends HandlerThread {
             graphicOverlayGazeLocation.add(new DotGraphic(activity, graphicOverlayGazeLocation, prediction.getX(), prediction.getY()));
             graphicOverlayGazeLocation.postInvalidate();
 
-            if(feature.getSmileProb() > 0.8)
+            if(feature.getSmileProb() > 0.8) {
                 SimulatedTouch.click(500, 800); //TODO: replace the x and y by prediction.getX() and getY()
+            }
         }
     }
     public static GraphicOverlay getGraphicOverlayGazeLocation() {
