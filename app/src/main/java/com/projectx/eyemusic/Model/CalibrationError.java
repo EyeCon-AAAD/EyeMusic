@@ -55,7 +55,7 @@ public  class CalibrationError{
 
     public float getX_error() { return x_error; }
     public float getY_error() { return y_error; }
-    public float getXy_error() { return xy_error; }
+    public float getXY_error() { return xy_error; }
     public float getSample_size() {return sample_size; }
 
     public void setX_error(float x_error) { this.x_error = x_error; }

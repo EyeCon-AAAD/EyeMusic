@@ -293,10 +293,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void calibrationFinished(List<Feature1> features){
-        Log.d("Calibration", "calibrationFinished: ");
+        Log.d(TAG, "CalibrationRun: ");
         isCalibration = false;
         for (Feature1 feature : features){
-            Log.d("Calibration", "CALIBRATION RESULT: " + feature);
+            Log.d(TAG, "CalibrationRun: RESULTS-> " + feature);
         }
 
         btn_calibration.post( () -> {btn_calibration.setVisibility(View.VISIBLE);} );
