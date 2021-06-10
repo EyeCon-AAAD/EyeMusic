@@ -15,10 +15,30 @@ public class MatrixUtils {
 
     // Function to multiply
     // two matrices A[][] and B[][]
-    static Float[][] multiplyMatrix(
+    public static Float[][] multiplyMatrix(
             int row1, int col1, Float A[][],
             int row2, int col2, Float B[][])
     {
+
+        if(A == null || B == null) {
+
+            return null;
+        }
+
+        for (Float[] row: A) {
+            if (row == null){
+                Log.e(TAG, "multiplyMatrix: matrix A is not initialized correctly");
+                return null;
+            }
+        }
+
+        for (Float[] row: B) {
+            if (row == null){
+                Log.e(TAG, "multiplyMatrix: matrix B is not initialized correctly");
+                return null;
+            }
+        }
+
         int i, j, k;
 
         // Check if multiplication is Possible
@@ -33,6 +53,11 @@ public class MatrixUtils {
         // be of size row1 x col2
         Float C[][] = new Float[row1][col2];
 
+        for (i = 0; i < row1; i++) {
+            for (j = 0; j < col2; j++)
+                C[i][j] = (float) 0;
+        }
+
         // Multiply the two marices
         for (i = 0; i < row1; i++) {
             for (j = 0; j < col2; j++) {
@@ -46,20 +71,61 @@ public class MatrixUtils {
 
     // This function stores transpose
     // of A[][] in B[][]
-    static  void transpose(Float A[][], Float B[][], int rows, int cols)
+    public static  Float [] [] transpose(Float A[][], int rows, int cols)
     {
+        if (A == null){
+            Log.e(TAG, "inverse: matrix A is null");
+            return null;
+        }
+
+        if(A.length != rows){
+            Log.e(TAG, "inverse: the argument rows does not match the length of the matrix");
+            return null;
+        }
+        for (Float[] row: A) {
+            if(row.length != cols){
+                Log.e(TAG, "inverse: the argument cols does not match structure of the matrix");
+                return null;
+            }
+        }
+
+        Float B[][];
+        B = new Float[cols][rows];
+
         int i, j;
-        for (i = 0; i < rows; i++)
-            for (j = 0; j < cols; j++)
-                B[i][j] = A[j][i];
+        for (i = 0; i < rows; i++) {
+            for (j = 0; j < cols; j++) {
+                B[j][i] = A[i][j];
+            }
+        }
+        return B;
     }
 
     // Function to get inverse of A[N][N]
-    static Float[][] inverse(Float A[][], int rows, int cols){
-        if (rows != cols)
+    public static Float[][] inverse(Float A[][], int rows, int cols){
+        if (rows != cols){
+            Log.e(TAG, "inverse: the rows and cols should be same size");
             return null;
+        }
+
+        if (A == null){
+            Log.e(TAG, "inverse: matrix A is null");
+            return null;
+        }
+
+        if(A.length != rows){
+            Log.e(TAG, "inverse: the argument rows does not match the length of the matrix");
+            return null;
+        }
+        for (Float[] row: A) {
+            if(row.length != cols){
+                Log.e(TAG, "inverse: the argument cols does not match structure of the matrix");
+                return null;
+            }
+        }
 
         int N = rows;
+
 
         Float [][]adj =  new Float[N][N];
         Float [][]inv = new Float[N][N];

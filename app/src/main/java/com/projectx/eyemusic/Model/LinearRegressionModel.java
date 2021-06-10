@@ -18,7 +18,7 @@ public class LinearRegressionModel {
 
     public static final int TRAIN_NORM_EQUATION = 0;
     public static final int TRAIN_GRADIENT_DESCENT = 1;
-    
+
     private float a2 = 0;
     private float a1 = 0;
     private float a0 = 0;
@@ -82,8 +82,11 @@ public class LinearRegressionModel {
         };
 
         //creating the X
-        Float[][] X = new Float[SAMPLE_SIZE][FEATURE_SIZE];
-        MatrixUtils.transpose(XT, X, FEATURE_SIZE, SAMPLE_SIZE);
+//        Float[][] X = new Float[SAMPLE_SIZE][FEATURE_SIZE];
+//        MatrixUtils.transpose(XT, X, FEATURE_SIZE, SAMPLE_SIZE);
+
+        Float[][] X;
+        X = MatrixUtils.transpose(XT, FEATURE_SIZE, SAMPLE_SIZE);
 
         // creating X*XT
         Float[][] A1;
@@ -112,8 +115,11 @@ public class LinearRegressionModel {
         Y_array.toArray(y);
 
         Float[][] YT = new Float[][]{y};
-        Float[][] Y = new Float[SAMPLE_SIZE][1];
-        MatrixUtils.transpose(YT, Y, 1, SAMPLE_SIZE);
+//        Float[][] Y = new Float[SAMPLE_SIZE][1];
+//        MatrixUtils.transpose(YT, Y, 1, SAMPLE_SIZE);
+
+        Float[][] Y;
+        Y = MatrixUtils.transpose(YT,1, SAMPLE_SIZE);
 
         //creating coefs = inverse(XT*X)*XT*y
         Float[][] coefs;
@@ -121,7 +127,7 @@ public class LinearRegressionModel {
 
         if (coefs.length != FEATURE_SIZE || coefs[0].length !=1){
             Log.e(TAG, "trainNormEquation: the coef size is wrong :" + coefs.length + "x:"+ coefs[1].length +
-            "instead of "+ FEATURE_SIZE + "x" + 1);
+                    "instead of "+ FEATURE_SIZE + "x" + 1);
             return false;
         }
 
