@@ -90,7 +90,7 @@ public class LinearRegressionModel {
         X = MatrixUtils.transpose(XT, FEATURE_SIZE, SAMPLE_SIZE);
         showMatrix(X, SAMPLE_SIZE, FEATURE_SIZE, "X");
 
-        // creating X*XT
+        // creating XT*X
         Float[][] A1;
         A1 = MatrixUtils.multiplyMatrix(FEATURE_SIZE, SAMPLE_SIZE, XT, SAMPLE_SIZE, FEATURE_SIZE, X);
         showMatrix(A1, FEATURE_SIZE, FEATURE_SIZE, "A1");
