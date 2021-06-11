@@ -27,6 +27,7 @@ public class GazeModelManager {
         try{
             GazePoint p = gazePredictionModel.Predict(feature);
             Log.d(TAG, "predictOriginal: " + p.getX() + " " + p.getY());
+            Log.d(TAG, "Screen (w x h) : (" + SCREEN_WIDTH + ", " + SCREEN_HEIGHT + ")");
             return p;
 
         } catch (Exception e){

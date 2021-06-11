@@ -4,14 +4,18 @@ package com.projectx.eyemusic.Model;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.os.FileUtils;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.camera.core.impl.CaptureProcessor;
 
+import com.google.android.gms.common.util.IOUtils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.LittleEndianDataInputStream;
 import com.google.firebase.ml.modeldownloader.CustomModel;
 import com.google.firebase.ml.modeldownloader.CustomModelDownloadConditions;
 import com.google.firebase.ml.modeldownloader.DownloadType;
@@ -37,6 +41,7 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.nio.channels.Channels;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -212,7 +217,11 @@ public class OriginalModel {
         if(is == null){
             throw new NullPointerException("InputStream for raw file is null");
         }
-        DataInputStream meanInputStream = new DataInputStream(is);
+        // Setup Reading of little endian bytes
+        byte[] inputBytes = ByteStreams.toByteArray(is);
+        ByteBuffer inputByteBuffer = ByteBuffer.wrap(inputBytes).order(ByteOrder.LITTLE_ENDIAN);
+        inputByteBuffer.flip();
+        inputByteBuffer.compact();
         ByteBuffer inputImage = ByteBuffer.allocateDirect(64 * 64 * 3 * 4).order(ByteOrder.nativeOrder());
         for(int y = 0; y < 64; y++){
             for (int x = 0; x < 64; x++) {
@@ -223,18 +232,18 @@ public class OriginalModel {
                 int g = Color.green(px);
                 int b = Color.blue(px);
 
-                // read from data input stream
-                float r_mean = meanInputStream.readFloat();
-                float g_mean = meanInputStream.readFloat();
-                float b_mean = meanInputStream.readFloat();
+                // read from inputByteBuffer
+                float r_mean = inputByteBuffer.getFloat();
+                float g_mean = inputByteBuffer.getFloat();
+                float b_mean = inputByteBuffer.getFloat();
 
                 // pre-process
                 // TODO: Need to add (- mean) appropriately
-                float rf = (r / 255.0f) ;
-                float gf = (g / 255.0f) ;
-                float bf = (b / 255.0f) ;
+                float rf = (r / 255.0f) - r_mean;
+                float gf = (g / 255.0f) - g_mean;
+                float bf = (b / 255.0f) - b_mean;
 
-                // add to byte buffer
+                // add to inputImage byte buffer
                 inputImage.putFloat(rf);
                 inputImage.putFloat(gf);
                 inputImage.putFloat(bf);
