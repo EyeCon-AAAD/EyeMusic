@@ -1,5 +1,7 @@
 package com.projectx.eyemusic.Model;
 
+import com.spotify.android.appremote.internal.Validate;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,13 +11,16 @@ public class CalibratedModel {
     private LinearRegressionModel y_model =null;
     private CalibrationError trainingError = null;
 
-    CalibratedModel(){
+    public CalibratedModel(){
         x_model = new LinearRegressionModel();
         y_model = new LinearRegressionModel();
         trainingError = new CalibrationError();
     }
 
-    CalibratedModel(List<GazePoint> predictions, List <GazePoint> coordinates){
+    public CalibratedModel(List<GazePoint> predictions, List<GazePoint> coordinates){
+        Validate.checkNotNull(predictions);
+        Validate.checkNotNull(coordinates);
+
         List<Float> x_array = new ArrayList<Float>();
         List<Float> y_array = new ArrayList<Float>();
         List<Float> x_prediction_array = new ArrayList<Float>();
