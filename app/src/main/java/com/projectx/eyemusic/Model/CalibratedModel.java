@@ -37,17 +37,62 @@ public class CalibratedModel {
         // predicting the predictions once again to find the error
         List<GazePoint> calibPredictions = new ArrayList<GazePoint>();
         for (GazePoint prediction: predictions){
-            calibPredictions.add(predict(prediction));
+            // For aisan is this how you wanna do it?
+            GazePoint tmp = predict(prediction);
+            if (tmp == null) {
+                System.out.println("predict result returns null");
+                continue;
+            }
+            calibPredictions.add(tmp);
         }
 
         trainingError = new CalibrationError(predictions, calibPredictions);
     }
 
     public GazePoint predict(GazePoint input){
-        return new GazePoint(x_model.predict(input.getX(), input.getY()), y_model.predict(input.getY(), input.getY()));
+        float tmpX;
+        float tmpY;
+        try{
+            tmpX = x_model.predict(input.getX(), input.getY());
+        }
+        catch (NullPointerException e) {
+            System.out.println("tmpX prediction returns null");
+            return null;
+        }
+
+        try {
+            tmpY = y_model.predict(input.getY(), input.getY());
+        }
+        catch (NullPointerException e) {
+            System.out.println("tmpY prediction returns null");
+            return null;
+        }
+        return new GazePoint(tmpX, tmpY);
     }
 
     public CalibrationError getTrainingError() {
         return trainingError;
     }
+
+    ////////////////////////////////////////////////////////////////////
+    // Setters and getters used for testing
+    public LinearRegressionModel getX_model() {
+        return x_model;
+    }
+
+//    public void setX_model(LinearRegressionModel x_model) {
+//        this.x_model = x_model;
+//    }
+
+    public LinearRegressionModel getY_model() {
+        return y_model;
+    }
+
+//    public void setY_model(LinearRegressionModel y_model) {
+//        this.y_model = y_model;
+//    }
+
+//    public void setTrainingError(CalibrationError trainingError) {
+//        this.trainingError = trainingError;
+//    }
 }

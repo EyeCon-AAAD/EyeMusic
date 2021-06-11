@@ -20,13 +20,32 @@ public  class CalibrationError{
     }
 
     CalibrationError(List<GazePoint> originalPredictions, List <GazePoint> calibrationPredictions){
-        if (originalPredictions.size() != calibrationPredictions.size()){
+
+        // Should be handled with an exception instead
+        if (originalPredictions == null || calibrationPredictions == null) {
+//            Log.e(TAG, "CalibrationError: the size of original and calibration predictions are not same" + originalPredictions.size()+" "+ calibrationPredictions.size());
+            x_error = -1;
+            y_error = -1;
+            xy_error = -1;
+            sample_size = -1;
+            System.out.println("hello");
+            return;
+        }
+        else if (originalPredictions.size() != calibrationPredictions.size()){
             Log.e(TAG, "CalibrationError: the size of original and calibration predictions are not same" + originalPredictions.size()+" "+ calibrationPredictions.size());
             x_error = -1;
             y_error = -1;
             xy_error = -1;
             sample_size = -1;
         }
+
+        // needs handling when the original size is larger than the calibration size
+        // it produces out of bounds exception
+        if (originalPredictions.size() > calibrationPredictions.size()) {
+            System.out.println("originalPredictions are larger than calibrationPrediction");
+            return;
+        }
+
 
         int size = originalPredictions.size();
         this.sample_size = size;
