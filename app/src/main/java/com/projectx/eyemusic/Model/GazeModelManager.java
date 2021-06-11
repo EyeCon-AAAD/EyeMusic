@@ -25,7 +25,10 @@ public class GazeModelManager {
 
     public static GazePoint predictOriginal(Feature1 feature){
         try{
-            return gazePredictionModel.Predict(feature);
+            GazePoint p = gazePredictionModel.Predict(feature);
+            Log.d(TAG, "predictOriginal: " + p.getX() + " " + p.getY());
+            return p;
+
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -35,11 +38,16 @@ public class GazeModelManager {
 
     public static GazePoint predictCalibrated(Feature1 feature){
         GazePoint originalPredict = predictOriginal(feature);
-        if (isCalibratedAtAll)
-            return calibratedModel.predict(originalPredict);
+        Log.d(TAG, "predictCalibrated: original " + originalPredict.getX() + " " + originalPredict.getY());
+        if (isCalibratedAtAll){
+            GazePoint calibPredict = calibratedModel.predict(originalPredict);
+            Log.d(TAG, "predictCalibrated: calibrated " + calibPredict.getX() + " " + calibPredict.getY());
+            return calibPredict;
+        }
+
         else{
             Log.e(TAG, "predictCalibrated: there is no calibrated model");
-            return null;
+            return new GazePoint(500,500);
         }
     }
 
@@ -51,8 +59,16 @@ public class GazeModelManager {
             coordinates.add(feature.getCoordinate());
         }
 
-        calibratedModel = new CalibratedModel(predictions, coordinates);
-        isCalibratedAtAll = true;
+        CalibratedModel newCalibratedModel = new CalibratedModel(predictions, coordinates);
+        if (newCalibratedModel.isTrained()) {
+            isCalibratedAtAll = true;
+            calibratedModel = newCalibratedModel;
+            Log.d(TAG, "updateCalibratedModel: calibrated model is updated successfully.");
+        }else{
+            Log.d(TAG, "updateCalibratedModel: calibrated model is not updated successfully.");
+        }
+
+
         Log.d(TAG, "updateCalibratedModel: finished");
     }
 

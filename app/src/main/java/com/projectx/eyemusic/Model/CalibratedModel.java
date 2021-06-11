@@ -1,13 +1,17 @@
 package com.projectx.eyemusic.Model;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
 //TODO: check for trained
 public class CalibratedModel {
+    private static final String TAG = "CalibratedModel";
     private LinearRegressionModel x_model = null;
     private LinearRegressionModel y_model =null;
     private CalibrationError trainingError = null;
+    private boolean trained = false;
 
     CalibratedModel(){
         x_model = new LinearRegressionModel();
@@ -34,20 +38,40 @@ public class CalibratedModel {
         x_model = new LinearRegressionModel(x_prediction_array, y_prediction_array, x_array, LinearRegressionModel.TRAIN_NORM_EQUATION);
         y_model = new LinearRegressionModel(x_prediction_array, y_prediction_array, y_array, LinearRegressionModel.TRAIN_NORM_EQUATION);
 
-        // predicting the predictions once again to find the error
-        List<GazePoint> calibPredictions = new ArrayList<GazePoint>();
-        for (GazePoint prediction: predictions){
-            calibPredictions.add(predict(prediction));
+
+        if (!x_model.isTrained() || !y_model.isTrained()){
+            trainingError = null;
+            trained = false;
+        }
+        else{
+            trained = true;
+            // predicting the predictions once again to find the error
+            List<GazePoint> calibPredictions = new ArrayList<GazePoint>();
+            for (GazePoint prediction: predictions){
+                calibPredictions.add(predict(prediction));
+            }
+
+            trainingError = new CalibrationError(predictions, calibPredictions);
         }
 
-        trainingError = new CalibrationError(predictions, calibPredictions);
     }
 
     public GazePoint predict(GazePoint input){
-        return new GazePoint(x_model.predict(input.getX(), input.getY()), y_model.predict(input.getY(), input.getY()));
+        if (!trained){
+            return null;
+        }
+        Float x_predicted = x_model.predict(input.getX(), input.getY());
+        Float y_predicted = y_model.predict(input.getY(), input.getY());
+        return new GazePoint(x_predicted, y_predicted);
     }
 
     public CalibrationError getTrainingError() {
+        if(!trained)
+            return null;
         return trainingError;
+    }
+
+    public boolean isTrained() {
+        return trained;
     }
 }
