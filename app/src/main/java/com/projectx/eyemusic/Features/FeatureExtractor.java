@@ -50,9 +50,11 @@ public class FeatureExtractor {
         // this block of code is used for saving the face, both eyes to external memory (internal memory of the phone in folder "/EyeMusicTestFeatures")
         // for checking of the these of of the image is cropped properly
         if (saveCount > 0){
+            saveBitmap(newFeature.getOriginal(), "image");
             saveBitmap(newFeature.getFaceImage(), "face");
             saveBitmap(newFeature.getLeftEyeImage(), "left");
             saveBitmap(newFeature.getRightEyeImage(), "right");
+            newFeature.logFaceGrid("TESTING FEATURE");
         }
         saveCount--;
 
