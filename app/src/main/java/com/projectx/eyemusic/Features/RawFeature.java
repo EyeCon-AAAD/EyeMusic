@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import com.google.mlkit.vision.face.Face;
 import com.projectx.eyemusic.Model.GazeModelManager;
 import com.projectx.eyemusic.Model.GazePoint;
+import com.spotify.android.appremote.internal.Validate;
 
 //TODO: complete this class
 public class RawFeature {
@@ -14,10 +15,11 @@ public class RawFeature {
     protected float smileProb;
 
     public RawFeature(Bitmap b, Face face) {
+        Validate.checkNotNull(b);
+        Validate.checkNotNull(face);
         this.original = b;
         this.face = face;
         this.smileProb = face.getSmilingProbability();
-
     }
     public String toString() {
         return "x:" + coordinate.getX() + " , " + "y:" + coordinate.getY();
@@ -26,6 +28,7 @@ public class RawFeature {
     //------------------------- SETTERS ----------------------------------------
 
     public void setCoordinate(GazePoint coordinates) {
+        Validate.checkNotNull(coordinates);
         this.coordinate = coordinates;
     }
 

@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.google.mlkit.vision.face.Face;
 import com.google.mlkit.vision.face.FaceLandmark;
+import com.spotify.android.appremote.internal.Validate;
 
 import java.util.Locale;
 
@@ -27,6 +28,9 @@ public class Feature1 extends RawFeature {
 
     public Feature1(Bitmap b, Face face) {
         super(b, face);
+        Validate.checkNotNull(b);
+        Validate.checkNotNull(face);
+
         faceBoundingBox = face.getBoundingBox();
         leftEyeLandmark = face.getLandmark(FaceLandmark.LEFT_EYE);
         rightEyeLandmark = face.getLandmark(FaceLandmark.RIGHT_EYE);
