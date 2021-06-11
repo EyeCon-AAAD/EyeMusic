@@ -157,10 +157,10 @@ public class Feature1 extends RawFeature {
                 faceGrid[i][j] = 1;
             }
         }
-        logFaceGrid();
+        logFaceGrid(TAG);
     }
 
-    private void logFaceGrid(){
+    void logFaceGrid(String TAG){
         int i;
         for ( i = 0; i < 25; i++ ){
             StringBuilder strbul = new StringBuilder();
