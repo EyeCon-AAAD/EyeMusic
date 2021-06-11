@@ -43,7 +43,7 @@ public class PredictionThread extends HandlerThread {
 
         @Override
         public void run() {
-            graphicOverlayGazeLocation.clear();
+
             GazePoint prediction;
             if (GazeModelManager.haveCalibratedModel()){
                 prediction = GazeModelManager.predictCalibrated(feature);
@@ -55,6 +55,8 @@ public class PredictionThread extends HandlerThread {
                 Log.d(TAG, "Original model coordinates: (" + prediction.getX() + ", " + prediction.getY() + ")");
                 Log.d(TAG, "run: using original model");
             }
+            Log.d(TAG, "SHOWN DOT: " + prediction.getX() + " " + prediction.getY());
+            graphicOverlayGazeLocation.clear();
             graphicOverlayGazeLocation.add(new DotGraphic(activity, graphicOverlayGazeLocation, prediction.getX(), prediction.getY()));
             graphicOverlayGazeLocation.postInvalidate();
 
