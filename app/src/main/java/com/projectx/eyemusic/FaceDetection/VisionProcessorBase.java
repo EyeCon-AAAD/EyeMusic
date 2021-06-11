@@ -38,6 +38,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskExecutors;
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.face.Face;
+import com.google.mlkit.vision.face.FaceLandmark;
 import com.projectx.eyemusic.Features.FeatureExtractor;
 import com.projectx.eyemusic.Features.RawFeature;
 import com.projectx.eyemusic.PredictionThread;
@@ -330,8 +331,17 @@ public abstract class VisionProcessorBase<T> implements VisionImageProcessor {
   * this function will send the raw feature to the Feature Extraction part*/
   protected void sendData(Bitmap originalCameraImage, List<Face> faces){
       try{
+          if (originalCameraImage == null){
+              Log.w(TAG, "sendData: original camera image is null");
+              return;
+          }
+          if (faces == null){
+              Log.w(TAG, "sendData: faces is null");
+              return;
+          }
+
           if (faces.isEmpty()){
-              Log.w(TAG, "sendData: face is not detected");
+              Log.w(TAG, "sendData: no face is detected");
               return;
           }
 
@@ -344,6 +354,24 @@ public abstract class VisionProcessorBase<T> implements VisionImageProcessor {
           Object smileProb = dominantFace.getSmilingProbability();
           if (smileProb == null){
               Log.w(TAG, "sendData: smileProb is null" );
+              return;
+          }
+
+          Object boundingBox = dominantFace.getBoundingBox();
+          if (boundingBox == null){
+              Log.w(TAG, "sendData: boundingBox is null" );
+              return;
+          }
+
+          Object landmarkEyeLeft = dominantFace.getLandmark(FaceLandmark.LEFT_EYE);
+          if (landmarkEyeLeft == null){
+              Log.w(TAG, "sendData: left eye landmark is null" );
+              return;
+          }
+
+          Object landmarkEyeRight = dominantFace.getLandmark(FaceLandmark.RIGHT_EYE);
+          if (landmarkEyeRight == null){
+              Log.w(TAG, "sendData: right eye landmark is null" );
               return;
           }
 
