@@ -1,5 +1,8 @@
 package com.projectx.eyemusic;
 
+import com.projectx.eyemusic.Model.CalibrationError;
+import com.projectx.eyemusic.Model.GazePoint;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -14,10 +17,10 @@ public class CalibrationErrorTest {
 
         CalibrationError ce = new CalibrationError();
 
-        Assert.assertEquals(-1, ce.getX_error());
-        Assert.assertEquals(-1, ce.getY_error());
-        Assert.assertEquals(-1, ce.getXY_error());
-        Assert.assertEquals(-1, ce.getXY_error());
+        Assert.assertEquals(-1, ce.getX_error(),0.1);
+        Assert.assertEquals(-1, ce.getY_error(), 0.1);
+        Assert.assertEquals(-1, ce.getXY_error(), 0.1);
+        Assert.assertEquals(-1, ce.getSample_size());
     }
 
     @Test
@@ -27,7 +30,7 @@ public class CalibrationErrorTest {
         List<GazePoint> gazePointsOriginal = null;
         List<GazePoint> gazePointsCalibration = null;
 
-        CalibrationError ce = new CalibrationError(gazePointsOriginal, gazePointsCalibration);
+        Assert.assertThrows(NullPointerException.class, ()->new CalibrationError(gazePointsOriginal, gazePointsCalibration));
     }
 
 
@@ -59,9 +62,9 @@ public class CalibrationErrorTest {
         CalibrationError ce = new CalibrationError(gazePointsOriginal, gazePointsCalibration);
 
         Assert.assertEquals(3, ce.getSample_size());
-        Assert.assertEquals(0, ce.getX_error());
-        Assert.assertEquals(0, ce.getY_error());
-        Assert.assertEquals(0, ce.getXY_error());
+        Assert.assertEquals(0, ce.getX_error(), 0.1);
+        Assert.assertEquals(0, ce.getY_error(),0.1);
+        Assert.assertEquals(0, ce.getXY_error(),0.1);
     }
 
     @Test
@@ -82,8 +85,8 @@ public class CalibrationErrorTest {
         CalibrationError ce = new CalibrationError(gazePointsOriginal, gazePointsCalibration);
 
         Assert.assertEquals(3, ce.getSample_size());
-        Assert.assertEquals(5.0, ce.getX_error());
-        Assert.assertEquals(5.0, ce.getY_error());
+        Assert.assertEquals(5.0, ce.getX_error(), 0.1);
+        Assert.assertEquals(5.0, ce.getY_error(), 0.1);
 //        Assert.assertEquals(0, ce.getXY_error());
     }
 
@@ -105,7 +108,7 @@ public class CalibrationErrorTest {
         CalibrationError ce = new CalibrationError(gazePointsOriginal, gazePointsCalibration);
 
         Assert.assertEquals(3, ce.getSample_size());
-        Assert.assertEquals(8, ce.getXY_error());
+        Assert.assertEquals(5.6, ce.getXY_error(), 0.1);
     }
 
 
@@ -127,8 +130,8 @@ public class CalibrationErrorTest {
         CalibrationError ce = new CalibrationError(gazePointsOriginal, gazePointsCalibration);
 
         Assert.assertEquals(3, ce.getSample_size());
-        Assert.assertEquals(5.0, ce.getX_error());
-        Assert.assertEquals(5.0, ce.getY_error());
+        Assert.assertEquals(5.0, ce.getX_error(),0.1);
+        Assert.assertEquals(5.0, ce.getY_error(), 0.1);
 //        Assert.assertEquals(0, ce.getXY_error());
     }
 
@@ -149,10 +152,10 @@ public class CalibrationErrorTest {
 
         CalibrationError ce = new CalibrationError(gazePointsOriginal, gazePointsCalibration);
 
-        Assert.assertEquals(2, ce.getSample_size());
-        Assert.assertEquals(3.0, ce.getX_error());
-        Assert.assertEquals(4.0, ce.getY_error());
-        Assert.assertEquals(5.0, ce.getXY_error());
+        Assert.assertEquals(-1, ce.getSample_size());
+        Assert.assertEquals(-1, ce.getX_error(), 0.1);
+        Assert.assertEquals(-1, ce.getY_error(), 0.1);
+        Assert.assertEquals(-1, ce.getXY_error(), 0.1);
     }
 
     @Test
@@ -173,9 +176,9 @@ public class CalibrationErrorTest {
         CalibrationError ce = new CalibrationError(gazePointsOriginal, gazePointsCalibration);
 
         Assert.assertEquals(-1, ce.getSample_size());
-        Assert.assertEquals(-1, ce.getX_error());
-        Assert.assertEquals(-1, ce.getY_error());
-        Assert.assertEquals(-1, ce.getXY_error());
+        Assert.assertEquals(-1, ce.getX_error(), 0.1);
+        Assert.assertEquals(-1, ce.getY_error(), 0.1);
+        Assert.assertEquals(-1, ce.getXY_error(), 0.1);
     }
 
 }
