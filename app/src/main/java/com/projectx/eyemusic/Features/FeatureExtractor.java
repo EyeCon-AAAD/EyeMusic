@@ -1,16 +1,22 @@
 package com.projectx.eyemusic.Features;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.mlkit.vision.face.Face;
 import com.projectx.eyemusic.CalibrationRunnable;
 import com.projectx.eyemusic.MainActivity;
 import com.projectx.eyemusic.PredictionThread;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 
 
 /*this class  is the Feature Extraction mainly responsible for sending the features to either calibration thread or prediction thread
@@ -31,12 +37,24 @@ public class FeatureExtractor {
              return;
          }
 
-        /*if (saveCount > 0){
+        /*
+        //this block of code ws suppose to create the original image and the face objects but due to the fact that
+        // Face class cannot be serializable the face objects could not be saved for later use in the unit tests
+        if (saveCount > 0){
+            saveBitmap(rawFeature.getOriginal(), "image_faceInImage");
+            saveFaceObj2(rawFeature.getFace(), "faceObj_faceInImage");
+            saveCount--;
+        }*/
+
+
+        // this block of code is used for saving the face, both eyes to external memory (internal memory of the phone in folder "/EyeMusicTestFeatures")
+        // for checking of the these of of the image is cropped properly
+        if (saveCount > 0){
             saveBitmap(newFeature.getFaceImage(), "face");
             saveBitmap(newFeature.getLeftEyeImage(), "left");
             saveBitmap(newFeature.getRightEyeImage(), "right");
         }
-        saveCount--;*/
+        saveCount--;
 
          if (calibrationMode){
              MainActivity.getGraphicOverlayGazeLocation().clear();
@@ -62,7 +80,7 @@ public class FeatureExtractor {
     }
 
     private static void saveBitmap(Bitmap bitmap, String file_name) {
-
+        String TAG = "SaveBitmap";
         try {
             if (bitmap != null) {
 
@@ -88,7 +106,7 @@ public class FeatureExtractor {
 
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Log.e("save()", e.getMessage());
+                    Log.e(TAG, e.getMessage());
                 }
                 finally {
                     try {
@@ -98,13 +116,91 @@ public class FeatureExtractor {
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
+                        Log.e(TAG, e.getMessage());
                     }
                 }
 
             }
         }catch(Exception e){
-            Log.e("save()", e.getMessage()); }
+            e.printStackTrace();
+            Log.e("saveBitmap()", e.getMessage());
+        }
 
+    }
+
+    private static void saveFaceObj(Face face, String file_name){
+        final String TAG = "SaveFaceObj";
+        try{
+            if (face != null) {
+
+                File file = new File(Environment.getExternalStorageDirectory() + "/EyeMusicTestFeatures");
+                if (!file.isDirectory()) {
+                    file.mkdir();
+                }
+
+                file = new File(Environment.getExternalStorageDirectory() + "/EyeMusicTestFeatures", file_name + "_" + System.currentTimeMillis() + ".dat");
+                FileOutputStream fileOutputStream = null;
+                ObjectOutputStream object_output_stream = null;
+
+                try {
+                    fileOutputStream = new FileOutputStream(file);
+                    object_output_stream = new ObjectOutputStream(fileOutputStream);
+                    object_output_stream.writeObject(face);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e(TAG, e.getMessage());
+                }
+                finally {
+                    try {
+                        if (fileOutputStream != null) {
+                            fileOutputStream.close();
+                        }
+
+                        if(object_output_stream != null)
+                            object_output_stream.close();
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, e.getMessage());
+                    }
+                }
+            }
+
+        }catch(Exception e){
+            e.printStackTrace();
+            Log.e(TAG, e.getMessage());
+
+        }
+    }
+
+    private static void saveFaceObj2(Face face, String file_name){
+        final String TAG = "SaveFaceObj2";
+        try{
+            if (face != null) {
+                Gson gson = new Gson();
+
+                File file = new File(Environment.getExternalStorageDirectory() + "/EyeMusicTestFeatures");
+                if (!file.isDirectory()) {
+                    file.mkdir();
+                }
+
+                file = new File(Environment.getExternalStorageDirectory() + "/EyeMusicTestFeatures", file_name + "_" + System.currentTimeMillis() + ".json");
+
+
+                try {
+                    gson.toJson(face, new FileWriter(file));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e(TAG, e.getMessage());
+                }
+            }
+
+        }catch(Exception e){
+            e.printStackTrace();
+            Log.e(TAG, e.getMessage());
+
+        }
     }
 }
 
