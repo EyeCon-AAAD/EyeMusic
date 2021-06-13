@@ -125,15 +125,15 @@
             />
         <ImageView
             android:id="@+id/imgalbumart"
-            android:layout_width="240dp"
-            android:layout_height="240dp"
+            android:layout_width="230dp"
+            android:layout_height="230dp"
+            android:layout_marginBottom="20dp"
             android:scaleType="centerCrop"
             android:src="@drawable/albumart"
             app:layout_constraintBottom_toTopOf="@id/btnplay"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-
             />
 
 
