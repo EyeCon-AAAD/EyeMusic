@@ -7,9 +7,11 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layoutPlayer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:backgroundTint="@color/colorWhite"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        >
 
         <ImageButton
             android:id="@+id/btnrepeat"
@@ -123,12 +125,13 @@
             />
         <ImageView
             android:id="@+id/imgalbumart"
-            android:layout_width="220dp"
-            android:layout_height="220dp"
-            android:layout_marginBottom="50dp"
+            android:layout_width="230dp"
+            android:layout_height="230dp"
+            android:layout_marginBottom="20dp"
             android:scaleType="centerCrop"
             android:src="@drawable/albumart"
             app:layout_constraintBottom_toTopOf="@id/btnplay"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             />
