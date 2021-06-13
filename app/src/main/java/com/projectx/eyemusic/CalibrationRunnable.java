@@ -57,7 +57,7 @@ public class CalibrationRunnable implements Runnable {
 
             //giving time to the user to look at the dot
             try {
-                Thread.sleep(1000);
+                Thread.sleep(3000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -69,6 +69,7 @@ public class CalibrationRunnable implements Runnable {
             while(newFeature == null){
                 Log.d(TAG, "CalibrationRun: the new feature is null (in the while loop)" );
             }
+
             capturedFeature = newFeature;
             setNewFeatureCaptured(true);
 
@@ -81,7 +82,6 @@ public class CalibrationRunnable implements Runnable {
 
         //finishing the calibration
         graphicOverlayCalibration.clear();
-        //Toast.makeText(activity.getApplicationContext(), "Wait for the model to be trained", Toast.LENGTH_LONG);
 
         try{
             //updating the model
@@ -103,6 +103,7 @@ public class CalibrationRunnable implements Runnable {
         FeatureExtractor.setCalibrationMode(false);
         activity.calibrationFinished(features);
         Log.d(TAG, "CalibrationRun: finished");
+
     }
 
     private static List<GazePoint> produceDots(int no_x, int no_y){

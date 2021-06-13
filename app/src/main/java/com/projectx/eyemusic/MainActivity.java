@@ -74,6 +74,7 @@ import com.projectx.eyemusic.Fragments.PlaylistFragment;
 import com.projectx.eyemusic.Graphics.DotGraphic;
 import com.projectx.eyemusic.Graphics.GraphicOverlay;
 import com.projectx.eyemusic.Model.GazeModelManager;
+import com.projectx.eyemusic.Model.GazePoint;
 import com.projectx.eyemusic.Model.OriginalModel;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
@@ -172,11 +173,6 @@ public class MainActivity extends AppCompatActivity {
         pb_main = findViewById(R.id.pb_load_main);
         rv_main_playlists = findViewById(R.id.rv_playlists);
 
-        /*        // setup recycler view
-        rv_main_playlists = findViewById(R.id.rv_main_playlists);
-        rv_main_playlists.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(MainActivity.this);
-        rv_main_playlists.setLayoutManager(layoutManager);*/
 
         packageManager = getPackageManager();
 
@@ -188,6 +184,9 @@ public class MainActivity extends AppCompatActivity {
 
         // create Authentication Object
         authentication = new Authentication(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, preferences, requestQueue, this);
+
+        // fetch latest model
+        gazePredictionModel = OriginalModel.getInstance();
 
 
         // --------------------------------------------------------------------------------------------------------------------------
@@ -288,11 +287,6 @@ public class MainActivity extends AppCompatActivity {
             //change the preview opacity
             //previewView.setVisibility(View.INVISIBLE);
             //graphicOverlayFace.setAlpha(0.4f);
-
-
-//            Testing predict function with loaded model -> no functionality yet
-//            gazePredictionModel = OriginalModel.getInstance();
-//            gazePredictionModel.Predict(null);
 
         });
 
