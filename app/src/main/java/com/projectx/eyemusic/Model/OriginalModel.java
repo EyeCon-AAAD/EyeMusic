@@ -4,22 +4,9 @@ package com.projectx.eyemusic.Model;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.os.FileUtils;
 import android.util.Log;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.camera.core.impl.CaptureProcessor;
-
-import com.google.android.gms.common.util.IOUtils;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.common.io.ByteStreams;
-import com.google.common.io.LittleEndianDataInputStream;
-import com.google.firebase.ml.modeldownloader.CustomModel;
-import com.google.firebase.ml.modeldownloader.CustomModelDownloadConditions;
-import com.google.firebase.ml.modeldownloader.DownloadType;
-import com.google.firebase.ml.modeldownloader.FirebaseModelDownloader;
 import com.projectx.eyemusic.App;
 import com.projectx.eyemusic.Features.Feature1;
 import com.projectx.eyemusic.R;
@@ -27,23 +14,13 @@ import com.projectx.eyemusic.ml.GazePredictorModel;
 
 import org.tensorflow.lite.DataType;
 import org.tensorflow.lite.Interpreter;
-import org.tensorflow.lite.Tensor;
-import org.tensorflow.lite.support.common.ops.NormalizeOp;
-import org.tensorflow.lite.support.image.ImageProcessor;
-import org.tensorflow.lite.support.image.TensorImage;
-import org.tensorflow.lite.support.image.ops.ResizeOp;
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
 
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-import java.nio.channels.Channels;
-import java.util.HashMap;
-import java.util.Map;
 
 public class OriginalModel {
 
@@ -53,7 +30,7 @@ public class OriginalModel {
     private static String TAG = "OriginalModel";
 
     private static OriginalModel gazePredictionModel = null;
-    private GazePredictorModel model;
+    private final GazePredictorModel model;
     private OriginalModel() throws IOException {
         this.modelFile = null;
         this.interpreter = null;
@@ -238,7 +215,6 @@ public class OriginalModel {
                 float b_mean = inputByteBuffer.getFloat();
 
                 // pre-process
-                // TODO: Need to add (- mean) appropriately
                 float rf = (r / 255.0f) - r_mean;
                 float gf = (g / 255.0f) - g_mean;
                 float bf = (b / 255.0f) - b_mean;

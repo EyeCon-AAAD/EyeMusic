@@ -81,8 +81,6 @@ dependencies {
     //bundled version
     implementation 'com.google.mlkit:face-detection:16.0.6'
 
-    implementation 'com.google.guava:guava:27.1-android'
-
     //// CameraX
     //def camerax_version = "1.0.0-rc05"
     // The following line is optional, as the core library is included indirectly by camera-camera2
