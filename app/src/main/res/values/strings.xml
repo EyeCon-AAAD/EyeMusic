@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">EyeMusic</string>
     <string name="play">Play</string>
-    <string name="pause">pause</string>
+    <string name="pause">Pause</string>
     <!-- The endpoint past is /me to get this user's playlists. No need for user id at this stage  -->
     <string name="SpotifyUserPlaylistsEndpoint">https://api.spotify.com/v1/me/playlists</string>
     <!-- Token endpoint for requesting refreshed Token -->
