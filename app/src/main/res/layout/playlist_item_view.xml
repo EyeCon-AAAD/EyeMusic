@@ -4,7 +4,12 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="160dp"
+    android:layout_marginStart="20dp"
+    android:layout_marginEnd="20dp"
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="5dp"
     android:layout_gravity="center"
+    android:background="@drawable/arrows_background"
     app:cardElevation="4dp"
     app:cardUseCompatPadding="true"
     app:cardCornerRadius="5dp">
@@ -12,12 +17,23 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <ImageView
-            android:layout_width="160dp"
-            android:layout_height="160dp"
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="130dp"
+            android:layout_height="130dp"
             android:layout_alignParentStart="true"
-            android:id="@+id/iv_playlist_image">
-        </ImageView>
+            app:cardCornerRadius="12dp"
+            android:layout_margin="5dp"
+            android:elevation="10dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:id="@+id/iv_playlist_image"
+                android:scaleType="centerCrop"
+                />
+        </androidx.cardview.widget.CardView>
 
         <TextView
             android:id="@+id/tv_playlist_name"
@@ -33,7 +49,8 @@
             android:layout_marginBottom="39dp"
             android:ellipsize="end"
             android:text="@string/playlist_name"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:textStyle="bold"/>
 
     </RelativeLayout>
 
