@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-
+apply plugin: 'com.google.gms.google-services'
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
@@ -28,6 +28,9 @@ android {
 
     testOptions {
         unitTests.returnDefaultValues = true
+    }
+    buildFeatures {
+        mlModelBinding true
     }
 }
 
@@ -58,6 +61,16 @@ dependencies {
     implementation 'androidx.fragment:fragment:1.3.2'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
+    // firebase
+    implementation platform('com.google.firebase:firebase-bom:28.0.1')
+    implementation 'com.google.firebase:firebase-ml-modeldownloader'
+    implementation 'org.tensorflow:tensorflow-lite:2.3.0'
+    implementation 'org.tensorflow:tensorflow-lite-support:0.2.0'
+    implementation 'org.tensorflow:tensorflow-lite-metadata:0.1.0-rc1'
+
+    // use Guava to read bytes
+    implementation 'com.google.guava:guava:30.1.1-android'
+
     testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
@@ -67,8 +80,6 @@ dependencies {
     //implementation 'com.google.android.gms:play-services-mlkit-face-detection:16.1.5'
     //bundled version
     implementation 'com.google.mlkit:face-detection:16.0.6'
-
-    implementation 'com.google.guava:guava:27.1-android'
 
     //// CameraX
     //def camerax_version = "1.0.0-rc05"

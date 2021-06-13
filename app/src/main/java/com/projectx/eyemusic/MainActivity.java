@@ -74,6 +74,8 @@ import com.projectx.eyemusic.Fragments.PlaylistFragment;
 import com.projectx.eyemusic.Graphics.DotGraphic;
 import com.projectx.eyemusic.Graphics.GraphicOverlay;
 import com.projectx.eyemusic.Model.GazeModelManager;
+import com.projectx.eyemusic.Model.GazePoint;
+import com.projectx.eyemusic.Model.OriginalModel;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
@@ -149,6 +151,9 @@ public class MainActivity extends AppCompatActivity {
     private Thread calibrationThread;
     private boolean isCalibration;
 
+    // Original Model
+    private OriginalModel gazePredictionModel = null;
+
     Button btn_main_back, btn_main_reconnect_spotify;
 
     @Override
@@ -168,11 +173,6 @@ public class MainActivity extends AppCompatActivity {
         pb_main = findViewById(R.id.pb_load_main);
         rv_main_playlists = findViewById(R.id.rv_playlists);
 
-        /*        // setup recycler view
-        rv_main_playlists = findViewById(R.id.rv_main_playlists);
-        rv_main_playlists.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(MainActivity.this);
-        rv_main_playlists.setLayoutManager(layoutManager);*/
 
         packageManager = getPackageManager();
 
@@ -184,6 +184,9 @@ public class MainActivity extends AppCompatActivity {
 
         // create Authentication Object
         authentication = new Authentication(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, preferences, requestQueue, this);
+
+        // fetch latest model
+        gazePredictionModel = OriginalModel.getInstance();
 
 
         // --------------------------------------------------------------------------------------------------------------------------
@@ -400,7 +403,7 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         Log.d(TAG, "onDestroy: ");
         // disconnect from AppRemote
-        mSpotifyAppRemote.getPlayerApi().pause();
+        // mSpotifyAppRemote.getPlayerApi().pause();
         SpotifyAppRemote.disconnect(mSpotifyAppRemote);
         predictionThread.quit(); // it will destroy all the messages that has not been started yet and are in the message queue
         if (imageProcessor != null) {
@@ -541,6 +544,11 @@ public class MainActivity extends AppCompatActivity {
         if (preferences.getBoolean("firstTime", true)) {
             // Do authentication once
             authentication.authenticate(MainActivity.this, SPOTIFY_AUTH_CODE_REQUEST_CODE);
+
+            // Do initial download of the model.
+            // TODO: initialization in it's own activity later on
+            gazePredictionModel = OriginalModel.getInstance();
+
             // set first time to false
             preferences.edit().putBoolean("firstTime", false).apply();
             return true;
