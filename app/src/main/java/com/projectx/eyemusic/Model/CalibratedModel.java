@@ -38,7 +38,6 @@ public class CalibratedModel {
         x_model = new LinearRegressionModel(x_prediction_array, y_prediction_array, x_array, LinearRegressionModel.TRAIN_NORM_EQUATION);
         y_model = new LinearRegressionModel(x_prediction_array, y_prediction_array, y_array, LinearRegressionModel.TRAIN_NORM_EQUATION);
 
-
         if (!x_model.isTrained() || !y_model.isTrained()){
             trainingError = null;
             trained = false;

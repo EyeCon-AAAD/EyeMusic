@@ -59,7 +59,6 @@ public class GazeModelManager {
             predictions.add(predictOriginal(feature));
             coordinates.add(feature.getCoordinate());
         }
-
         CalibratedModel newCalibratedModel = new CalibratedModel(predictions, coordinates);
         if (newCalibratedModel.isTrained()) {
             isCalibratedAtAll = true;
@@ -68,8 +67,6 @@ public class GazeModelManager {
         }else{
             Log.d(TAG, "updateCalibratedModel: calibrated model is not updated successfully.");
         }
-
-
         Log.d(TAG, "updateCalibratedModel: finished");
     }
 
