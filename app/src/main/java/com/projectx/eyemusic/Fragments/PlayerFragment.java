@@ -111,10 +111,12 @@ public class PlayerFragment extends Fragment {
                 paused = true;
             }
         }));
-        buttoneffect(btnplay);
+        MainActivity.buttoneffect(btnplay);
 
 
-        tracksecond = tracks.get(played_index).getDuration_ms() / 100;
+        tracksecond = track.getDuration_ms() / 100;
+
+
         seekBar.setOnTouchListener(new View.OnTouchListener(){
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -127,30 +129,18 @@ public class PlayerFragment extends Fragment {
                     while (paused);
                     seekBar.setProgress(progress);
                     progress++;
+                    Thread.sleep(tracksecond);
                     if (progress == 100) {
                         if (!repeat)
-                            btnnext.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    btnnext.performClick();
-                                }
-                            });
+                            btnnext.post(() -> btnnext.performClick());
                         else {
                             threadrepeat = true;
-                            btnprev.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    btnprev.performClick();
-                                }
-                            });
+                            btnprev.post(() -> btnprev.performClick());
                         }
                     }
-                    Thread.sleep(tracksecond);
-
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-
             }
         }).start();
 
@@ -171,7 +161,7 @@ public class PlayerFragment extends Fragment {
             paused = false;
 
         });
-        buttoneffect(btnnext);
+        MainActivity.buttoneffect(btnnext);
 
         btnprev.setOnClickListener(v -> {
             MainActivity.mSpotifyAppRemote.getPlayerApi().getPlayerState().setResultCallback(playback->{
@@ -200,7 +190,7 @@ public class PlayerFragment extends Fragment {
                }
             });
         });
-        buttoneffect(btnprev);
+        MainActivity.buttoneffect(btnprev);
 
         btnrepeat.setOnClickListener(v -> {
             if (!repeat){
@@ -215,24 +205,5 @@ public class PlayerFragment extends Fragment {
 
     }
 
-    public static void buttoneffect (View button){
-        button.setOnTouchListener(new View.OnTouchListener() {
 
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN: {
-                        v.getBackground().setColorFilter(0x69696969,PorterDuff.Mode.SRC_ATOP);
-                        v.invalidate();
-                        break;
-                    }
-                    case MotionEvent.ACTION_UP: {
-                        v.getBackground().clearColorFilter();
-                        v.invalidate();
-                        break;
-                    }
-                }
-                return false;
-            }
-        });
-    }
 }

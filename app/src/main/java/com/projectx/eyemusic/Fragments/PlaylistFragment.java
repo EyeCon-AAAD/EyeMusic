@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.android.volley.RequestQueue;
@@ -40,6 +41,8 @@ public class PlaylistFragment extends Fragment {
     private static final String TAG = "PlaylistFragment";
     public MainActivity mainActivity;
     ProgressBar progressBar;
+    ImageView btnup;
+    ImageView btndown;
 
     public PlaylistFragment() {
         // Required empty public constructor
@@ -73,6 +76,8 @@ public class PlaylistFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         progressBar = view.findViewById(R.id.pb_load_main);
+        btnup = view.findViewById(R.id.btnup);
+        btndown = view.findViewById(R.id.btndown);
         initPlaylistRecyclerView(view);
     }
 
@@ -81,8 +86,8 @@ public class PlaylistFragment extends Fragment {
         rv_playlists.setHasFixedSize(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         rv_playlists.setLayoutManager(layoutManager);
-
         fetchPlaylists(mainActivity.requestQueue, MainActivity.mSpotifyAppRemote, rv_playlists);
+        scrollControls(layoutManager, rv_playlists);
     }
 
     private void fetchPlaylists(RequestQueue requestQueue, SpotifyAppRemote mSpotifyAppRemote, RecyclerView rv_playlists){
@@ -137,5 +142,24 @@ public class PlaylistFragment extends Fragment {
         requestQueue.add(playlistRequest);
     }
 
+    private void scrollControls(LinearLayoutManager linearLayoutManager, RecyclerView recyclerView){
+        btnup.setOnClickListener(v -> {
+            int firstVisibleItemIndex = linearLayoutManager.findFirstCompletelyVisibleItemPosition();
+            if (firstVisibleItemIndex > 0) {
+                linearLayoutManager.smoothScrollToPosition(recyclerView,null,firstVisibleItemIndex-1);
+            }
+        });
+        MainActivity.buttoneffect(btnup);
+
+        btndown.setOnClickListener(v -> {
+            int totalItemCount = recyclerView.getAdapter().getItemCount();
+            if (totalItemCount <= 0) return;
+            int lastVisibleItemIndex = linearLayoutManager.findLastCompletelyVisibleItemPosition();
+
+            if (lastVisibleItemIndex >= totalItemCount) return;
+            linearLayoutManager.smoothScrollToPosition(recyclerView,null,lastVisibleItemIndex+1);
+        });
+        MainActivity.buttoneffect(btndown);
+    }
 
 }
