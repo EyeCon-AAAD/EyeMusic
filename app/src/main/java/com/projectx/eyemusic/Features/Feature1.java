@@ -77,7 +77,7 @@ public class Feature1 extends RawFeature {
             return;
         }
 
-        createBitmaps(4);
+        createBitmaps(3.5f);
     }
 
     // all the values are checked before hand so just the cropping

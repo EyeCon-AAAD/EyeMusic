@@ -161,13 +161,12 @@ public class OriginalModel {
     // need to explicitly create ByteBuffer for face mask to match input shape for model
     // used ALPHA_8 for gray-scale
     private ByteBuffer faceGridToByteBuffer(int[][] faceGrid){
-        Bitmap bitmap = Bitmap.createBitmap(25, 25, Bitmap.Config.ALPHA_8);
         ByteBuffer faceMaskInput = ByteBuffer.allocateDirect(25 * 25 * 4).order(ByteOrder.nativeOrder());
         int c = 0;
         for (int y = 0; y < 25; y++) {
             for (int x = 0; x < 25; x++) {
-                bitmap.setPixel(x, y, Color.alpha(faceGrid[x][y]));
-                int px = bitmap.getPixel(x, y);
+                // disregard using bitmap
+                float px = (float) faceGrid[y][x];
                 faceMaskInput.putFloat(px);
             }
         }
