@@ -43,6 +43,7 @@ public class FeatureExtractor {
              CalibrationRunnable.setNewFeature(newFeature);
          }else{
              Log.i(TAG, "getData: data sent to predict");
+             PredictionThread.getHandler().removeCallbacksAndMessages(null); // all the pending runnable objects will be removed
              PredictionThread.getHandler().post(new PredictionThread.GazeRunnable(newFeature));
              /*
              //wanted to make teh click slower
