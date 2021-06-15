@@ -68,9 +68,7 @@ public class PlayerFragment extends Fragment {
             }
             track = tracks.get(played_index);
             shuffled_tracks = new ArrayList<MyTrack>(tracks);
-   /*         for (int i = played_index + 1; i < tracks.size(); i++){
-                MainActivity.mSpotifyAppRemote.getPlayerApi().queue(tracks.get(i).getSpotifyURI());
-            }*/
+
 
         }
 
