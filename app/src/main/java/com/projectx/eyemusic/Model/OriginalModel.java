@@ -31,7 +31,8 @@ public class OriginalModel {
 
     private static OriginalModel gazePredictionModel = null;
     private final GazePredictorModel model;
-    private OriginalModel() throws IOException {
+
+    public OriginalModel() throws IOException {
         this.modelFile = null;
         this.interpreter = null;
         this.isModelDownloaded = false;

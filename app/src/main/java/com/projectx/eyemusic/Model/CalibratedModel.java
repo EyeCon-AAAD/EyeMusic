@@ -13,13 +13,13 @@ public class CalibratedModel {
     private CalibrationError trainingError = null;
     private boolean trained = false;
 
-    CalibratedModel(){
+    public CalibratedModel(){
         x_model = new LinearRegressionModel();
         y_model = new LinearRegressionModel();
         trainingError = new CalibrationError();
     }
 
-    CalibratedModel(List<GazePoint> predictions, List <GazePoint> coordinates){
+    public CalibratedModel(List<GazePoint> predictions, List<GazePoint> coordinates){
         List<Float> x_array = new ArrayList<Float>();
         List<Float> y_array = new ArrayList<Float>();
         List<Float> x_prediction_array = new ArrayList<Float>();
@@ -71,5 +71,13 @@ public class CalibratedModel {
 
     public boolean isTrained() {
         return trained;
+    }
+
+    public LinearRegressionModel getX_model() {
+        return x_model;
+    }
+
+    public LinearRegressionModel getY_model() {
+        return y_model;
     }
 }

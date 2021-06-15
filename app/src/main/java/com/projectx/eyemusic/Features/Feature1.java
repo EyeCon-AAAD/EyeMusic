@@ -1,6 +1,7 @@
 package com.projectx.eyemusic.Features;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.util.Log;
@@ -158,6 +159,18 @@ public class Feature1 extends RawFeature {
             }
         }
         logFaceGrid(TAG);
+
+        Log.d(TAG, "PixelFaceConfig: " + faceImage.getConfig());
+
+        /*for (int i = 0; i<64; i++){
+            for (int j = 0; j<64; j++){
+                int A = Color.alpha(faceImage.getPixel(i,j));
+                Log.d(TAG, "PixelFaceA: " + A);
+                Log.d(TAG, ".");
+            }
+        }
+        Log.d(TAG, "PixelFace00: " + faceImage.getPixel(0,0));*/
+        Log.d(TAG, "ColorARGB: " + Color.argb(255, 255, 255, 255));
     }
 
     void logFaceGrid(String TAG){
