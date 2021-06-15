@@ -226,4 +226,64 @@ public class OriginalModel {
         }
         return inputImage;
     }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    public GazePoint Predict(Bitmap faceImage, Bitmap rightImage, Bitmap leftImage, int[][] gridArray) throws IOException {
+
+        //if(isModelDownloaded()){
+        // DO prediction
+        // create byte buffers from bitmap image while pre-processing them
+        ByteBuffer eyeLeft = processBitmap(leftImage, "left_eye");
+        ByteBuffer eyeRight = processBitmap(rightImage, "right_eye");
+        ByteBuffer face = processBitmap(faceImage, "face");
+        ByteBuffer faceMask = faceGridToByteBuffer(gridArray);
+
+        // Add offline setup of TFLite
+        // Creates inputs for reference.
+        TensorBuffer eyeLeftTensor = TensorBuffer.createFixedSize(new int[]{1, 64, 64, 3}, DataType.FLOAT32);
+        eyeLeftTensor.loadBuffer(eyeLeft);
+        TensorBuffer eyeRightTensor = TensorBuffer.createFixedSize(new int[]{1, 64, 64, 3}, DataType.FLOAT32);
+        eyeRightTensor.loadBuffer(eyeRight);
+        TensorBuffer faceTensor = TensorBuffer.createFixedSize(new int[]{1, 64, 64, 3}, DataType.FLOAT32);
+        faceTensor.loadBuffer(face);
+        TensorBuffer faceMaskTensor = TensorBuffer.createFixedSize(new int[]{1, 625}, DataType.FLOAT32);
+        faceMaskTensor.loadBuffer(faceMask);
+
+        /*// create container for prediction result
+        TensorBuffer coordinateBuffer = TensorBuffer.createFixedSize(new int[]{1, 2},
+                DataType.FLOAT32);*/
+
+        // Runs model inference and gets result.
+        GazePredictorModel.Outputs outputs = model.process(eyeLeftTensor, eyeRightTensor, faceTensor, faceMaskTensor);
+        TensorBuffer outputFeatures = outputs.getOutputFeature0AsTensorBuffer();
+        /*// order of inputs matters
+        Object[] inputs = new Object[]{eyeLeft,
+                eyeRight,
+                face,
+                faceMask};*/
+        // outputs
+        /*Map<Integer, Object> output = new HashMap<>();
+        output.put(0, coordinateBuffer.getBuffer());*/
+        ByteBuffer out = outputFeatures.getBuffer();
+        out.rewind();
+        float x_coordinate = out.get(0);
+        float y_coordinate = out.get(1);
+        Log.d(TAG, String.format("Coordinates (x, y) : (%1.4f, %1.4f)", x_coordinate, y_coordinate));
+        return new GazePoint(x_coordinate, y_coordinate);
+
+        // infer
+        /*try{
+            interpreter.runForMultipleInputsOutputs(inputs, output);
+            // need to test inference
+            ByteBuffer out = coordinateBuffer.getBuffer();
+            out.rewind();
+            float x_coordinate = out.get(0);
+            float y_coordinate = out.get(1);
+            Log.d(TAG, String.format("Coordinates (x, y) : (%1.4f, %1.4f)", x_coordinate, y_coordinate));
+
+            return new GazePoint(x_coordinate, y_coordinate);
+        }catch (IllegalArgumentException e){
+            e.printStackTrace();
+        }*/
+    }
 }

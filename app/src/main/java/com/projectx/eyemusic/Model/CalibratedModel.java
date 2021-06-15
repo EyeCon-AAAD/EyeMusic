@@ -52,7 +52,6 @@ public class CalibratedModel {
 
             trainingError = new CalibrationError(predictions, calibPredictions);
         }
-
     }
 
     public GazePoint predict(GazePoint input){
