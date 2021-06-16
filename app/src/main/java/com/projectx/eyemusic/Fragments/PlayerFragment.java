@@ -1,17 +1,12 @@
 package com.projectx.eyemusic.Fragments;
 
-import android.content.Context;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatSeekBar;
 import androidx.fragment.app.Fragment;
 
 import android.os.Parcelable;
-import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -27,13 +22,16 @@ import com.projectx.eyemusic.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 
 public class PlayerFragment extends Fragment {
 
     private static final String TAG = "PlayerFragment";
     private int played_index;
+    private int shuffled_played_index;
     private ArrayList<MyTrack> tracks;
+    private ArrayList<MyTrack> shuffled_tracks;
     private MyTrack track;
     ImageButton btnplay;
     ImageButton btnnext;
@@ -64,13 +62,13 @@ public class PlayerFragment extends Fragment {
         if (getArguments() != null) {
             played_index = this.getArguments().getInt("played");
             tracks = new ArrayList<MyTrack>();
+
             for (Parcelable parcelable: this.getArguments().getParcelableArrayList("tracks")){
                 tracks.add((MyTrack) parcelable);
             }
             track = tracks.get(played_index);
-   /*         for (int i = played_index + 1; i < tracks.size(); i++){
-                MainActivity.mSpotifyAppRemote.getPlayerApi().queue(tracks.get(i).getSpotifyURI());
-            }*/
+            shuffled_tracks = new ArrayList<MyTrack>(tracks);
+
 
         }
 
@@ -145,11 +143,20 @@ public class PlayerFragment extends Fragment {
         }).start();
 
         btnnext.setOnClickListener(v -> {
-            if (played_index == tracks.size() - 1)
-                played_index = 0;
-            else
+            if (shuffle){
+                shuffled_played_index++;
+                if (shuffled_played_index == tracks.size() - 1){
+                    shuffled_played_index = 0;
+                }
+                track = shuffled_tracks.get(shuffled_played_index);
+            }
+            else{
                 played_index++;
-            track = tracks.get(played_index);
+                if (played_index == tracks.size() - 1){
+                    played_index = 0;
+                }
+                track = tracks.get(played_index);
+            }
             MainActivity.mSpotifyAppRemote.getPlayerApi().play(track.getSpotifyURI());
             Picasso.get().load(track.getImageURL()).into(albumart);
             trackname.setText(track.getTrackName());
@@ -165,7 +172,12 @@ public class PlayerFragment extends Fragment {
 
         btnprev.setOnClickListener(v -> {
             MainActivity.mSpotifyAppRemote.getPlayerApi().getPlayerState().setResultCallback(playback->{
-               if (playback.playbackPosition > 5000 || played_index==0 || threadrepeat){
+               int index;
+                if (shuffle)
+                    index = shuffled_played_index;
+                else
+                    index  = played_index;
+               if (playback.playbackPosition > 5000 || index==0 || threadrepeat){
                    MainActivity.mSpotifyAppRemote.getPlayerApi().play(track.getSpotifyURI());
                    seekBar.setProgress(0);
                    progress = 0;
@@ -176,8 +188,14 @@ public class PlayerFragment extends Fragment {
                    if (threadrepeat) threadrepeat = false;
                }
                else{
-                   played_index--;
-                   track = tracks.get(played_index);
+                   if (shuffle){
+                       shuffled_played_index--;
+                       track = shuffled_tracks.get(shuffled_played_index);
+                   }
+                   else{
+                       played_index--;
+                       track = tracks.get(played_index);
+                   }
                    MainActivity.mSpotifyAppRemote.getPlayerApi().play(track.getSpotifyURI());
                    Picasso.get().load(track.getImageURL()).into(albumart);
                    trackname.setText(track.getTrackName());
@@ -202,6 +220,25 @@ public class PlayerFragment extends Fragment {
                 repeat = false;
             }
         });
+
+        btnshuffle.setOnClickListener(v -> {
+            if (!shuffle){
+                btnshuffle.setImageResource(R.drawable.ic_shuffle_glow);
+                shuffle = true;
+                Collections.shuffle(shuffled_tracks);
+                int i = shuffled_tracks.indexOf(track);
+                Collections.swap(shuffled_tracks,0,i);
+                shuffled_played_index = 0;
+            }
+            else{
+                btnshuffle.setImageResource(R.drawable.ic_shuffle);
+                shuffle = false;
+                played_index = tracks.indexOf(track);
+            }
+        });
+
+
+
 
     }
 
