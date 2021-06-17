@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Fragments.OnBoarding.SplashFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/upper_layout"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/splash_eye_icon"
+            android:layout_width="87dp"
+            android:layout_height="87dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="257dp"
+            android:src="@drawable/eye_icon"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/tv_splash_fragment_eyemusic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="30dp"
+            android:fontFamily="@font/segoe_ui"
+            android:text="@string/app_name"
+            android:textColor="@color/colorBlack"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/upper_layout"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_powered_spotify"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="@font/segoe_ui"
+            android:text="Powered by Spotify"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="27dp"
+            android:layout_height="27dp"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/spotify_black"
+            android:layout_marginStart="2dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.153"
+            app:layout_constraintStart_toEndOf="@+id/tv_powered_spotify" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</RelativeLayout>

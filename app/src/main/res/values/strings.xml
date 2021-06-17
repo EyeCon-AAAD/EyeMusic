@@ -46,4 +46,5 @@
     <string name="pref_summary_camera_live_viewport">Do not block camera preview drawing on detection</string>
     <!-- Gaze prediction Model name in Firebase -->
     <string name="GazeModelName">Gaze-Predictor</string>
+    <string name="permission_request">EyeMusic needs some permissions to function</string>
 </resources>

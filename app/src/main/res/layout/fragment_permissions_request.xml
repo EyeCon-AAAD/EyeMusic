@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/fragment_permission_request"
+    tools:context=".Fragments.OnBoarding.PermissionsRequestFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/upper_layout"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/spotify_connect"
+            android:layout_width="87dp"
+            android:layout_height="87dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="257dp"
+            android:src="@drawable/approval"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/tv_permission_fragment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="30dp"
+            android:fontFamily="@font/segoe_ui"
+            android:text="@string/permission_request"
+            android:textAlignment="center"
+            android:textColor="@color/colorBlack"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+        <Button
+            android:id="@+id/btn_fragment_permission_request"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/custom_rounded_button"
+            android:layout_marginTop="100dp"
+            android:layout_gravity="center_horizontal"
+            android:text="Grant Permissions"
+            android:textColor="@color/colorWhite"
+            android:textSize="20sp"
+            android:fontFamily="@font/segoe_ui"
+            android:textStyle="bold"
+            android:textAllCaps="false"
+            >
+        </Button>
+    </LinearLayout>
+
+</RelativeLayout>
