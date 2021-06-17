@@ -1,21 +1,48 @@
 package com.projectx.eyemusic.Fragments.OnBoarding;
 
+import android.Manifest;
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
+import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.DialogOnAnyDeniedMultiplePermissionsListener;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.projectx.eyemusic.MainActivity;
+import com.projectx.eyemusic.OnBoardingActivity;
 import com.projectx.eyemusic.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,6 +51,10 @@ import com.projectx.eyemusic.R;
  */
 public class PermissionsRequestFragment extends Fragment {
     Button btnRequestPermissions;
+    private static final String TAG = "PermissionsRequest";
+    private static final int PERMISSION_REQUESTS = 1;
+    Context context;
+    ActivityResultLauncher<Intent> mIntent;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -85,18 +116,86 @@ public class PermissionsRequestFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         btnRequestPermissions = view.findViewById(R.id.btn_fragment_permission_request);
+        context = getContext();
+
+        // settings Activity Result Callback
+        mIntent = registerForActivityResult(new StartActivityForResult(),
+                result -> startMainActivity());
+
+        MultiplePermissionsListener listener = new MultiplePermissionsListener() {
+            @Override
+            public void onPermissionsChecked(MultiplePermissionsReport multiplePermissionsReport) {
+                if(multiplePermissionsReport.areAllPermissionsGranted()) {
+                    startMainActivity();
+                } else if(multiplePermissionsReport.isAnyPermissionPermanentlyDenied()){
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setTitle("Camera & Storage Permissions")
+                            .setMessage("Camera and Storage permissions are needed for calibration and gaze prediction")
+                            .setPositiveButton("Go to SETTINGS", (dialogInterface, i) -> {
+                                showSettings();
+                            })
+                            .setNegativeButton("No Thanks", ((dialogInterface, i) -> {
+                                // proceed without granting permissions
+                                startMainActivity();
+                            }))
+                            .setIcon(R.mipmap.ic_launcher_eye_music)
+                            .show();
+                }else{
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setTitle("Camera & Storage Permissions")
+                            .setMessage("Camera and Storage permissions are needed for calibration and gaze prediction")
+                            .setPositiveButton("Request Again", (dialogInterface, i) -> {
+
+                            })
+                            .setNegativeButton("No Thanks", ((dialogInterface, i) -> {
+                                // proceed without granting permissions
+                                startMainActivity();
+                            }))
+                            .setIcon(R.mipmap.ic_launcher_eye_music)
+                            .show();
+                }
+            }
+
+            @Override
+            public void onPermissionRationaleShouldBeShown(List<PermissionRequest> list, PermissionToken permissionToken) {
+                // User previously denied the permission, request them again
+                permissionToken.continuePermissionRequest();
+            }
+        };
         btnRequestPermissions.setOnClickListener(v -> {
             // finish onBoarding
             onBoardingFinished();
 
-            Intent intent = new Intent(getActivity(), MainActivity.class);
-            startActivity(intent);
+            Dexter.withContext(getContext())
+                    .withPermissions(
+                            Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            Manifest.permission.CAMERA,
+                            Manifest.permission.INTERNET
+                    ).withListener(listener)
+                    .onSameThread()
+                    .check();
         });
     }
 
+    private void startMainActivity() {
+        Intent intent = new Intent(getActivity(), MainActivity.class);
+        startActivity(intent);
+        getActivity().finish();
+    }
+
     private void onBoardingFinished(){
-        SharedPreferences preferences = requireActivity().getSharedPreferences("onBoarding",
+        String appPackageName = getString(R.string.APP_PACKAGE_NAME);
+        SharedPreferences preferences = requireActivity().getSharedPreferences(appPackageName,
                 Context.MODE_PRIVATE);
         preferences.edit().putBoolean("finished", true).apply();
     }
+
+    public void showSettings(){
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", getActivity().getPackageName(), null);
+        intent.setData(uri);
+        mIntent.launch(intent);
+    }
+
 }

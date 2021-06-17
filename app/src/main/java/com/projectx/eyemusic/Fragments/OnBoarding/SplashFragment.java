@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 
 import com.projectx.eyemusic.MainActivity;
 import com.projectx.eyemusic.R;
+import com.projectx.eyemusic.Utilities;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -32,7 +33,7 @@ public class SplashFragment extends Fragment {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if(isOnboardingFinished()){
+                if(Utilities.isOnboardingFinished()){
                     // start mainActivity
                     Intent intent = new Intent(getActivity(), MainActivity.class);
                     startActivity(intent);
@@ -49,9 +50,4 @@ public class SplashFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_splash, container, false);
     }
 
-    private boolean isOnboardingFinished(){
-        SharedPreferences preferences = requireActivity().getSharedPreferences("onBoarding",
-                Context.MODE_PRIVATE);
-        return preferences.getBoolean("finished", false);
-    }
 }

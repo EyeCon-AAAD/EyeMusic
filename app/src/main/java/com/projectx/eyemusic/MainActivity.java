@@ -58,13 +58,11 @@ import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.common.Feature;
 import com.google.mlkit.common.MlKitException;
 import com.google.mlkit.vision.face.FaceDetectorOptions;
 import com.projectx.eyemusic.Authentication.Authentication;
 import com.projectx.eyemusic.Features.Feature1;
 import com.projectx.eyemusic.Features.FeatureExtractor;
-import com.projectx.eyemusic.Features.RawFeature;
 import com.projectx.eyemusic.Fragments.CalibrationFragment;
 import com.projectx.eyemusic.FaceDetection.CameraXViewModel;
 import com.projectx.eyemusic.FaceDetection.FaceDetectorProcessor;
@@ -74,7 +72,6 @@ import com.projectx.eyemusic.Fragments.PlaylistFragment;
 import com.projectx.eyemusic.Graphics.DotGraphic;
 import com.projectx.eyemusic.Graphics.GraphicOverlay;
 import com.projectx.eyemusic.Model.GazeModelManager;
-import com.projectx.eyemusic.Model.GazePoint;
 import com.projectx.eyemusic.Model.OriginalModel;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
@@ -335,7 +332,6 @@ public class MainActivity extends AppCompatActivity {
         final AuthorizationResponse response = AuthorizationClient.getResponse(resultCode, data);
         // error occurred
         if (response.getError() != null && response.getError().isEmpty()) {
-            tv_auth_token.setText(response.getError());
             Log.e(TAG, response.getError());
         }
         if (requestCode == SPOTIFY_TOKEN_REQUEST_CODE) {
@@ -364,7 +360,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         Log.d(TAG, "onStart: ");
         // check if EyeMusic is launched for the first time
-        if (!isFirstTimeLaunch()) {
+        if (Utilities.isOnboardingFinished()) {
             // order matters
             mAccessCode = authentication.getAccessCode();
             mAccessToken = authentication.getAccessToken();
@@ -372,28 +368,19 @@ public class MainActivity extends AppCompatActivity {
             // ------------------- perform error check for when the access is denied but launch is not first time ----------
         }
         // Check if Spotify is installed each time the app is launched. Requirement!
-        if (!isSpotifyInstalled(packageManager)) {
-            directUserToPlayStore();
+        if (!Utilities.isSpotifyInstalled()) {
+            Utilities.directUserToPlayStore();
         } else {
             if (authentication.isAuthenticated()) {
                 ConnectionParams connectionParams = new ConnectionParams.Builder(CLIENT_ID)
                         .setRedirectUri(REDIRECT_URI)
                         .showAuthView(true)
                         .build();
-                // offline support is possible out of the box and doesn't require additional implementation
-                // if the following conditions are met:
-                // -> Application has successfully connected to Spotify over the last 24 hours
-                // -> The Application uses the same REDIRECT_URI, CLIENT_ID and scopes when connecting to
-                //    Spotify
-                // Use the SpotifyAppRemote.Connector to connect to Spotify and get an instance of
-                // SpotifyAppRemote
-                //SpotifyAppRemote.disconnect(mSpotifyAppRemote);
                 if (mSpotifyAppRemote == null) {
                     connectSpotifyRemote(connectionParams);
                 } else if (!mSpotifyAppRemote.isConnected()) {
                     connectSpotifyRemote(connectionParams);
                 }
-
             }
         }
     }
@@ -450,97 +437,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void directUserToPlayStore() {
-        // Send user to Play Store to install if available in current market
-        // TO-DO: If Spotify is not in user's market --> potentially can't make use of our app
-        Log.w(TAG, "Spotify isn't installed! Going to play store");
-        // Alert Dialog for good UX
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this); // look up context
-        builder.setMessage("Please install Spotify from Play Store then launch app again.")
-                .setCancelable(true) // may change this
-                .setPositiveButton("Install", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        try {
-                            Uri uri = Uri.parse("market://details")
-                                    .buildUpon()
-                                    .appendQueryParameter("id", SPOTIFY_PACKAGE_NAME)
-                                    .appendQueryParameter("referrer", REFERRER)
-                                    .build();
-                            startActivity(new Intent(Intent.ACTION_VIEW, uri));
-                        } catch (android.content.ActivityNotFoundException ignored) {
-                            Uri uri = Uri.parse(PLAY_STORE_URI)
-                                    .buildUpon()
-                                    .appendQueryParameter("id", SPOTIFY_PACKAGE_NAME)
-                                    .appendQueryParameter("referrer", REFERRER)
-                                    .build();
-                            startActivity(new Intent(Intent.ACTION_VIEW, uri));
-                        }
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.cancel();
-                    }
-                })
-                .create().show();
-    }
-
-    private boolean isSpotifyInstalled(PackageManager packageManager) {
-        try {
-            packageManager.getPackageInfo(SPOTIFY_PACKAGE_NAME, 0);
-            return true;
-        } catch (PackageManager.NameNotFoundException e) {
-            return false;
-        }
-    }
-
-    // has code for using the spotify remote
-    private void connected() {
-        btn_play.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!flag) {
-                    mSpotifyAppRemote.getPlayerApi().play("spotify:album:5pF05wJrbrIvqunE41vWP8");
-
-                    mSpotifyAppRemote.getPlayerApi()
-                            .subscribeToPlayerState()
-                            .setEventCallback(playerState -> {
-                                final Track track = playerState.track;
-                                if (track != null) {
-                                    tv_message.setText(track.name);
-                                    tv_artist.setText(track.artist.name);
-                                }
-                            });
-                    flag = true;
-                } else {
-                    mSpotifyAppRemote.getPlayerApi().resume();
-                    mSpotifyAppRemote.getPlayerApi()
-                            .subscribeToPlayerState()
-                            .setEventCallback(playerState -> {
-                                final Track track = playerState.track;
-                                if (track != null) {
-                                    tv_message.setText(track.name);
-                                    tv_artist.setText(track.artist.name);
-                                }
-                            });
-                }
-                btn_play.setEnabled(false);
-            }
-        });
-        btn_pause.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mSpotifyAppRemote.getPlayerApi().pause();
-                flag = true;
-                btn_play.setEnabled(true);
-            }
-        });
-
-    }
-
-    private boolean isFirstTimeLaunch() {
+    private boolean isOnBoardingFinished() {
         if (preferences.getBoolean("firstTime", true)) {
             // Do authentication once
             authentication.authenticate(MainActivity.this, SPOTIFY_AUTH_CODE_REQUEST_CODE);
