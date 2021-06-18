@@ -52,7 +52,6 @@ public class CalibratedModel {
 
             trainingError = new CalibrationError(predictions, calibPredictions);
         }
-
     }
 
     public GazePoint predict(GazePoint input){
@@ -74,8 +73,6 @@ public class CalibratedModel {
         return trained;
     }
 
-    ////////////////////////////////////////////////////////////////////
-    // Setters and getters used for testing
     public LinearRegressionModel getX_model() {
         return x_model;
     }
@@ -83,5 +80,4 @@ public class CalibratedModel {
     public LinearRegressionModel getY_model() {
         return y_model;
     }
-
 }
