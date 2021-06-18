@@ -16,6 +16,7 @@ public class GazeModelManager {
     private final static int SCREEN_WIDTH = Utilities.getScreenWidth();
     private final static int SCREEN_HEIGHT = Utilities.getScreenHeight();
     private static boolean isCalibratedAtAll = false;
+    private static boolean recentCalibrationSuccess = false;
 
     private static Random rand  = new Random();
 
@@ -62,9 +63,11 @@ public class GazeModelManager {
         CalibratedModel newCalibratedModel = new CalibratedModel(predictions, coordinates);
         if (newCalibratedModel.isTrained()) {
             isCalibratedAtAll = true;
+            recentCalibrationSuccess = true;
             calibratedModel = newCalibratedModel;
             Log.d(TAG, "updateCalibratedModel: calibrated model is updated successfully.");
         }else{
+            recentCalibrationSuccess = false;
             Log.d(TAG, "updateCalibratedModel: calibrated model is not updated successfully.");
         }
         Log.d(TAG, "updateCalibratedModel: finished");
@@ -74,5 +77,13 @@ public class GazeModelManager {
         if (isCalibratedAtAll)
             return calibratedModel.getTrainingError();
         else return null;
+    }
+
+    public static boolean isIsCalibratedAtAll(){
+        return isCalibratedAtAll;
+    }
+
+    public  static boolean getRecentCalibrationSuccess(){
+        return recentCalibrationSuccess;
     }
 }

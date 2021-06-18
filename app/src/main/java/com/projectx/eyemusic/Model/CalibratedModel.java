@@ -50,7 +50,7 @@ public class CalibratedModel {
                 calibPredictions.add(predict(prediction));
             }
 
-            trainingError = new CalibrationError(predictions, calibPredictions);
+            trainingError = new CalibrationError(coordinates, calibPredictions);
         }
 
     }

@@ -64,19 +64,18 @@ public class CalibrationRunnable implements Runnable {
 
             //capturing the feature
             while (newFeatureCaptured){ //goes through here when its true meaning the feature is used so wants for feature
-                Log.d(TAG, "CalibrationRun: the new feature has not been come yet (in the while loop)" );
+                Log.d(TAG, "CalibrationNewFeature: the new feature has not been come yet (in the while loop)" );
             }
             while(newFeature == null){
-                Log.d(TAG, "CalibrationRun: the new feature is null (in the while loop)" );
+                Log.d(TAG, "CalibrationNewFeature: the new feature is null (in the while loop)" );
             }
 
             capturedFeature = newFeature;
             setNewFeatureCaptured(true);
 
-            //TODO: save the rawData somewhere
             capturedFeature.setCoordinate(point);
             features.add(capturedFeature);
-            Log.d(TAG, "+++++CalibrationRun: the new feature is added, run:" + i +"/" + size_points +" feature:"+ capturedFeature);
+            Log.d(TAG, "CalibrationNewFeature: the new feature is added, run:" + i +"/" + size_points +" feature:"+ capturedFeature);
             i++;
         }
 
@@ -84,26 +83,90 @@ public class CalibrationRunnable implements Runnable {
         graphicOverlayCalibration.clear();
 
         try{
+            //TODO: show the message that the model is being calibrated
             //updating the model
             GazeModelManager.updateCalibratedModel(features);
-            //Show the training error
-            CalibrationError calibError = GazeModelManager.getCalibrationTrainingError();
-            Log.d(TAG, "CalibrationRun: calibration training error (X Y XY): "
-                    + calibError.getX_error() + " " + calibError.getY_error() + " " + calibError.getXY_error());
-            Log.d(TAG, "CalibrationRun: the model is updated");
 
+            // no need for the features captured so far
+            features.clear();
+
+            //checking if the calibrated model is trained or not
+            boolean success = GazeModelManager.getRecentCalibrationSuccess();
+            if (success){
+                //TODO: show the message
+                Log.d(TAG, "CalibrationResult: the model is updated");
+                //Show the training error
+                CalibrationError calibError = GazeModelManager.getCalibrationTrainingError();
+                //TODO: show the message
+                Log.d(TAG, "CalibrationResult: calibration training error (X Y XY): "
+                        + calibError.getX_error() + " " + calibError.getY_error() + " " + calibError.getXY_error());
+
+                //TODO: show the message that they have to look at the screen
+                //waiting for the person to look
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+
+                int dotColors[] = new int[]{Color.RED, Color.YELLOW, Color.GREEN , Color.BLUE, Color.BLACK};
+
+                for(int count = 0; count<5; count++){
+                    // show the dot in the screen for showing the calibration test error
+                    graphicOverlayCalibration.clear();
+                    DotGraphic dot = new DotGraphic(activity, graphicOverlayCalibration, SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
+                    dot.setColor(dotColors[count]);
+                    dot.setRadius(50f);
+                    graphicOverlayCalibration.add(dot);
+                    graphicOverlayCalibration.postInvalidate();
+
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    //capturing the feature
+                    while (newFeatureCaptured){ //goes through here when its true meaning the feature is used so wants for feature
+                        Log.d(TAG, "CalibrationNewFeature: the new feature has not been come yet (in the while loop)" );
+                    }
+                    while(newFeature == null){
+                        Log.d(TAG, "CalibrationNewFeature: the new feature is null (in the while loop)" );
+                    }
+
+                    //features are collected
+                    capturedFeature = newFeature;
+                    setNewFeatureCaptured(true);
+                    capturedFeature.setCoordinate(new GazePoint(SCREEN_WIDTH/2, SCREEN_HEIGHT/2));
+                    features.add(capturedFeature);
+                    Log.d(TAG, "CalibrationNewFeature: the new feature is added, run:" + i +"/" + size_points +" feature:"+ capturedFeature);
+
+                }
+                List<GazePoint> calibPredictions = new ArrayList<GazePoint>();
+                List <GazePoint> coordinates = new ArrayList<GazePoint>();
+                for (Feature1 feature: features){
+                    calibPredictions.add(GazeModelManager.predictCalibrated(feature));
+                    coordinates.add(feature.getCoordinate());
+                }
+
+                //TODO: show the test error
+                CalibrationError testError = new CalibrationError(coordinates, calibPredictions);
+                Log.d(TAG, "CalibrationResult: calibration test error (X Y XY): "
+                        + testError.getX_error() + " " + testError.getY_error() + " " + testError.getXY_error());
+
+            }else {
+                Log.d(TAG, "CalibrationResult: the model could not be updated");
+            }
         }catch (Exception e){
-            Log.e(TAG, "CalibrationRun: ", e);
+            Log.e(TAG, "CalibrationResult: ", e);
         }
 
-
-
-        //make other runtime error
-
+        //finishing the calibration
+        graphicOverlayCalibration.clear();
         FeatureExtractor.setCalibrationMode(false);
-        activity.calibrationFinished(features);
-        Log.d(TAG, "CalibrationRun: finished");
-
+        activity.calibrationFinished();
+        Log.d(TAG, "Calibration: finished");
     }
 
     private static List<GazePoint> produceDots(int no_x, int no_y){
@@ -131,7 +194,7 @@ public class CalibrationRunnable implements Runnable {
     public static boolean setNewFeature(Feature1 f){
         newFeature = f;
         setNewFeatureCaptured(false);
-        Log.d("Calibration", "-----the new feature has arrived: ");
+        Log.d("CalibrationNewFeature", "-----the new feature has arrived: ");
         return true;
     }
 
