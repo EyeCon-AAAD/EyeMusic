@@ -25,13 +25,14 @@ import com.spotify.sdk.android.auth.AuthorizationResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.Date;
 
-public class Authentication implements AuthUtils{
+public class Authentication implements AuthUtils, Serializable {
 
-    private final String TAG = "Authentication";
+    private final static String TAG = "Authentication";
     private final String CLIENT_ID;
     private final String CLIENT_SECRET;
     private final String REDIRECT_URI;
@@ -42,7 +43,7 @@ public class Authentication implements AuthUtils{
             "app-remote-control"};
     private final SharedPreferences preferences;
     private final RequestQueue requestQueue;
-    private final Context context;
+    private Context context;
     private final Calendar calendar;
     private Response.ErrorListener errorListener;
     private Response.Listener<String> tokenStringRequest, refreshedTokenRequest;
@@ -288,6 +289,14 @@ public class Authentication implements AuthUtils{
                 showError(errorMessage);
             }
         }
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
     }
 
     /**

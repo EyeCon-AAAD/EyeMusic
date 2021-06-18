@@ -45,6 +45,9 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.multidex:multidex:2.0.1'
 
+    // permission library
+    implementation 'com.karumi:dexter:6.2.2'
+
     // spotify dependencies
     implementation project(':spotify-app-remote-release-0.7.0')
     implementation "com.google.code.gson:gson:2.8.5"
@@ -70,6 +73,9 @@ dependencies {
 
     // use Guava to read bytes
     implementation 'com.google.guava:guava:30.1.1-android'
+    implementation 'androidx.navigation:navigation-fragment:2.3.4'
+    implementation 'androidx.navigation:navigation-ui:2.3.4'
+    implementation 'androidx.viewpager2:viewpager2:1.0.0'
 
     testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

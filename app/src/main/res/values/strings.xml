@@ -3,7 +3,7 @@
     <string name="play">Play</string>
     <string name="pause">Pause</string>
     <!-- The endpoint past is /me to get this user's playlists. No need for user id at this stage  -->
-    <string name="SpotifyUserPlaylistsEndpoint">https://api.spotify.com/v1/me/playlists</string>
+    <string name="SpotifyUserPlaylistsEndpoint">https://api.spotify.com/v1/me/playlists?limit=50</string>
     <!-- Token endpoint for requesting refreshed Token -->
     <string name="SpotifyTokenEndpoint">https://accounts.spotify.com/api/token</string>
     <string name="SpotifyPlaylistItemsEndpoint">https://api.spotify.com/v1/playlists</string>
@@ -46,4 +46,5 @@
     <string name="pref_summary_camera_live_viewport">Do not block camera preview drawing on detection</string>
     <!-- Gaze prediction Model name in Firebase -->
     <string name="GazeModelName">Gaze-Predictor</string>
+    <string name="permission_request">EyeMusic needs some permissions to function</string>
 </resources>
