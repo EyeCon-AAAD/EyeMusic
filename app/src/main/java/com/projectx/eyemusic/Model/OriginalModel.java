@@ -267,8 +267,8 @@ public class OriginalModel {
         output.put(0, coordinateBuffer.getBuffer());*/
         ByteBuffer out = outputFeatures.getBuffer();
         out.rewind();
-        float x_coordinate = out.get(0);
-        float y_coordinate = out.get(1);
+        float x_coordinate = out.getFloat();
+        float y_coordinate = out.getFloat();
         Log.d(TAG, String.format("Coordinates (x, y) : (%1.4f, %1.4f)", x_coordinate, y_coordinate));
         return new GazePoint(x_coordinate, y_coordinate);
 
