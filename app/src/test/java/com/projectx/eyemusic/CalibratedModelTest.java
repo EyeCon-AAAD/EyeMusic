@@ -20,11 +20,11 @@ public class CalibratedModelTest {
 
         CalibratedModel cm = new CalibratedModel();
 
-        Assert.assertNotNull(cm.getX_model());
-        Assert.assertNotNull(cm.getY_model());
-        Assert.assertNotNull(cm.getTrainingError());
+        Assert.assertNull(cm.getX_model());
+        Assert.assertNull(cm.getY_model());
+        Assert.assertNull(cm.getTrainingError());
 
-        System.out.println(cm.getTrainingError().getX_error());
+        /*System.out.println(cm.getTrainingError().getX_error());
         Assert.assertEquals(-1.0, cm.getTrainingError().getX_error(), 0.1);
 
         System.out.println(cm.getTrainingError().getY_error());
@@ -34,7 +34,7 @@ public class CalibratedModelTest {
         Assert.assertEquals(-1.0, cm.getTrainingError().getXY_error(), 0.1);
 
         System.out.println(cm.getTrainingError().getSample_size());
-        Assert.assertEquals(-1.0, cm.getTrainingError().getSample_size(), 0.1);
+        Assert.assertEquals(-1.0, cm.getTrainingError().getSample_size(), 0.1);*/
     }
 
 
@@ -44,19 +44,21 @@ public class CalibratedModelTest {
 
         List<GazePoint> predictionsList = new ArrayList<>();
 
-        predictionsList.add(new GazePoint(0, 0));
-        predictionsList.add(new GazePoint(1, 1));
-        predictionsList.add(new GazePoint(2, 2));
+        predictionsList.add(new GazePoint(0, 3));
+        predictionsList.add(new GazePoint(1, 5));
+        predictionsList.add(new GazePoint(2, 6));
 
         List<GazePoint> coordinatesList = new ArrayList<>();
-        coordinatesList.add(new GazePoint(0, 0));
-        coordinatesList.add(new GazePoint(1, 1));
-        coordinatesList.add(new GazePoint(2, 2));
+        coordinatesList.add(new GazePoint(0, 3));
+        coordinatesList.add(new GazePoint(1, 5));
+        coordinatesList.add(new GazePoint(2, 6));
 
         CalibratedModel cm = new CalibratedModel(predictionsList, coordinatesList);
 
         Assert.assertNotNull(cm.getX_model());
         Assert.assertNotNull(cm.getY_model());
+
+        System.out.println(cm.isTrained());
         Assert.assertNotNull(cm.getTrainingError());
     }
 
@@ -80,8 +82,7 @@ public class CalibratedModelTest {
     }
 
     @Test
-    // Testing when the inputs produces null
-    // It gives an error because the inputs are giving null values (check predict function in the CalibratedModel.java)
+    // Testing when the inputs produces null because it cannot be trained
     public void predictTest1() {
 
         GazePoint gp = new GazePoint(3, 4);
@@ -101,9 +102,11 @@ public class CalibratedModelTest {
 
         CalibratedModel cm = new CalibratedModel(predictionsList, coordinatesList);
 
+        System.out.println(cm.isTrained());
+
+        Assert.assertNull(cm.getX_model());
+        Assert.assertNull(cm.getY_model());
+        Assert.assertNull(cm.getTrainingError());
 
     }
-
-    // We can add another test for actual known inputs and outputs
-
 }

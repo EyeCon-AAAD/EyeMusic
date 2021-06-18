@@ -74,10 +74,14 @@ public class CalibratedModel {
     }
 
     public LinearRegressionModel getX_model() {
+        if (!trained)
+            return null;
         return x_model;
     }
 
     public LinearRegressionModel getY_model() {
+        if (!trained)
+            return null;
         return y_model;
     }
 }
