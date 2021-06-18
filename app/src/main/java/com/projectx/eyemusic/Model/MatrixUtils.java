@@ -59,12 +59,22 @@ public class MatrixUtils {
         }
 
         // Multiply the two marices
-        for (i = 0; i < row1; i++) {
-            for (j = 0; j < col2; j++) {
-                for (k = 0; k < row2; k++)
-                    C[i][j] += A[i][k] * B[k][j];
+        try {
+            for (i = 0; i < row1; i++) {
+                for (j = 0; j < col2; j++) {
+                    for (k = 0; k < row2; k++)
+                        C[i][j] += A[i][k] * B[k][j];
+                }
             }
         }
+        catch (NullPointerException e) {
+            Log.e(TAG, "Error: The input matrix is null");
+            return null;
+        }
+        catch (ArrayIndexOutOfBoundsException e) {
+            return null;
+        }
+
 
         return C;
     }
@@ -74,17 +84,17 @@ public class MatrixUtils {
     public static  Float [] [] transpose(Float A[][], int rows, int cols)
     {
         if (A == null){
-            Log.e(TAG, "inverse: matrix A is null");
+            Log.e(TAG, "transpose: matrix A is null");
             return null;
         }
 
         if(A.length != rows){
-            Log.e(TAG, "inverse: the argument rows does not match the length of the matrix");
+            Log.e(TAG, "transpose: the argument rows does not match the length of the matrix");
             return null;
         }
         for (Float[] row: A) {
             if(row.length != cols){
-                Log.e(TAG, "inverse: the argument cols does not match structure of the matrix");
+                Log.e(TAG, "transpose: the argument cols does not match structure of the matrix");
                 return null;
             }
         }
@@ -95,6 +105,10 @@ public class MatrixUtils {
         int i, j;
         for (i = 0; i < rows; i++) {
             for (j = 0; j < cols; j++) {
+                if(A[i][j] == null) {
+                    Log.e(TAG, "transpose: the element is not initialized");
+                    return null;
+                }
                 B[j][i] = A[i][j];
             }
         }
