@@ -61,15 +61,16 @@ public class CalibrationFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         btn_next_fragment = view.findViewById(R.id.btn_fragment_calibrate);
+        btn_next_fragment.setVisibility(View.INVISIBLE);
 
         // go to next fragment
         btn_next_fragment.setOnClickListener(view1 -> {
-            AppCompatActivity activity = (MainActivity) view1.getContext();
-            Fragment playlistFragment = PlaylistFragment.newInstance();
-            activity.getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.main_fragment_container, playlistFragment, "Playlist Fragment")
-                    .addToBackStack(null)
-                    .commit();
+//            AppCompatActivity activity = (MainActivity) view1.getContext();
+//            Fragment playlistFragment = PlaylistFragment.newInstance();
+//            activity.getSupportFragmentManager().beginTransaction()
+//                    .replace(R.id.main_fragment_container, playlistFragment, "Playlist Fragment")
+//                    .addToBackStack(null)
+//                    .commit();
         });
     }
 }

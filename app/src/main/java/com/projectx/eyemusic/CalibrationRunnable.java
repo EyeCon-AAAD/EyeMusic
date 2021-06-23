@@ -21,7 +21,7 @@ import java.util.List;
 public class CalibrationRunnable implements Runnable {
     private static final String TAG = "CalibrationRunnable";
     private GraphicOverlay graphicOverlayCalibration;
-    private MainActivity activity;
+    private CalibrationActivity activity;
 
     private static boolean newFeatureCaptured;
     private static Feature1 newFeature; //contains the the frames and all the landmarks and other things needed
@@ -32,7 +32,7 @@ public class CalibrationRunnable implements Runnable {
     private final static int SCREEN_WIDTH = Utilities.getScreenWidth();
     private final static int SCREEN_HEIGHT = Utilities.getScreenHeight();
 
-    CalibrationRunnable(GraphicOverlay overlayGaze, MainActivity activity){
+    CalibrationRunnable(GraphicOverlay overlayGaze, CalibrationActivity activity){
         graphicOverlayCalibration= overlayGaze;
         this.activity =  activity;
         this.newFeatureCaptured = true; // meaning that the new feature has not come
@@ -57,7 +57,7 @@ public class CalibrationRunnable implements Runnable {
 
             //giving time to the user to look at the dot
             try {
-                Thread.sleep(3000);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -165,6 +165,7 @@ public class CalibrationRunnable implements Runnable {
         //finishing the calibration
         graphicOverlayCalibration.clear();
         FeatureExtractor.setCalibrationMode(false);
+        activity.setCalibration(false);
         activity.calibrationFinished();
         Log.d(TAG, "Calibration: finished");
     }

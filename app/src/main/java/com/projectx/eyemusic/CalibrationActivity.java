@@ -83,10 +83,11 @@ import com.spotify.protocol.types.Track;
 import com.spotify.sdk.android.auth.AuthorizationResponse;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class MainActivity extends BaseActivity {
-    private static final String TAG = "MainActivity";
+public class CalibrationActivity extends BaseActivity {
+    private static final String TAG = "CalibrationActivity";
 
     private String CLIENT_ID;
     private String CLIENT_SECRET;
@@ -95,24 +96,15 @@ public class MainActivity extends BaseActivity {
     private String APP_PACKAGE_NAME;
     private String PLAY_STORE_URI;
     private String REFERRER;
-    private static final int SPOTIFY_TOKEN_REQUEST_CODE = 777;
-    public static final int SPOTIFY_AUTH_CODE_REQUEST_CODE = 0x11;
-    public static SpotifyAppRemote mSpotifyAppRemote;
     public RequestQueue requestQueue; // made this public to access from fragment
-    private String mAccessToken;
-    private String mAccessCode;
 
     public SharedPreferences preferences = null; // made this public to access from fragment
 
     // Views
-    Button btn_play, btn_pause;
-    TextView tv_message;
-    TextView tv_artist, tv_auth_token;
-    RecyclerView rv_main_playlists;
     public ProgressBar pb_main;
     boolean flag = false;
     PackageManager packageManager;
-
+    TextView tmpInstructionMessage;
 
     public Authentication authentication; // made this public to access from fragment
 
@@ -143,11 +135,14 @@ public class MainActivity extends BaseActivity {
     private TextView textViewReport;
 
     //Calibration
-    private Button btn_calibration;
+    private Button btn_start_calibration;
     private GraphicOverlay graphicOverlayCalibration;
     private CalibrationRunnable calibrationRunnable;
     private Thread calibrationThread;
     private boolean isCalibration;
+    public boolean setCalibration(boolean value) {
+        return value;
+    }
 
     // Original Model
     private OriginalModel gazePredictionModel = null;
@@ -158,30 +153,32 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: ");
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_calibration);
         {
+            tmpInstructionMessage = findViewById(R.id.text_view_instructions);
+//            tmpInstructionMessage.setVisibility(View.INVISIBLE);
             CLIENT_ID = getString(R.string.CLIENT_ID);
             CLIENT_SECRET = getString(R.string.CLIENT_SECRET);
             REDIRECT_URI = getString(R.string.REDIRECT_URI);
-            SPOTIFY_PACKAGE_NAME = getString(R.string.SPOTIFY_PACKAGE_NAME);
-            APP_PACKAGE_NAME = getString(R.string.APP_PACKAGE_NAME);
-            PLAY_STORE_URI = getString(R.string.PLAY_STORE_URI);
+//            SPOTIFY_PACKAGE_NAME = getString(R.string.SPOTIFY_PACKAGE_NAME);
+//            APP_PACKAGE_NAME = getString(R.string.APP_PACKAGE_NAME);
+//            PLAY_STORE_URI = getString(R.string.PLAY_STORE_URI);
             REFERRER = getString(R.string.REFERRER);
         }
         pb_main = findViewById(R.id.pb_load_main);
-        rv_main_playlists = findViewById(R.id.rv_playlists);
+//        rv_main_playlists = findViewById(R.id.rv_playlists);
 
 
-        packageManager = getPackageManager();
+//        packageManager = getPackageManager();
+//
+//        // use sharedPreferences to determine first time launch
+//        preferences = getSharedPreferences(APP_PACKAGE_NAME, MODE_PRIVATE);
 
-        // use sharedPreferences to determine first time launch
-        preferences = getSharedPreferences(APP_PACKAGE_NAME, MODE_PRIVATE);
-
-        // create  singleton request queue
-        requestQueue = Volley.newRequestQueue(MainActivity.this);
-
-        // create Authentication Object
-        authentication = new Authentication(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, preferences, requestQueue, this);
+//        // create  singleton request queue
+//        requestQueue = Volley.newRequestQueue(BaseActivity.this);
+//
+//        // create Authentication Object
+//        authentication = new Authentication(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, preferences, requestQueue, this);
 
         // fetch latest model
         gazePredictionModel = OriginalModel.getInstance();
@@ -189,22 +186,6 @@ public class MainActivity extends BaseActivity {
 
         // --------------------------------------------------------------------------------------------------------------------------
 
-        //just for testing
-        /*Activity mActivity = this;
-        findViewById(R.id.btn_main_stimulateTouch).setOnClickListener(view -> {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        SimulatedTouch.click(mActivity, 500, 500);
-                        //SimulatedTouch.swap(100 ,100,1000 ,500, 5);
-                    } catch (Exception e) {
-                        Log.e(TAG, "When pressed simulatedTouch btn: ", e);
-                    }
-                }
-            }).start();
-
-        });*/
 
         graphicOverlayGazeLocation = findViewById(R.id.graphic_overlay_gaze_location);
         if (graphicOverlayGazeLocation == null) {
@@ -253,44 +234,49 @@ public class MainActivity extends BaseActivity {
                             }
                         });
 
-        if (!allPermissionsGranted()) {
-            getRuntimePermissions();
-        }
+        //***
+//        if (!allPermissionsGranted()) {
+//            getRuntimePermissions();
+//        }
 
         //Calibration
         btn_main_back = findViewById(R.id.btn_main_back);
-//        btn_main_back.setVisibility(View.INVISIBLE);
-//        btn_main_reconnect_spotify = findViewById(R.id.btn_main_reconnect_spotify);
+        btn_main_back.setVisibility(View.INVISIBLE);
+        btn_main_reconnect_spotify = findViewById(R.id.btn_main_reconnect_spotify);
 
         isCalibration = false;
         graphicOverlayCalibration = findViewById(R.id.graphic_overlay_calibration);
-//        calibrationRunnable = new CalibrationRunnable(graphicOverlayCalibration, this);
-        btn_calibration = findViewById(R.id.btn_main_calibration);
-        btn_calibration.setOnClickListener (view -> {
-//            isCalibration = true;
-
-            Intent openCalibrationIntent = new Intent(this, CalibrationActivity.class);
-            startActivity(openCalibrationIntent);
+        calibrationRunnable = new CalibrationRunnable(graphicOverlayCalibration, this);
+        btn_start_calibration = findViewById(R.id.btn_start_calibration);
+        btn_start_calibration.setOnClickListener (view -> {
+            isCalibration = true;
 
 
-//            FeatureExtractor.setCalibrationMode(isCalibration);
-//            calibrationThread  = new Thread(calibrationRunnable);
-//            calibrationThread.start();
+
+            FeatureExtractor.setCalibrationMode(isCalibration);
+            calibrationThread  = new Thread(calibrationRunnable);
+
+            calibrationThread.start();
+//            View tmpBox = findViewById(R.id.graphic_overlay_calibration);
+//            tmpBox.setVisibility(View.INVISIBLE);
+
+
+
+            // set the calibration fragment
+            getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment_container,
+                    new CalibrationFragment()).commit();
+
+
+
+            //change the buttons
+            //btn_start_calibration.setEnabled(false);
+            btn_start_calibration.setVisibility(View.INVISIBLE);
+            //btn_main_back.setVisibility(View.INVISIBLE);
+
+            //change the preview opacity
+            //previewView.setVisibility(View.INVISIBLE);
+            //graphicOverlayFace.setAlpha(0.4f);
 //
-//            // set the calibration fragment
-//            getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment_container,
-//                    new CalibrationFragment()).commit();
-//
-//            //change the buttons
-//            //btn_calibration.setEnabled(false);
-//            btn_calibration.setVisibility(View.INVISIBLE);
-//            //btn_main_back.setVisibility(View.INVISIBLE);
-//            btn_main_reconnect_spotify.setVisibility(View.INVISIBLE);
-//
-//            //change the preview opacity
-//            //previewView.setVisibility(View.INVISIBLE);
-//            //graphicOverlayFace.setAlpha(0.4f);
-
         });
 
     }
@@ -302,13 +288,13 @@ public class MainActivity extends BaseActivity {
 //            Log.d(TAG, "CalibrationRun: RESULTS-> " + feature);
 //        }
 
-//        btn_calibration.post( () -> {btn_calibration.setVisibility(View.VISIBLE);} );
+        btn_start_calibration.post( () -> {btn_start_calibration.setVisibility(View.VISIBLE);} );
         //btn_main_back.post( () -> {btn_main_back.setVisibility(View.VISIBLE);} );
 //        btn_main_reconnect_spotify.post( () -> {btn_main_reconnect_spotify.setVisibility(View.VISIBLE);} );
 
         // start the playlist fragment
-        getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment_container,
-                new PlaylistFragment()).commit();
+//        getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment_container,
+//                new PlaylistFragment()).commit();
     }
 
     public static GraphicOverlay getGraphicOverlayGazeLocation() {
@@ -325,80 +311,82 @@ public class MainActivity extends BaseActivity {
         Log.i(TAG, "onWindowFocusChanged:Location of overlay " + graphicOverlayGazeLocationLocation[0] + " " + graphicOverlayGazeLocationLocation[1]);
     }
 
-    /**
-     * Dispatch incoming result to the correct fragment.
-     *
-     * @param requestCode
-     * @param resultCode
-     * @param data
-     */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        final AuthorizationResponse response = AuthorizationClient.getResponse(resultCode, data);
-        // error occurred
-        if (response.getError() != null && response.getError().isEmpty()) {
-            Log.e(TAG, response.getError());
-        }
-        if (requestCode == SPOTIFY_TOKEN_REQUEST_CODE) {
-            mAccessToken = response.getAccessToken();
-            if (mAccessToken != null) {
-                // store the access token
-                authentication.storeToken(mAccessToken);
-                Utilities.showProgressBar(pb_main, rv_main_playlists, true);
-            }
-        } else if (requestCode == SPOTIFY_AUTH_CODE_REQUEST_CODE) {
-            mAccessCode = response.getCode();
-
-            if (mAccessCode != null) {
-                // store Access code
-                authentication.storeAccessCode(mAccessCode);
-                // fetch access token and refresh token and store them
-                authentication.fetchTokens();
-                // call on start after successfully authenticating --> only happens on first launch
-                onStart();
-            }
-        }
-    }
+//    /**
+//     * Dispatch incoming result to the correct fragment.
+//     *
+//     * @param requestCode
+//     * @param resultCode
+//     * @param data
+//     */
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        final AuthorizationResponse response = AuthorizationClient.getResponse(resultCode, data);
+//        // error occurred
+//        if (response.getError() != null && response.getError().isEmpty()) {
+//            Log.e(TAG, response.getError());
+//        }
+//        if (requestCode == SPOTIFY_TOKEN_REQUEST_CODE) {
+//            mAccessToken = response.getAccessToken();
+//            if (mAccessToken != null) {
+//                // store the access token
+//                authentication.storeToken(mAccessToken);
+//                Utilities.showProgressBar(pb_main, rv_main_playlists, true);
+//            }
+//        } else if (requestCode == SPOTIFY_AUTH_CODE_REQUEST_CODE) {
+//            mAccessCode = response.getCode();
+//
+//            if (mAccessCode != null) {
+//                // store Access code
+//                authentication.storeAccessCode(mAccessCode);
+//                // fetch access token and refresh token and store them
+//                authentication.fetchTokens();
+//                // call on start after successfully authenticating --> only happens on first launch
+//                onStart();
+//            }
+//        }
+//    }
 
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d(TAG, "onStart: ");
-        // check if EyeMusic is launched for the first time
-        if (Utilities.isOnboardingFinished()) {
-            // order matters
-            mAccessCode = authentication.getAccessCode();
-            mAccessToken = authentication.getAccessToken();
-
-            // ------------------- perform error check for when the access is denied but launch is not first time ----------
-        }
-        // Check if Spotify is installed each time the app is launched. Requirement!
-        if (!Utilities.isSpotifyInstalled()) {
-            Utilities.directUserToPlayStore();
-        } else {
-            if (authentication.isAuthenticated()) {
-                ConnectionParams connectionParams = new ConnectionParams.Builder(CLIENT_ID)
-                        .setRedirectUri(REDIRECT_URI)
-                        .showAuthView(true)
-                        .build();
-                if (mSpotifyAppRemote == null) {
-                    connectSpotifyRemote(connectionParams);
-                } else if (!mSpotifyAppRemote.isConnected()) {
-                    connectSpotifyRemote(connectionParams);
-                }
-            }
-        }
+//        Log.d(TAG, "onStart: ");
+//        // check if EyeMusic is launched for the first time
+        Utilities.isOnboardingFinished();
+//        if (Utilities.isOnboardingFinished()) {
+//            // order matters
+//            mAccessCode = authentication.getAccessCode();
+//            mAccessToken = authentication.getAccessToken();
+//
+//            // ------------------- perform error check for when the access is denied but launch is not first time ----------
+//        }
+//        // Check if Spotify is installed each time the app is launched. Requirement!
+//        if (!Utilities.isSpotifyInstalled()) {
+//            Utilities.directUserToPlayStore();
+//        } else {
+//            if (authentication.isAuthenticated()) {
+//                ConnectionParams connectionParams = new ConnectionParams.Builder(CLIENT_ID)
+//                        .setRedirectUri(REDIRECT_URI)
+//                        .showAuthView(true)
+//                        .build();
+//                if (mSpotifyAppRemote == null) {
+//                    connectSpotifyRemote(connectionParams);
+//                } else if (!mSpotifyAppRemote.isConnected()) {
+//                    connectSpotifyRemote(connectionParams);
+//                }
+//            }
+//        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy: ");
-        // disconnect from AppRemote
-        // mSpotifyAppRemote.getPlayerApi().pause();
-        SpotifyAppRemote.disconnect(mSpotifyAppRemote);
+//        // disconnect from AppRemote
+//        // mSpotifyAppRemote.getPlayerApi().pause();
+//        SpotifyAppRemote.disconnect(mSpotifyAppRemote);
         predictionThread.quit(); // it will destroy all the messages that has not been started yet and are in the message queue
+
         if (imageProcessor != null) {
             imageProcessor.stop();}
     }
@@ -417,47 +405,49 @@ public class MainActivity extends BaseActivity {
         bindAllCameraUseCases();
     }
 
-    //------------------------------------ SPOTIFY -------------------------------------------------
-    private void connectSpotifyRemote(ConnectionParams connectionParams) {
-        SpotifyAppRemote.connect(this, connectionParams, new Connector.ConnectionListener() {
-            @Override
-            public void onConnected(SpotifyAppRemote spotifyAppRemote) {
-                mSpotifyAppRemote = spotifyAppRemote;
-                // connection was successful
-                Toast.makeText(getApplicationContext(), "Successfully Connected", Toast.LENGTH_SHORT).show();
-                // refresh access token before fetching playlists if token has expired
-                authentication.refreshAccessToken();
-                // load playlist fragment
-                // changed PlaylistFragment to Calibrate\ionFragment
-                getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment_container,
-                        new PlaylistFragment()).commit();
-                // fetchPlaylists(requestQueue, mSpotifyAppRemote);
-            }
-
-            @Override
-            public void onFailure(Throwable throwable) {
-                // handle connection error here
-                Toast.makeText(getApplicationContext(), "Couldn't connect", Toast.LENGTH_LONG).show();
-                Log.e(TAG, throwable.getMessage(), throwable);
-            }
-        });
-    }
-
+//    //------------------------------------ SPOTIFY -------------------------------------------------
+//    private void connectSpotifyRemote(ConnectionParams connectionParams) {
+//        SpotifyAppRemote.connect(this, connectionParams, new Connector.ConnectionListener() {
+//            @Override
+//            public void onConnected(SpotifyAppRemote spotifyAppRemote) {
+//                mSpotifyAppRemote = spotifyAppRemote;
+//                // connection was successful
+//                Toast.makeText(getApplicationContext(), "Successfully Connected", Toast.LENGTH_SHORT).show();
+//                // refresh access token before fetching playlists if token has expired
+//                authentication.refreshAccessToken();
+//                // load playlist fragment
+//                // changed PlaylistFragment to Calibrate\ionFragment
+//                getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment_container,
+//                        new PlaylistFragment()).commit();
+//                // fetchPlaylists(requestQueue, mSpotifyAppRemote);
+//            }
+//
+//            @Override
+//            public void onFailure(Throwable throwable) {
+//                // handle connection error here
+//                Toast.makeText(getApplicationContext(), "Couldn't connect", Toast.LENGTH_LONG).show();
+//                Log.e(TAG, throwable.getMessage(), throwable);
+//            }
+//        });
+//    }
+//
     private boolean isOnBoardingFinished() {
-        if (preferences.getBoolean("firstTime", true)) {
-            // Do authentication once
-            authentication.authenticate(MainActivity.this, SPOTIFY_AUTH_CODE_REQUEST_CODE);
-
-            // Do initial download of the model.
-            // TODO: initialization in it's own activity later on
+//        if (preferences.getBoolean("firstTime", true)) {
+//            // Do authentication once
+//            authentication.authenticate(MainActivity.this, SPOTIFY_AUTH_CODE_REQUEST_CODE);
+//
+//            // Do initial download of the model.
+//            // TODO: initialization in it's own activity later on
             gazePredictionModel = OriginalModel.getInstance();
 
-            // set first time to false
-            preferences.edit().putBoolean("firstTime", false).apply();
-            return true;
-        } else {
-            return false;
-        }
+        return true;
+//
+//            // set first time to false
+//            preferences.edit().putBoolean("firstTime", false).apply();
+//            return true;
+//        } else {
+//            return false;
+//        }
     }
 
     //-----------------------------CAMERA AND FEATURES --------------------------------------------
@@ -471,26 +461,26 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    private void bindPreviewUseCase(){
-        if (cameraProvider == null) {
-            return;
-        }
-        if (previewUseCase != null) {
-            cameraProvider.unbind(previewUseCase);
-        }
-
-        Preview.Builder builder = new Preview.Builder();
-
-        Size targetResolution = PreferenceUtils.getCameraXTargetResolution(this, lensFacing);
-        if (targetResolution != null) {
-            builder.setTargetResolution(targetResolution);
-        }
-
-        previewUseCase = builder.build();
-        previewUseCase.setSurfaceProvider(previewView.getSurfaceProvider());
-        cameraProvider.bindToLifecycle(/* lifecycleOwner= */ this,
-                cameraSelector, previewUseCase);
-    }
+//    private void bindPreviewUseCase(){
+//        if (cameraProvider == null) {
+//            return;
+//        }
+//        if (previewUseCase != null) {
+//            cameraProvider.unbind(previewUseCase);
+//        }
+//
+//        Preview.Builder builder = new Preview.Builder();
+//
+//        Size targetResolution = PreferenceUtils.getCameraXTargetResolution(this, lensFacing);
+//        if (targetResolution != null) {
+//            builder.setTargetResolution(targetResolution);
+//        }
+//
+//        previewUseCase = builder.build();
+//        previewUseCase.setSurfaceProvider(previewView.getSurfaceProvider());
+//        cameraProvider.bindToLifecycle(/* lifecycleOwner= */ this,
+//                cameraSelector, previewUseCase);
+//    }
 
     private void bindAnalysisUseCase() {
         if (cameraProvider == null) {
@@ -682,4 +672,4 @@ public class MainActivity extends BaseActivity {
 
 }
 
-//new
+// new

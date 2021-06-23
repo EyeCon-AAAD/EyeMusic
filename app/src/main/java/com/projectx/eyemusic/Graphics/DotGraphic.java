@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
+import com.projectx.eyemusic.BaseActivity;
 import com.projectx.eyemusic.MainActivity;
 import com.projectx.eyemusic.Graphics.GraphicOverlay.Graphic;
 
@@ -16,7 +17,7 @@ public class DotGraphic extends Graphic{
     private float x;
     private float y;
 
-    public DotGraphic(MainActivity activity, GraphicOverlay overlay, float x, float y){
+    public DotGraphic(BaseActivity activity, GraphicOverlay overlay, float x, float y){
         super(overlay);
         paint = new Paint();
         paint.setColor(color);
