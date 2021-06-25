@@ -47,4 +47,5 @@
     <!-- Gaze prediction Model name in Firebase -->
     <string name="GazeModelName">Gaze-Predictor</string>
     <string name="permission_request">EyeMusic needs some permissions to function</string>
+    <string name="no_playlists_msg">No Playlists were found.<br/>Please create playlists in Spotify and try again.</string>
 </resources>

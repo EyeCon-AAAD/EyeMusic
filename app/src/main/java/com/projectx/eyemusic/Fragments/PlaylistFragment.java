@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.projectx.eyemusic.App;
 import com.projectx.eyemusic.MainActivity;
 import com.projectx.eyemusic.Music.Playlist;
 import com.projectx.eyemusic.Music.PlaylistAdapter;
@@ -127,6 +128,13 @@ public class PlaylistFragment extends Fragment {
                     PlaylistAdapter rv_adapter = new PlaylistAdapter(getContext(), playlists, mSpotifyAppRemote);
                     // set the adapter for the recycler view
                     rv_playlists.setAdapter(rv_adapter);
+                } else{
+                    // the user doesn't have any playlists. Show appropriate UI to create playlists
+                    // in Spotify
+                    Fragment fragment = new PlaylistErrorFragment();
+                    mainActivity.getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.main_fragment_container, fragment, "Playlist Error Fragment")
+                            .commit();
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
