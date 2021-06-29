@@ -55,6 +55,53 @@ public class CalibratedModel {
 
     }
 
+
+    private List<Integer> getOutliersIndex(List<Float> input) {
+        if(input==null) return null;
+
+        //at least two numbers
+        if(input.size()<2){
+            return null;
+        }
+        List<Integer> outliers_index = new ArrayList<Integer>();
+        List<Float> sorted_input= new ArrayList<Float>(input);
+        List<Float> data1;
+        List<Float> data2;
+
+        if (sorted_input.size() % 2 == 0) {
+            data1 = sorted_input.subList(0, sorted_input.size() / 2);
+            data2 = sorted_input.subList(sorted_input.size() / 2, sorted_input.size());
+        } else {
+            data1 = sorted_input.subList(0, sorted_input.size() / 2);
+            data2 = sorted_input.subList(sorted_input.size() / 2 + 1, sorted_input.size());
+        }
+        double q1 = getMedian(data1);
+        double q3 = getMedian(data2);
+        double iqr = q3 - q1;
+        double lowerFence = q1 - 1.5 * iqr;
+        double upperFence = q3 + 1.5 * iqr;
+
+        for (int i = 0; i < input.size(); i++) {
+            if (input.get(i) < lowerFence || input.get(i) > upperFence)
+                outliers_index.add(i);
+        }
+        return outliers_index;
+    }
+
+    private Float getMedian(List<Float> data) {
+        //testing for the wrong input
+        if(data == null)
+            return null;
+        if(data.size()<1){
+            return null;
+        }
+
+        if (data.size() % 2 == 0)
+            return (data.get(data.size() / 2) + data.get(data.size() / 2 - 1)) / 2;
+        else
+            return data.get(data.size() / 2);
+    }
+
     public GazePoint predict(GazePoint input){
         if (!trained){
             return null;
