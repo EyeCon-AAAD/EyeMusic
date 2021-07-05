@@ -69,6 +69,7 @@ public class PlaylistFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mainActivity = (MainActivity) getActivity();
+        mainActivity.resetBackCounter();
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_playlist, container, false);
     }

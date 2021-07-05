@@ -25,6 +25,7 @@
 
 package com.projectx.eyemusic;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.CameraSelector;
@@ -157,6 +158,7 @@ public class MainActivity extends AppCompatActivity {
 
     Button btn_main_show_player;
     ImageButton btn_main_back;
+    private int backcounter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -294,9 +296,9 @@ public class MainActivity extends AppCompatActivity {
 
         });
         btn_main_show_player.setOnClickListener(view -> {
+
             if (playerFragment!=null){
-
-
+                resetBackCounter();
                 if (!playerFragment.isHidden()) {
 
                 getSupportFragmentManager().beginTransaction()
@@ -309,7 +311,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
         });
-
+        backcounter = 0;
         btn_main_back.setOnClickListener(view ->{
             Fragment fragment = getSupportFragmentManager().findFragmentByTag("Tracks Fragment");
             if (playerFragment != null && !playerFragment.isHidden()){
@@ -323,21 +325,29 @@ public class MainActivity extends AppCompatActivity {
                 currentFragment = playlistFragment;
                 int x = 3;
             }
+            else {
+                backcounter++;
+                if (backcounter == 2) {
+                    mSpotifyAppRemote.getPlayerApi().pause();
+                    finish();
+                    System.exit(0);
+                }
+                else
+                    Toast.makeText(getApplicationContext(), "One more time to exit!", Toast.LENGTH_SHORT).show();
+            }
         });
 
-
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                btn_main_back.post(() -> btn_main_back.performClick());
+            }
+        };
+        getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
-    public Fragment getVisibleFragment(){
-        FragmentManager fragmentManager = MainActivity.this.getSupportFragmentManager();
-        List<Fragment> fragments = fragmentManager.getFragments();
-        if(fragments != null){
-            for(Fragment fragment : fragments){
-                if(fragment != null && fragment.isVisible())
-                    return fragment;
-            }
-        }
-        return null;
+    public void resetBackCounter(){
+        backcounter = 0;
     }
 
     public void calibrationFinished(List<Feature1> features){
