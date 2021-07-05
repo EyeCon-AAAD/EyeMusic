@@ -119,7 +119,6 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.ViewHolder
                     MyTrack track = tracks.get(i);
                     // play track
                     spotifyAppRemote.getPlayerApi().play(track.getSpotifyURI());
-                    Toast.makeText(context, "Playing " + track.getTrackName(), Toast.LENGTH_SHORT).show();
                     Bundle playerBundle = new Bundle();
                     playerBundle.putInt("played", i);
                     playerBundle.putParcelableArrayList("tracks", tracks);

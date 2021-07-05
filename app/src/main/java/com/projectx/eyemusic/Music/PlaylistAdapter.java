@@ -118,7 +118,6 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(context, tv_playlist_name.getText(),Toast.LENGTH_SHORT).show();
                     Playlist playlist = playlists.get(getAdapterPosition());
                     //spotifyAppRemote.getPlayerApi().play(playlist.getSpotifyURI());
                     // go to the Tracks Fragment
