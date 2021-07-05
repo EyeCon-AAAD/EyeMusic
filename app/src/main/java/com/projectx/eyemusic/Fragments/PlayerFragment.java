@@ -42,8 +42,8 @@ public class PlayerFragment extends Fragment {
     TextView trackname;
     TextView artistname;
     SeekBar seekBar;
-    long tracksecond;
-    int progress;
+    public long tracksecond;
+    public int progress;
     long currenttime;
     boolean repeat;
     boolean threadrepeat;

@@ -125,8 +125,16 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
                     // Playlist id will be needed to fetch tracks of current album
                     AppCompatActivity activity = (AppCompatActivity) view.getContext();
                     Fragment fragment = TracksFragment.newInstance(playlist.getId());
+
+                    Fragment frag = null;
+                    MainActivity.currentFragment = fragment;
+                    for (Fragment f: activity.getSupportFragmentManager().getFragments()){
+                        if (f.getTag().equals("Playlist Fragment"))
+                            frag = f;
+                    }
                     activity.getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.main_fragment_container, fragment, "Tracks Fragment")
+                            .remove(frag)
+                            .add(R.id.main_fragment_container, fragment, "Tracks Fragment")
                             .addToBackStack(null) // on back pressed go back
                             .commit();
                 }
