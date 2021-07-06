@@ -118,15 +118,22 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(context, tv_playlist_name.getText(),Toast.LENGTH_SHORT).show();
                     Playlist playlist = playlists.get(getAdapterPosition());
                     //spotifyAppRemote.getPlayerApi().play(playlist.getSpotifyURI());
                     // go to the Tracks Fragment
                     // Playlist id will be needed to fetch tracks of current album
                     AppCompatActivity activity = (AppCompatActivity) view.getContext();
                     Fragment fragment = TracksFragment.newInstance(playlist.getId());
+
+                    Fragment frag = null;
+                    MainActivity.currentFragment = fragment;
+                    for (Fragment f: activity.getSupportFragmentManager().getFragments()){
+                        if (f.getTag().equals("Playlist Fragment"))
+                            frag = f;
+                    }
                     activity.getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.main_fragment_container, fragment, "Tracks Fragment")
+                            .remove(frag)
+                            .add(R.id.main_fragment_container, fragment, "Tracks Fragment")
                             .addToBackStack(null) // on back pressed go back
                             .commit();
                 }

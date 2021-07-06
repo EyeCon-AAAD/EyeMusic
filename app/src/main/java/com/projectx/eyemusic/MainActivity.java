@@ -25,6 +25,7 @@
 
 package com.projectx.eyemusic;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.CameraSelector;
@@ -34,18 +35,17 @@ import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.PorterDuff;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -53,6 +53,7 @@ import android.util.Size;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -79,7 +80,6 @@ import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.spotify.sdk.android.auth.*;
 
-import com.spotify.protocol.types.Track;
 import com.spotify.sdk.android.auth.AuthorizationResponse;
 
 import java.util.ArrayList;
@@ -152,8 +152,13 @@ public class MainActivity extends AppCompatActivity {
     // Original Model
     private OriginalModel gazePredictionModel = null;
 
-    Button btn_main_back, btn_main_reconnect_spotify;
+    public static boolean playerAccessable;
+    public static Fragment playerFragment;
+    public static Fragment currentFragment;
 
+    Button btn_main_show_player;
+    ImageButton btn_main_back;
+    private int backcounter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -219,6 +224,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Camera and features
         textViewReport = findViewById(R.id.text_view_report);
+        textViewReport.setVisibility(View.INVISIBLE);
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             Toast.makeText(
@@ -259,8 +265,8 @@ public class MainActivity extends AppCompatActivity {
 
         //Calibration
         btn_main_back = findViewById(R.id.btn_main_back);
-        btn_main_back.setVisibility(View.INVISIBLE);
-        btn_main_reconnect_spotify = findViewById(R.id.btn_main_reconnect_spotify);
+       // btn_main_back.setVisibility(View.INVISIBLE);
+        btn_main_show_player = findViewById(R.id.btn_main_show_player);
 
         isCalibration = false;
         graphicOverlayCalibration = findViewById(R.id.graphic_overlay_calibration);
@@ -279,15 +285,69 @@ public class MainActivity extends AppCompatActivity {
             //change the buttons
             //btn_calibration.setEnabled(false);
             btn_calibration.setVisibility(View.INVISIBLE);
+            btn_main_back.setVisibility(View.INVISIBLE);
+
             //btn_main_back.setVisibility(View.INVISIBLE);
-            btn_main_reconnect_spotify.setVisibility(View.INVISIBLE);
+            btn_main_show_player.setVisibility(View.INVISIBLE);
 
             //change the preview opacity
             //previewView.setVisibility(View.INVISIBLE);
             //graphicOverlayFace.setAlpha(0.4f);
 
         });
+        btn_main_show_player.setOnClickListener(view -> {
 
+            if (playerFragment!=null){
+                resetBackCounter();
+                if (!playerFragment.isHidden()) {
+
+                getSupportFragmentManager().beginTransaction()
+                        .show(currentFragment).hide(playerFragment).commit();
+                }
+                else{
+                    getSupportFragmentManager().beginTransaction()
+                            .show(playerFragment).hide(currentFragment).commit();
+                }
+            }
+
+        });
+        backcounter = 0;
+        btn_main_back.setOnClickListener(view ->{
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag("Tracks Fragment");
+            if (playerFragment != null && !playerFragment.isHidden()){
+                btn_main_show_player.post(() -> btn_main_show_player.performClick());
+            }
+            else if (fragment != null && fragment.isVisible()){
+                Fragment playlistFragment = new PlaylistFragment();
+                getSupportFragmentManager().beginTransaction().remove(fragment)
+                        .add(R.id.main_fragment_container, playlistFragment, "Playlist Fragment")
+                        .commit();
+                currentFragment = playlistFragment;
+                int x = 3;
+            }
+            else {
+                backcounter++;
+                if (backcounter == 2) {
+                    mSpotifyAppRemote.getPlayerApi().pause();
+                    finish();
+                    System.exit(0);
+                }
+                else
+                    Toast.makeText(getApplicationContext(), "One more time to exit!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                btn_main_back.post(() -> btn_main_back.performClick());
+            }
+        };
+        getOnBackPressedDispatcher().addCallback(this, callback);
+    }
+
+    public void resetBackCounter(){
+        backcounter = 0;
     }
 
     public void calibrationFinished(List<Feature1> features){
@@ -298,12 +358,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
         btn_calibration.post( () -> {btn_calibration.setVisibility(View.VISIBLE);} );
+        btn_main_back.post( () -> {btn_main_back.setVisibility(View.VISIBLE);} );
+
         //btn_main_back.post( () -> {btn_main_back.setVisibility(View.VISIBLE);} );
-        btn_main_reconnect_spotify.post( () -> {btn_main_reconnect_spotify.setVisibility(View.VISIBLE);} );
+        btn_main_show_player.post( () -> {
+            btn_main_show_player.setVisibility(View.VISIBLE);} );
 
         // start the playlist fragment
+        currentFragment = new PlaylistFragment();
         getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment_container,
-                new PlaylistFragment()).commit();
+                currentFragment, "Playlist Fragment").commit();
     }
 
     public static GraphicOverlay getGraphicOverlayGazeLocation() {
@@ -425,7 +489,7 @@ public class MainActivity extends AppCompatActivity {
                 // load playlist fragment
                 // changed PlaylistFragment to Calibrate\ionFragment
                 getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment_container,
-                        new PlaylistFragment()).commit();
+                        new PlaylistFragment(), "Playlist Fragment").commit();
                 // fetchPlaylists(requestQueue, mSpotifyAppRemote);
             }
 
