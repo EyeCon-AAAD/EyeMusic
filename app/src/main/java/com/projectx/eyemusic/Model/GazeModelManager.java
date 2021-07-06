@@ -5,6 +5,12 @@ import com.google.android.gms.common.Feature;
 import com.projectx.eyemusic.Features.Feature1;
 import com.projectx.eyemusic.Features.RawFeature;
 import com.projectx.eyemusic.Utilities;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -19,6 +25,46 @@ public class GazeModelManager {
     private static boolean recentCalibrationSuccess = false;
 
     private static Random rand  = new Random();
+
+    public static boolean initializeGazeModelManager() {
+        loadCalibratedModel();
+
+        if(calibratedModel == null) {
+            return false;
+        }
+
+        if (calibratedModel.isTrained()) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public static void loadCalibratedModel() {
+        try {
+            FileInputStream fileIn = new FileInputStream("calibratedmodel.ser");
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            calibratedModel = (CalibratedModel) in.readObject();
+            in.close();
+            fileIn.close();
+        } catch (ClassNotFoundException | IOException i) {
+            i.printStackTrace();
+        }
+    }
+
+    public static void storeCalibratedModel() {
+        try {
+            FileOutputStream fileOut = new FileOutputStream("employee.ser");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(calibratedModel);
+            out.close();
+            fileOut.close();
+        } catch (IOException i) {
+            i.printStackTrace();
+        }
+    }
+
 
     public static boolean haveCalibratedModel() {
         return isCalibratedAtAll;
@@ -65,6 +111,10 @@ public class GazeModelManager {
             isCalibratedAtAll = true;
             recentCalibrationSuccess = true;
             calibratedModel = newCalibratedModel;
+
+            // Storing the new calibrated model
+            storeCalibratedModel();
+
             Log.d(TAG, "updateCalibratedModel: calibrated model is updated successfully.");
         }else{
             recentCalibrationSuccess = false;

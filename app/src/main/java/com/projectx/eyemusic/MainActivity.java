@@ -214,7 +214,11 @@ public class MainActivity extends BaseActivity {
         graphicOverlayGazeLocation.add(new DotGraphic(this, graphicOverlayGazeLocation, 500, 500));
 
         //Gaze thread
-        predictionThread = new PredictionThread(new GazeModelManager(), graphicOverlayGazeLocation, this);
+
+        GazeModelManager mainGazeModelManager = new GazeModelManager();
+        GazeModelManager.initializeGazeModelManager();
+
+        predictionThread = new PredictionThread(mainGazeModelManager, graphicOverlayGazeLocation, this);
         predictionThread.start();
 
         // Camera and features

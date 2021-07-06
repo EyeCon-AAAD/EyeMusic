@@ -89,24 +89,13 @@ import java.util.List;
 public class CalibrationActivity extends BaseActivity {
     private static final String TAG = "CalibrationActivity";
 
-    private String CLIENT_ID;
-    private String CLIENT_SECRET;
-    private String REDIRECT_URI;
-    private String SPOTIFY_PACKAGE_NAME;
-    private String APP_PACKAGE_NAME;
-    private String PLAY_STORE_URI;
-    private String REFERRER;
-    public RequestQueue requestQueue; // made this public to access from fragment
 
     public SharedPreferences preferences = null; // made this public to access from fragment
 
     // Views
-    public ProgressBar pb_main;
-    boolean flag = false;
-    PackageManager packageManager;
     TextView tmpInstructionMessage;
 
-    public Authentication authentication; // made this public to access from fragment
+//    public Authentication authentication; // made this public to access from fragment
 
     //graphics
     static int[] graphicOverlayGazeLocationLocation = new int[2];
@@ -136,6 +125,7 @@ public class CalibrationActivity extends BaseActivity {
 
     //Calibration
     private Button btn_start_calibration;
+    private Button btn_calibration_back;
     private GraphicOverlay graphicOverlayCalibration;
     private CalibrationRunnable calibrationRunnable;
     private Thread calibrationThread;
@@ -147,8 +137,6 @@ public class CalibrationActivity extends BaseActivity {
     // Original Model
     private OriginalModel gazePredictionModel = null;
 
-    Button btn_main_back, btn_main_reconnect_spotify;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -156,30 +144,8 @@ public class CalibrationActivity extends BaseActivity {
         setContentView(R.layout.activity_calibration);
         {
             tmpInstructionMessage = findViewById(R.id.text_view_instructions);
-//            tmpInstructionMessage.setVisibility(View.INVISIBLE);
-            CLIENT_ID = getString(R.string.CLIENT_ID);
-            CLIENT_SECRET = getString(R.string.CLIENT_SECRET);
-            REDIRECT_URI = getString(R.string.REDIRECT_URI);
-//            SPOTIFY_PACKAGE_NAME = getString(R.string.SPOTIFY_PACKAGE_NAME);
-//            APP_PACKAGE_NAME = getString(R.string.APP_PACKAGE_NAME);
-//            PLAY_STORE_URI = getString(R.string.PLAY_STORE_URI);
-            REFERRER = getString(R.string.REFERRER);
+            tmpInstructionMessage.setVisibility(View.INVISIBLE);
         }
-        pb_main = findViewById(R.id.pb_load_main);
-//        rv_main_playlists = findViewById(R.id.rv_playlists);
-
-
-//        packageManager = getPackageManager();
-//
-//        // use sharedPreferences to determine first time launch
-//        preferences = getSharedPreferences(APP_PACKAGE_NAME, MODE_PRIVATE);
-
-//        // create  singleton request queue
-//        requestQueue = Volley.newRequestQueue(BaseActivity.this);
-//
-//        // create Authentication Object
-//        authentication = new Authentication(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, preferences, requestQueue, this);
-
         // fetch latest model
         gazePredictionModel = OriginalModel.getInstance();
 
@@ -240,13 +206,22 @@ public class CalibrationActivity extends BaseActivity {
 //        }
 
         //Calibration
-        btn_main_back = findViewById(R.id.btn_main_back);
-        btn_main_back.setVisibility(View.INVISIBLE);
-        btn_main_reconnect_spotify = findViewById(R.id.btn_main_reconnect_spotify);
+//        btn_main_back = findViewById(R.id.btn_main_back);
+//        btn_main_back.setVisibility(View.INVISIBLE);
+//        btn_main_reconnect_spotify = findViewById(R.id.btn_main_reconnect_spotify);
 
         isCalibration = false;
         graphicOverlayCalibration = findViewById(R.id.graphic_overlay_calibration);
         calibrationRunnable = new CalibrationRunnable(graphicOverlayCalibration, this);
+
+        btn_calibration_back = findViewById(R.id.btn_calibration_back);
+        btn_calibration_back.setOnClickListener(view -> {
+//            Intent backToMainIntent = new Intent(this, MainActivity.class);
+//            startActivity(backToMainIntent);
+            finish();
+
+        });
+
         btn_start_calibration = findViewById(R.id.btn_start_calibration);
         btn_start_calibration.setOnClickListener (view -> {
             isCalibration = true;
@@ -263,7 +238,7 @@ public class CalibrationActivity extends BaseActivity {
 
 
             // set the calibration fragment
-            getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment_container,
+            getSupportFragmentManager().beginTransaction().replace(R.id.calibration_fragment_container,
                     new CalibrationFragment()).commit();
 
 
@@ -271,6 +246,7 @@ public class CalibrationActivity extends BaseActivity {
             //change the buttons
             //btn_start_calibration.setEnabled(false);
             btn_start_calibration.setVisibility(View.INVISIBLE);
+            btn_calibration_back.setVisibility(View.INVISIBLE);
             //btn_main_back.setVisibility(View.INVISIBLE);
 
             //change the preview opacity
@@ -289,6 +265,7 @@ public class CalibrationActivity extends BaseActivity {
 //        }
 
         btn_start_calibration.post( () -> {btn_start_calibration.setVisibility(View.VISIBLE);} );
+        btn_calibration_back.post( () -> {btn_calibration_back.setVisibility(View.VISIBLE);});
         //btn_main_back.post( () -> {btn_main_back.setVisibility(View.VISIBLE);} );
 //        btn_main_reconnect_spotify.post( () -> {btn_main_reconnect_spotify.setVisibility(View.VISIBLE);} );
 
@@ -311,46 +288,10 @@ public class CalibrationActivity extends BaseActivity {
         Log.i(TAG, "onWindowFocusChanged:Location of overlay " + graphicOverlayGazeLocationLocation[0] + " " + graphicOverlayGazeLocationLocation[1]);
     }
 
-//    /**
-//     * Dispatch incoming result to the correct fragment.
-//     *
-//     * @param requestCode
-//     * @param resultCode
-//     * @param data
-//     */
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        final AuthorizationResponse response = AuthorizationClient.getResponse(resultCode, data);
-//        // error occurred
-//        if (response.getError() != null && response.getError().isEmpty()) {
-//            Log.e(TAG, response.getError());
-//        }
-//        if (requestCode == SPOTIFY_TOKEN_REQUEST_CODE) {
-//            mAccessToken = response.getAccessToken();
-//            if (mAccessToken != null) {
-//                // store the access token
-//                authentication.storeToken(mAccessToken);
-//                Utilities.showProgressBar(pb_main, rv_main_playlists, true);
-//            }
-//        } else if (requestCode == SPOTIFY_AUTH_CODE_REQUEST_CODE) {
-//            mAccessCode = response.getCode();
-//
-//            if (mAccessCode != null) {
-//                // store Access code
-//                authentication.storeAccessCode(mAccessCode);
-//                // fetch access token and refresh token and store them
-//                authentication.fetchTokens();
-//                // call on start after successfully authenticating --> only happens on first launch
-//                onStart();
-//            }
-//        }
-//    }
-
     @Override
     protected void onStart() {
         super.onStart();
-//        Log.d(TAG, "onStart: ");
+        Log.d(TAG, "onStart: ");
 //        // check if EyeMusic is launched for the first time
         Utilities.isOnboardingFinished();
 //        if (Utilities.isOnboardingFinished()) {
@@ -360,36 +301,31 @@ public class CalibrationActivity extends BaseActivity {
 //
 //            // ------------------- perform error check for when the access is denied but launch is not first time ----------
 //        }
-//        // Check if Spotify is installed each time the app is launched. Requirement!
-//        if (!Utilities.isSpotifyInstalled()) {
-//            Utilities.directUserToPlayStore();
-//        } else {
-//            if (authentication.isAuthenticated()) {
-//                ConnectionParams connectionParams = new ConnectionParams.Builder(CLIENT_ID)
-//                        .setRedirectUri(REDIRECT_URI)
-//                        .showAuthView(true)
-//                        .build();
-//                if (mSpotifyAppRemote == null) {
-//                    connectSpotifyRemote(connectionParams);
-//                } else if (!mSpotifyAppRemote.isConnected()) {
-//                    connectSpotifyRemote(connectionParams);
-//                }
-//            }
-//        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy: ");
-//        // disconnect from AppRemote
-//        // mSpotifyAppRemote.getPlayerApi().pause();
-//        SpotifyAppRemote.disconnect(mSpotifyAppRemote);
         predictionThread.quit(); // it will destroy all the messages that has not been started yet and are in the message queue
+
+//        graphicOverlayCalibration.clear();
+        FeatureExtractor.setCalibrationMode(false);
+//        setCalibration(false);
+//        calibrationFinished();
+
 
         if (imageProcessor != null) {
             imageProcessor.stop();}
+        Log.d(TAG, "Calibration: closing");
+
     }
+
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+////        onDestroy();
+//    }
 
     @Override
     protected void onPause() {
@@ -397,6 +333,7 @@ public class CalibrationActivity extends BaseActivity {
         if (imageProcessor != null) {
             imageProcessor.stop();
         }
+//        onDestroy();
     }
 
     @Override
@@ -405,32 +342,6 @@ public class CalibrationActivity extends BaseActivity {
         bindAllCameraUseCases();
     }
 
-//    //------------------------------------ SPOTIFY -------------------------------------------------
-//    private void connectSpotifyRemote(ConnectionParams connectionParams) {
-//        SpotifyAppRemote.connect(this, connectionParams, new Connector.ConnectionListener() {
-//            @Override
-//            public void onConnected(SpotifyAppRemote spotifyAppRemote) {
-//                mSpotifyAppRemote = spotifyAppRemote;
-//                // connection was successful
-//                Toast.makeText(getApplicationContext(), "Successfully Connected", Toast.LENGTH_SHORT).show();
-//                // refresh access token before fetching playlists if token has expired
-//                authentication.refreshAccessToken();
-//                // load playlist fragment
-//                // changed PlaylistFragment to Calibrate\ionFragment
-//                getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment_container,
-//                        new PlaylistFragment()).commit();
-//                // fetchPlaylists(requestQueue, mSpotifyAppRemote);
-//            }
-//
-//            @Override
-//            public void onFailure(Throwable throwable) {
-//                // handle connection error here
-//                Toast.makeText(getApplicationContext(), "Couldn't connect", Toast.LENGTH_LONG).show();
-//                Log.e(TAG, throwable.getMessage(), throwable);
-//            }
-//        });
-//    }
-//
     private boolean isOnBoardingFinished() {
 //        if (preferences.getBoolean("firstTime", true)) {
 //            // Do authentication once
@@ -456,7 +367,7 @@ public class CalibrationActivity extends BaseActivity {
         if (cameraProvider != null) {
             // As required by CameraX API, unbinds all use cases before trying to re-bind any of them.
             cameraProvider.unbindAll();
-            //bindPreviewUseCase();
+            //bindPreviewUseCase(); //aisan
             bindAnalysisUseCase();
         }
     }

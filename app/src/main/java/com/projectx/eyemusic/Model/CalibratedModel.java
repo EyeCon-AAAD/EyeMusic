@@ -2,12 +2,13 @@ package com.projectx.eyemusic.Model;
 
 import android.util.Log;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 //TODO: check for trained
-public class CalibratedModel {
+public class CalibratedModel implements Serializable {
     private static final String TAG = "CalibratedModel";
     private LinearRegressionModel x_model = null;
     private LinearRegressionModel y_model =null;
