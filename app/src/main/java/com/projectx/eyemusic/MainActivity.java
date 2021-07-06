@@ -122,6 +122,7 @@ public class MainActivity extends BaseActivity {
 
     //Thread
     //TODO: replace new GazeModelManager() with the actual model
+    private GazeModelManager mainGazeModelManager;
     private PredictionThread predictionThread;
 
     // camera and features
@@ -215,7 +216,7 @@ public class MainActivity extends BaseActivity {
 
         //Gaze thread
 
-        GazeModelManager mainGazeModelManager = new GazeModelManager();
+        mainGazeModelManager = new GazeModelManager();
         GazeModelManager.initializeGazeModelManager();
 
         predictionThread = new PredictionThread(mainGazeModelManager, graphicOverlayGazeLocation, this);
@@ -369,6 +370,7 @@ public class MainActivity extends BaseActivity {
     protected void onStart() {
         super.onStart();
         Log.d(TAG, "onStart: ");
+
         // check if EyeMusic is launched for the first time
         if (Utilities.isOnboardingFinished()) {
             // order matters
@@ -419,6 +421,26 @@ public class MainActivity extends BaseActivity {
     public void onResume() {
         super.onResume();
         bindAllCameraUseCases();
+
+//        try {
+//            Thread.sleep(3000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//
+//        while (true) {
+//            boolean isCalibrated = false;
+//            isCalibrated = GazeModelManager.initializeGazeModelManager();
+//            if (isCalibrated) {
+//                Log.d(TAG, "Successfully Calibrated!");
+//                break;
+//            }
+//            else {
+//                Log.d(TAG, "Not Calibrated!");
+//                Intent openCalibrationIntent = new Intent(this, CalibrationActivity.class);
+//                startActivity(openCalibrationIntent);
+//            }
+//        }
     }
 
     //------------------------------------ SPOTIFY -------------------------------------------------

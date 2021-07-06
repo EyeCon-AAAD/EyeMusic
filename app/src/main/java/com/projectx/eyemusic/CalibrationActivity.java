@@ -321,11 +321,11 @@ public class CalibrationActivity extends BaseActivity {
 
     }
 
-//    @Override
-//    protected void onStop() {
-//        super.onStop();
-////        onDestroy();
-//    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        finish();
+    }
 
     @Override
     protected void onPause() {
@@ -333,6 +333,7 @@ public class CalibrationActivity extends BaseActivity {
         if (imageProcessor != null) {
             imageProcessor.stop();
         }
+        finish();
 //        onDestroy();
     }
 
