@@ -64,8 +64,8 @@ public class CalibratedModel implements Serializable {
 
 
         //training the model
-        x_model = new LinearRegressionModel(x_prediction_array, normalized_x_prediction_array, normalized_x_array, LinearRegressionModel.TRAIN_NORM_EQUATION);
-        y_model = new LinearRegressionModel(x_prediction_array, normalized_y_prediction_array, normalized_y_array, LinearRegressionModel.TRAIN_NORM_EQUATION);
+        x_model = new LinearRegressionModel(normalized_x_prediction_array, normalized_y_prediction_array, normalized_x_array, LinearRegressionModel.TRAIN_NORM_EQUATION);
+        y_model = new LinearRegressionModel(normalized_x_prediction_array, normalized_y_prediction_array, normalized_y_array, LinearRegressionModel.TRAIN_NORM_EQUATION);
 
         //setting the training error metrics
         if (!x_model.isTrained() || !y_model.isTrained()){

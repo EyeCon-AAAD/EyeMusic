@@ -57,7 +57,7 @@ public class CalibrationRunnable implements Runnable {
 
             //giving time to the user to look at the dot
             try {
-                Thread.sleep(3000);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
