@@ -42,8 +42,8 @@ public class PlayerFragment extends Fragment {
     TextView trackname;
     TextView artistname;
     SeekBar seekBar;
-    public long tracksecond;
-    public int progress;
+    long tracksecond;
+    int progress;
     long currenttime;
     boolean repeat;
     boolean threadrepeat;
@@ -129,11 +129,14 @@ public class PlayerFragment extends Fragment {
                     progress++;
                     Thread.sleep(tracksecond);
                     if (progress == 100) {
-                        if (!repeat)
+                        if (!repeat) {
                             btnnext.post(() -> btnnext.performClick());
+                            progress = 0;
+                        }
                         else {
                             threadrepeat = true;
                             btnprev.post(() -> btnprev.performClick());
+                            progress = 0;
                         }
                     }
                 } catch (InterruptedException e) {
