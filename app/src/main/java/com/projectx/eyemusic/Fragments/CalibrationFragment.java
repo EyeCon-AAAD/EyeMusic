@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
+
 import com.projectx.eyemusic.Fragments.PlaylistFragment;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -26,6 +28,7 @@ public class CalibrationFragment extends Fragment {
 
     // fragment views
     Button btn_next_fragment;
+    TextView textView;
 
     public CalibrationFragment() {
         // Required empty public constructor
@@ -62,6 +65,9 @@ public class CalibrationFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         btn_next_fragment = view.findViewById(R.id.btn_fragment_calibrate);
         btn_next_fragment.setVisibility(View.INVISIBLE);
+        textView = view.findViewById(R.id.textView);
+        textView.setVisibility(View.INVISIBLE);
+
 
         // go to next fragment
         btn_next_fragment.setOnClickListener(view1 -> {

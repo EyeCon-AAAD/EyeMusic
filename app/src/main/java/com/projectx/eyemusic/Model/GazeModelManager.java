@@ -65,6 +65,10 @@ public class GazeModelManager {
         }
     }
 
+    public static CalibratedModel getCalibratedModel() {
+        return calibratedModel;
+    }
+
 
     public static boolean haveCalibratedModel() {
         return isCalibratedAtAll;

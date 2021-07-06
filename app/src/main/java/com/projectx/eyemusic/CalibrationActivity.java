@@ -143,8 +143,8 @@ public class CalibrationActivity extends BaseActivity {
         Log.d(TAG, "onCreate: ");
         setContentView(R.layout.activity_calibration);
         {
-            tmpInstructionMessage = findViewById(R.id.text_view_instructions);
-            tmpInstructionMessage.setVisibility(View.INVISIBLE);
+            tmpInstructionMessage = findViewById(R.id.calibration_instructions_textview);
+            tmpInstructionMessage.setVisibility(View.VISIBLE);
         }
         // fetch latest model
         gazePredictionModel = OriginalModel.getInstance();
@@ -212,7 +212,7 @@ public class CalibrationActivity extends BaseActivity {
 
         isCalibration = false;
         graphicOverlayCalibration = findViewById(R.id.graphic_overlay_calibration);
-        calibrationRunnable = new CalibrationRunnable(graphicOverlayCalibration, this);
+        calibrationRunnable = new CalibrationRunnable(graphicOverlayCalibration, this, findViewById(R.id.calibration_instructions_textview));
 
         btn_calibration_back = findViewById(R.id.btn_calibration_back);
         btn_calibration_back.setOnClickListener(view -> {
@@ -229,6 +229,7 @@ public class CalibrationActivity extends BaseActivity {
 
 
             FeatureExtractor.setCalibrationMode(isCalibration);
+            tmpInstructionMessage.setVisibility(View.INVISIBLE);
             calibrationThread  = new Thread(calibrationRunnable);
 
             calibrationThread.start();
