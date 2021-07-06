@@ -317,15 +317,21 @@ public class CalibrationActivity extends BaseActivity {
 
         if (imageProcessor != null) {
             imageProcessor.stop();}
-        Log.d(TAG, "Calibration: closing");
-
+        Log.d(TAG, "Calibration Activity: closing");
+        if (GazeModelManager.isIsCalibratedAtAll()) {
+            Log.d(TAG, "Calibration succeeded");
+        }
+        else {
+            Log.d(TAG, "Calibration failed");
+        }
+        Log.d(TAG, "Calibration Activity: closed");
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        finish();
-    }
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//        finish();
+//    }
 
     @Override
     protected void onPause() {
@@ -333,7 +339,7 @@ public class CalibrationActivity extends BaseActivity {
         if (imageProcessor != null) {
             imageProcessor.stop();
         }
-        finish();
+//        finish();
 //        onDestroy();
     }
 

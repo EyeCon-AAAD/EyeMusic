@@ -421,6 +421,8 @@ public class MainActivity extends BaseActivity {
     public void onResume() {
         super.onResume();
         bindAllCameraUseCases();
+        predictionThread = new PredictionThread(mainGazeModelManager, graphicOverlayGazeLocation, this);
+        predictionThread.start();
 
 //        try {
 //            Thread.sleep(3000);
