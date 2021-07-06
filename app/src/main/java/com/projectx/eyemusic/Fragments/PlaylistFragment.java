@@ -87,7 +87,16 @@ public class PlaylistFragment extends Fragment {
         rv_playlists.setHasFixedSize(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         rv_playlists.setLayoutManager(layoutManager);
-        fetchPlaylists(mainActivity.requestQueue, MainActivity.mSpotifyAppRemote, rv_playlists);
+        // check internet connection before fetching playlists
+        if(Utilities.isConnected()){
+            fetchPlaylists(mainActivity.requestQueue, MainActivity.mSpotifyAppRemote, rv_playlists);
+        } else{
+            // show network error fragment
+            Fragment fragment = NetworkErrorFragment.newInstance(getString(R.string.playlistFragment), null);
+            mainActivity.getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.main_fragment_container, fragment, "Network Error fragment")
+                    .commit();
+        }
         scrollControls(layoutManager, rv_playlists);
     }
 
