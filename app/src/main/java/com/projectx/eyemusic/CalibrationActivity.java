@@ -82,12 +82,19 @@ import com.spotify.sdk.android.auth.*;
 import com.spotify.protocol.types.Track;
 import com.spotify.sdk.android.auth.AuthorizationResponse;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class CalibrationActivity extends BaseActivity {
     private static final String TAG = "CalibrationActivity";
+
+    GazeModelManager localGazerModelManager = null;
 
     private String CLIENT_ID;
     private String CLIENT_SECRET;
@@ -194,8 +201,29 @@ public class CalibrationActivity extends BaseActivity {
         //just for testing
         graphicOverlayGazeLocation.add(new DotGraphic(this, graphicOverlayGazeLocation, 500, 500));
 
+
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
         //Gaze thread
-        predictionThread = new PredictionThread(new GazeModelManager(), graphicOverlayGazeLocation, this);
+        // Option1: getting the model manager which is passed from the main activity
+        Intent tmpIntent = getIntent();
+        localGazerModelManager = (GazeModelManager) tmpIntent.getSerializableExtra("sampleObject");
+
+        // Option2: reading from the saved file in internal memory
+        try {
+            FileInputStream fileIn = new FileInputStream("modelmanager.ser");
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            localGazerModelManager = (GazeModelManager) in.readObject();
+            in.close();
+            fileIn.close();
+        } catch (IOException | ClassNotFoundException i) {
+            i.printStackTrace();
+        }
+
+
+        predictionThread = new PredictionThread(localGazerModelManager, graphicOverlayGazeLocation, this);
+
+//        predictionThread = new PredictionThread(new GazeModelManager(), graphicOverlayGazeLocation, this);
         predictionThread.start();
 
         // Camera and features
@@ -257,6 +285,7 @@ public class CalibrationActivity extends BaseActivity {
             calibrationThread  = new Thread(calibrationRunnable);
 
             calibrationThread.start();
+
 //            View tmpBox = findViewById(R.id.graphic_overlay_calibration);
 //            tmpBox.setVisibility(View.INVISIBLE);
 
@@ -276,7 +305,31 @@ public class CalibrationActivity extends BaseActivity {
             //change the preview opacity
             //previewView.setVisibility(View.INVISIBLE);
             //graphicOverlayFace.setAlpha(0.4f);
-//
+
+
+// join causing crash
+//            // New: added the join
+//            try {
+//                calibrationThread.join();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+
+            //Saving the Updated model manager
+            // Should be moved to the activity finish later
+
+            try {
+                FileOutputStream fileOut = new FileOutputStream("employee.ser");
+                ObjectOutputStream out = new ObjectOutputStream(fileOut);
+                out.writeObject(localGazerModelManager);
+                out.close();
+                fileOut.close();
+            } catch (IOException i) {
+                i.printStackTrace();
+            }
+
+
+
         });
 
     }

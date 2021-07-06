@@ -82,6 +82,12 @@ import com.spotify.sdk.android.auth.*;
 import com.spotify.protocol.types.Track;
 import com.spotify.sdk.android.auth.AuthorizationResponse;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -122,6 +128,7 @@ public class MainActivity extends BaseActivity {
 
     //Thread
     //TODO: replace new GazeModelManager() with the actual model
+    GazeModelManager globalGazeModelManager;
     private PredictionThread predictionThread;
 
     // camera and features
@@ -213,8 +220,39 @@ public class MainActivity extends BaseActivity {
         //just for testing
         graphicOverlayGazeLocation.add(new DotGraphic(this, graphicOverlayGazeLocation, 500, 500));
 
+
         //Gaze thread
-        predictionThread = new PredictionThread(new GazeModelManager(), graphicOverlayGazeLocation, this);
+        // New:
+        // creating the ModelManager. Note: should be replaced with creating it during initialization of the app
+        globalGazeModelManager = new GazeModelManager(); // new
+//        File file = new File(getApplicationContext().getFilesDir(), "modelmanager.data");
+
+
+        // Saving the ModelManager to internal storage in order for it to be accessed in CalibrationActivity.
+        try {
+            FileOutputStream fileOut = new FileOutputStream("modelmanager.ser");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(globalGazeModelManager);
+            out.close();
+            fileOut.close();
+        } catch (IOException i) {
+            i.printStackTrace();
+        }
+
+        // Reading the model manager from internal memory
+        try {
+            FileInputStream fileIn = new FileInputStream("modelmanager.ser");
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            globalGazeModelManager = (GazeModelManager) in.readObject();
+            in.close();
+            fileIn.close();
+        } catch (IOException | ClassNotFoundException i) {
+            i.printStackTrace();
+        }
+
+
+        predictionThread = new PredictionThread(globalGazeModelManager, graphicOverlayGazeLocation, this);
+//        predictionThread = new PredictionThread(new GazeModelManager(), graphicOverlayGazeLocation, this);
         predictionThread.start();
 
         // Camera and features
@@ -270,6 +308,7 @@ public class MainActivity extends BaseActivity {
 //            isCalibration = true;
 
             Intent openCalibrationIntent = new Intent(this, CalibrationActivity.class);
+            openCalibrationIntent.putExtra("sampleObject", globalGazeModelManager);
             startActivity(openCalibrationIntent);
 
 

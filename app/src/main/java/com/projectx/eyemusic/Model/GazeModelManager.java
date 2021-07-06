@@ -5,11 +5,13 @@ import com.google.android.gms.common.Feature;
 import com.projectx.eyemusic.Features.Feature1;
 import com.projectx.eyemusic.Features.RawFeature;
 import com.projectx.eyemusic.Utilities;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class GazeModelManager {
+public class GazeModelManager implements Serializable {
     private static final OriginalModel gazePredictionModel = OriginalModel.getInstance();;
     private static CalibratedModel calibratedModel = null;
     private static final String TAG = "GazeModelManager";
@@ -19,6 +21,16 @@ public class GazeModelManager {
     private static boolean recentCalibrationSuccess = false;
 
     private static Random rand  = new Random();
+
+    private static boolean isModified;
+
+    public static void setIsModified(boolean m) {
+        isModified = m;
+    }
+
+    public static boolean getIsModified() {
+        return isModified;
+    }
 
     public static boolean haveCalibratedModel() {
         return isCalibratedAtAll;
@@ -64,6 +76,7 @@ public class GazeModelManager {
         if (newCalibratedModel.isTrained()) {
             isCalibratedAtAll = true;
             recentCalibrationSuccess = true;
+            isModified = true;
             calibratedModel = newCalibratedModel;
             Log.d(TAG, "updateCalibratedModel: calibrated model is updated successfully.");
         }else{
