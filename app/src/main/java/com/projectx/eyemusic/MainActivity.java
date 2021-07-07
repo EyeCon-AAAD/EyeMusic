@@ -306,6 +306,7 @@ public class MainActivity extends BaseActivity {
 
 
         });
+        btn_main_show_player = findViewById(R.id.btn_main_show_player);
         btn_main_show_player.setOnClickListener(view -> {
 
             if (playerFragment!=null){

@@ -182,9 +182,11 @@ public class CalibrationRunnable implements Runnable {
                 calibrationResults += String.format("Train Error X: %.2f (dp),\t", calibError.getX_error());
                 calibrationResults += String.format("%.2f (inch)\t", calibError.getX_error_inch());
                 calibrationResults += String.format("%.2f (cm),\n", calibError.getX_error_cm());
+
                 calibrationResults += String.format("Train Error Y: %.3f (dp),\t", calibError.getY_error());
                 calibrationResults += String.format("%.2f (inch)\t", calibError.getY_error_inch());
                 calibrationResults += String.format("%.2f (cm),\n", calibError.getY_error_cm());
+
                 calibrationResults += String.format("Train Error XY: %.3f (dp),\t", calibError.getXY_error());
                 calibrationResults += String.format("%.2f (inch)\t", calibError.getXy_error_inch());
                 calibrationResults += String.format("dp=%.2f (cm),\n\n", calibError.getXy_error_cm());
@@ -266,9 +268,11 @@ public class CalibrationRunnable implements Runnable {
                 resultMessage += String.format("Test Error X: %.2f (dp),\t", testError.getX_error());
                 resultMessage += String.format("%.2f (inch)\t", testError.getX_error_inch());
                 resultMessage += String.format("%.2f (cm),\n", testError.getX_error_cm());
+
                 resultMessage += String.format("Test Error Y: %.3f (dp),\t", testError.getY_error());
                 resultMessage += String.format("%.2f (inch)\t", testError.getY_error_inch());
-                resultMessage += String.format("%.2f (cm),\n", testError.getX_error_cm());
+                resultMessage += String.format("%.2f (cm),\n", testError.getY_error_cm());
+
                 resultMessage += String.format("Test Error XY: %.3f (dp),\t", testError.getXY_error());
                 resultMessage += String.format("%.2f (inch)\t", testError.getXy_error_inch());
                 resultMessage += String.format("dp=%.2f (cm),\n", testError.getXy_error_cm());
