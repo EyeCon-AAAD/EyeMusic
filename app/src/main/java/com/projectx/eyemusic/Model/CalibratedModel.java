@@ -61,7 +61,7 @@ public class CalibratedModel implements Serializable {
         // setting the size of the initial and normalized train samples
         normalizedTrainSampleSize = normalized_x_prediction_array.size();
         initialTrainSampleSize = x_prediction_array.size();
-
+        Log.d(TAG, "CalibratedModel: normalizedsample: " + normalizedTrainSampleSize);
 
         //training the model
         x_model = new LinearRegressionModel(normalized_x_prediction_array, normalized_y_prediction_array, normalized_x_array, LinearRegressionModel.TRAIN_NORM_EQUATION);
