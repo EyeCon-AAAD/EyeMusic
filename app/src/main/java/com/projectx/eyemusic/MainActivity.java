@@ -1,25 +1,25 @@
 /*
-* TODO: ISSUES:
-*
-* 1. when in calibration, when the configuration of the page changes then activities gets shut down and restarts again but the calibration is till
-* going on but the activity is not in the calibration phase case is calibration is set to false again.
-*
-* 2. synchronizing the x and y coordinates
+ * TODO: ISSUES:
+ *
+ * 1. when in calibration, when the configuration of the page changes then activities gets shut down and restarts again but the calibration is till
+ * going on but the activity is not in the calibration phase case is calibration is set to false again.
+ *
+ * 2. synchronizing the x and y coordinates
 
-* 3. adding a white blank background for the calibration.
-*
-* 4. saving feature
-*
-* 5. performance: look at the object leakage
-*
-* 6. better coding: change the static variables to object ones
-*
-* 7. performace: make the feature extraction in another thread
-*
-* 8. clean the code for warning: the variables, the extra code from facedetection
-*
-* 9. thread managment: add locks or synchronizations when neccessary
-* */
+ * 3. adding a white blank background for the calibration.
+ *
+ * 4. saving feature
+ *
+ * 5. performance: look at the object leakage
+ *
+ * 6. better coding: change the static variables to object ones
+ *
+ * 7. performace: make the feature extraction in another thread
+ *
+ * 8. clean the code for warning: the variables, the extra code from facedetection
+ *
+ * 9. thread managment: add locks or synchronizations when neccessary
+ * */
 
 
 
@@ -85,7 +85,7 @@ import com.spotify.sdk.android.auth.AuthorizationResponse;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
     private static final String TAG = "MainActivity";
 
     private String CLIENT_ID;
@@ -122,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
 
     //Thread
     //TODO: replace new GazeModelManager() with the actual model
+    private GazeModelManager mainGazeModelManager;
     private PredictionThread predictionThread;
 
     // camera and features
@@ -219,7 +220,11 @@ public class MainActivity extends AppCompatActivity {
         graphicOverlayGazeLocation.add(new DotGraphic(this, graphicOverlayGazeLocation, 500, 500));
 
         //Gaze thread
-        predictionThread = new PredictionThread(new GazeModelManager(), graphicOverlayGazeLocation, this);
+
+        mainGazeModelManager = new GazeModelManager();
+        GazeModelManager.initializeGazeModelManager();
+
+        predictionThread = new PredictionThread(mainGazeModelManager, graphicOverlayGazeLocation, this);
         predictionThread.start();
 
         // Camera and features
@@ -265,34 +270,40 @@ public class MainActivity extends AppCompatActivity {
 
         //Calibration
         btn_main_back = findViewById(R.id.btn_main_back);
-       // btn_main_back.setVisibility(View.INVISIBLE);
-        btn_main_show_player = findViewById(R.id.btn_main_show_player);
+
+//        btn_main_back.setVisibility(View.INVISIBLE);
+//        btn_main_reconnect_spotify = findViewById(R.id.btn_main_reconnect_spotify);
 
         isCalibration = false;
         graphicOverlayCalibration = findViewById(R.id.graphic_overlay_calibration);
-        calibrationRunnable = new CalibrationRunnable(graphicOverlayCalibration, this);
+//        calibrationRunnable = new CalibrationRunnable(graphicOverlayCalibration, this);
         btn_calibration = findViewById(R.id.btn_main_calibration);
         btn_calibration.setOnClickListener (view -> {
-            isCalibration = true;
-            FeatureExtractor.setCalibrationMode(isCalibration);
-            calibrationThread  = new Thread(calibrationRunnable);
-            calibrationThread.start();
 
-            // set the calibration fragment
-            getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment_container,
-                    new CalibrationFragment()).commit();
+//            isCalibration = true;
 
-            //change the buttons
-            //btn_calibration.setEnabled(false);
-            btn_calibration.setVisibility(View.INVISIBLE);
-            btn_main_back.setVisibility(View.INVISIBLE);
+            Intent openCalibrationIntent = new Intent(this, CalibrationActivity.class);
+            startActivity(openCalibrationIntent);
 
-            //btn_main_back.setVisibility(View.INVISIBLE);
-            btn_main_show_player.setVisibility(View.INVISIBLE);
 
-            //change the preview opacity
-            //previewView.setVisibility(View.INVISIBLE);
-            //graphicOverlayFace.setAlpha(0.4f);
+//            FeatureExtractor.setCalibrationMode(isCalibration);
+//            calibrationThread  = new Thread(calibrationRunnable);
+//            calibrationThread.start();
+//
+//            // set the calibration fragment
+//            getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment_container,
+//                    new CalibrationFragment()).commit();
+//
+//            //change the buttons
+//            //btn_calibration.setEnabled(false);
+//            btn_calibration.setVisibility(View.INVISIBLE);
+//            //btn_main_back.setVisibility(View.INVISIBLE);
+//            btn_main_reconnect_spotify.setVisibility(View.INVISIBLE);
+//
+//            //change the preview opacity
+//            //previewView.setVisibility(View.INVISIBLE);
+//            //graphicOverlayFace.setAlpha(0.4f);
+
 
         });
         btn_main_show_player.setOnClickListener(view -> {
@@ -350,19 +361,18 @@ public class MainActivity extends AppCompatActivity {
         backcounter = 0;
     }
 
-    public void calibrationFinished(List<Feature1> features){
+    public void calibrationFinished(){
         Log.d(TAG, "CalibrationRun: ");
         isCalibration = false;
-        for (Feature1 feature : features){
-            Log.d(TAG, "CalibrationRun: RESULTS-> " + feature);
-        }
+//        for (Feature1 feature : features){
+//            Log.d(TAG, "CalibrationRun: RESULTS-> " + feature);
+//        }
 
-        btn_calibration.post( () -> {btn_calibration.setVisibility(View.VISIBLE);} );
-        btn_main_back.post( () -> {btn_main_back.setVisibility(View.VISIBLE);} );
 
+//        btn_calibration.post( () -> {btn_calibration.setVisibility(View.VISIBLE);} );
         //btn_main_back.post( () -> {btn_main_back.setVisibility(View.VISIBLE);} );
-        btn_main_show_player.post( () -> {
-            btn_main_show_player.setVisibility(View.VISIBLE);} );
+//        btn_main_reconnect_spotify.post( () -> {btn_main_reconnect_spotify.setVisibility(View.VISIBLE);} );
+
 
         // start the playlist fragment
         currentFragment = new PlaylistFragment();
@@ -424,6 +434,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         Log.d(TAG, "onStart: ");
+
         // check if EyeMusic is launched for the first time
         if (Utilities.isOnboardingFinished()) {
             // order matters
@@ -474,6 +485,28 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         bindAllCameraUseCases();
+        predictionThread = new PredictionThread(mainGazeModelManager, graphicOverlayGazeLocation, this);
+        predictionThread.start();
+
+//        try {
+//            Thread.sleep(3000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//
+//        while (true) {
+//            boolean isCalibrated = false;
+//            isCalibrated = GazeModelManager.initializeGazeModelManager();
+//            if (isCalibrated) {
+//                Log.d(TAG, "Successfully Calibrated!");
+//                break;
+//            }
+//            else {
+//                Log.d(TAG, "Not Calibrated!");
+//                Intent openCalibrationIntent = new Intent(this, CalibrationActivity.class);
+//                startActivity(openCalibrationIntent);
+//            }
+//        }
     }
 
     //------------------------------------ SPOTIFY -------------------------------------------------
@@ -691,7 +724,7 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
-//--------------------------- PERMISSIONS FINISH ---------------------------------------------------
+    //--------------------------- PERMISSIONS FINISH ---------------------------------------------------
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int X = (int) event.getX();
@@ -741,4 +774,4 @@ public class MainActivity extends AppCompatActivity {
 
 }
 
-
+//new

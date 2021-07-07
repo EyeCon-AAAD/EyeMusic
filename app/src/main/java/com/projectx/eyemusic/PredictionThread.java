@@ -15,10 +15,10 @@ import com.projectx.eyemusic.Model.GazePoint;
 
 public class PredictionThread extends HandlerThread {
     private static GraphicOverlay graphicOverlayGazeLocation;
-    private static MainActivity activity;
+    private static BaseActivity activity;
     private static Handler handler;
 
-    public PredictionThread(GazeModelManager model, GraphicOverlay graphicOverlayGazeLocation, MainActivity activity) {
+    public PredictionThread(GazeModelManager model, GraphicOverlay graphicOverlayGazeLocation, BaseActivity activity) {
         super("PredictionThread", Process.THREAD_PRIORITY_DEFAULT); // TODO: later check the priority
         PredictionThread.graphicOverlayGazeLocation = graphicOverlayGazeLocation;
         PredictionThread.activity = activity;

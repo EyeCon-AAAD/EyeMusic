@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
+
 import com.projectx.eyemusic.Fragments.PlaylistFragment;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -26,6 +28,7 @@ public class CalibrationFragment extends Fragment {
 
     // fragment views
     Button btn_next_fragment;
+    TextView textView;
 
     public CalibrationFragment() {
         // Required empty public constructor
@@ -61,15 +64,19 @@ public class CalibrationFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         btn_next_fragment = view.findViewById(R.id.btn_fragment_calibrate);
+        btn_next_fragment.setVisibility(View.INVISIBLE);
+        textView = view.findViewById(R.id.textView);
+        textView.setVisibility(View.INVISIBLE);
+
 
         // go to next fragment
         btn_next_fragment.setOnClickListener(view1 -> {
-            AppCompatActivity activity = (MainActivity) view1.getContext();
-            Fragment playlistFragment = PlaylistFragment.newInstance();
-            activity.getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.main_fragment_container, playlistFragment, "Playlist Fragment")
-                    .addToBackStack(null)
-                    .commit();
+//            AppCompatActivity activity = (MainActivity) view1.getContext();
+//            Fragment playlistFragment = PlaylistFragment.newInstance();
+//            activity.getSupportFragmentManager().beginTransaction()
+//                    .replace(R.id.main_fragment_container, playlistFragment, "Playlist Fragment")
+//                    .addToBackStack(null)
+//                    .commit();
         });
     }
 }
