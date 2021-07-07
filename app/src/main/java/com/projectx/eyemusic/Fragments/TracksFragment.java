@@ -114,7 +114,17 @@ public class TracksFragment extends Fragment {
         rv_tracks.setHasFixedSize(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         rv_tracks.setLayoutManager(layoutManager);
-        fetchPlaylistTracks(playlistID, mainActivity.requestQueue, rv_tracks);
+        // check internet connection before fetching tracks
+        if(Utilities.isConnected()){
+            fetchPlaylistTracks(playlistID, mainActivity.requestQueue, rv_tracks);
+        }else{
+            // show network error fragment
+            Fragment fragment = NetworkErrorFragment.newInstance(getString(R.string.tracksFragment),
+                    playlistID);
+            mainActivity.getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.main_fragment_container, fragment, "Network Error fragment")
+                    .commit();
+        }
         scrollControls(layoutManager, rv_tracks);
     }
 

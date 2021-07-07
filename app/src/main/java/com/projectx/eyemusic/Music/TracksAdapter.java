@@ -16,11 +16,13 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.projectx.eyemusic.Fragments.PlayerFragment;
+import com.projectx.eyemusic.MainActivity;
 import com.projectx.eyemusic.R;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.ViewHolder> {
     public ArrayList<MyTrack> tracks;
@@ -117,15 +119,18 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.ViewHolder
                     MyTrack track = tracks.get(i);
                     // play track
                     spotifyAppRemote.getPlayerApi().play(track.getSpotifyURI());
-                    Toast.makeText(context, "Playing " + track.getTrackName(), Toast.LENGTH_SHORT).show();
                     Bundle playerBundle = new Bundle();
                     playerBundle.putInt("played", i);
                     playerBundle.putParcelableArrayList("tracks", tracks);
                     Fragment fragment = new PlayerFragment();
                     fragment.setArguments(playerBundle);
+                    MainActivity.playerFragment = fragment;
+
                     AppCompatActivity activity = (AppCompatActivity) view.getContext();
+                    List<Fragment> fragments = activity.getSupportFragmentManager().getFragments();
                     activity.getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.main_fragment_container, fragment, "Player Fragment")
+                            .add(R.id.main_fragment_container, fragment, "Player Fragment")
+                            .hide(MainActivity.currentFragment)
                             .addToBackStack(null) // on back pressed go back
                             .commit();
 

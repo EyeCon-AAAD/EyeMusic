@@ -7,10 +7,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 public class Utilities {
     private static final String SPOTIFY_PACKAGE_NAME = App.getContext()
@@ -80,5 +85,47 @@ public class Utilities {
         SharedPreferences preferences = App.getContext().getSharedPreferences(appPackageName,
                 Context.MODE_PRIVATE);
         return preferences.getBoolean("finished", false);
+    }
+
+    private static boolean isConnectedToNetwork(){
+        boolean conneceted = false;
+
+        ConnectivityManager cm = (ConnectivityManager)
+                App.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+        if(networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected()){
+            conneceted = true;
+            return conneceted;
+        }
+
+        return conneceted;
+    }
+
+    private static boolean isConnectedToInternet() throws InterruptedException {
+        // ping random server to see if we are able to send and receive packets
+        final boolean[] pinged = {false};
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    InetAddress address = InetAddress.getByName("google.com");
+                    pinged[0] = !address.equals("");
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        thread.start();
+        thread.join();
+        return pinged[0];
+    }
+
+    public static boolean isConnected(){
+        try {
+            return isConnectedToNetwork() && isConnectedToInternet();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }
