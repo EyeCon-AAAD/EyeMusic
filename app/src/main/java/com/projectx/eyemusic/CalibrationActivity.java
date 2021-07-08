@@ -157,8 +157,6 @@ public class CalibrationActivity extends BaseActivity {
         if (graphicOverlayGazeLocation == null) {
             Log.d(TAG, "graphicOverlay is null");
         }
-        //just for testing
-        graphicOverlayGazeLocation.add(new DotGraphic(this, graphicOverlayGazeLocation, 500, 500));
 
         //Gaze thread
         predictionThread = new PredictionThread(new GazeModelManager(), graphicOverlayGazeLocation, this);

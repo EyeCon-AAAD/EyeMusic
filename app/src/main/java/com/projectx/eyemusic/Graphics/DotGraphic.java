@@ -10,7 +10,7 @@ import com.projectx.eyemusic.Graphics.GraphicOverlay.Graphic;
 
 public class DotGraphic extends Graphic{
     private static final String TAG = "DotGraphic";
-    private  float radius = 20.0f; //default values
+    private  float radius = 40.0f; //default values
     private  int color = Color.RED;
 
     private Paint paint;

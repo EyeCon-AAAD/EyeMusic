@@ -216,8 +216,6 @@ public class MainActivity extends BaseActivity {
         if (graphicOverlayGazeLocation == null) {
             Log.d(TAG, "graphicOverlay is null");
         }
-        //just for testing
-        graphicOverlayGazeLocation.add(new DotGraphic(this, graphicOverlayGazeLocation, 500, 500));
 
         //Gaze thread
 
