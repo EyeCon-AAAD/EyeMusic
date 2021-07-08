@@ -460,6 +460,7 @@ public class MainActivity extends BaseActivity {
                 }
             }
         }
+
     }
 
     @Override
@@ -482,6 +483,7 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
@@ -489,25 +491,10 @@ public class MainActivity extends BaseActivity {
         predictionThread = new PredictionThread(mainGazeModelManager, graphicOverlayGazeLocation, this);
         predictionThread.start();
 
-//        try {
-//            Thread.sleep(3000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//
-//        while (true) {
-//            boolean isCalibrated = false;
-//            isCalibrated = GazeModelManager.initializeGazeModelManager();
-//            if (isCalibrated) {
-//                Log.d(TAG, "Successfully Calibrated!");
-//                break;
-//            }
-//            else {
-//                Log.d(TAG, "Not Calibrated!");
-//                Intent openCalibrationIntent = new Intent(this, CalibrationActivity.class);
-//                startActivity(openCalibrationIntent);
-//            }
-//        }
+        if (! GazeModelManager.isIsCalibratedAtAll()) {
+            Intent openCalibrationIntent = new Intent(this, CalibrationActivity.class);
+            startActivity(openCalibrationIntent);
+        }
     }
 
     //------------------------------------ SPOTIFY -------------------------------------------------

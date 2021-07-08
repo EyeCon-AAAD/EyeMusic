@@ -37,6 +37,7 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -166,6 +167,7 @@ public class CalibrationActivity extends BaseActivity {
 
         // Camera and features
         textViewReport = findViewById(R.id.text_view_report);
+        textViewReport.setVisibility(View.INVISIBLE);
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             Toast.makeText(
@@ -216,10 +218,12 @@ public class CalibrationActivity extends BaseActivity {
 
         btn_calibration_back = findViewById(R.id.btn_calibration_back);
         btn_calibration_back.setOnClickListener(view -> {
-//            Intent backToMainIntent = new Intent(this, MainActivity.class);
-//            startActivity(backToMainIntent);
-            finish();
-
+            if (! GazeModelManager.isIsCalibratedAtAll()) {
+                tmpInstructionMessage.setText("You cannot go back until you perform the calibration!");
+            }
+            else {
+                finish();
+            }
         });
 
         btn_start_calibration = findViewById(R.id.btn_start_calibration);
@@ -348,6 +352,23 @@ public class CalibrationActivity extends BaseActivity {
     public void onResume() {
         super.onResume();
         bindAllCameraUseCases();
+    }
+
+    @SuppressLint("SetTextI18n")
+    @Override
+    public void onBackPressed() {
+        if (! GazeModelManager.isIsCalibratedAtAll()) {
+            tmpInstructionMessage.setText("You cannot go back until you perform the calibration!");
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        }
+        else {
+            super.onBackPressed();
+        }
     }
 
     private boolean isOnBoardingFinished() {
