@@ -279,7 +279,7 @@ public class MainActivity extends BaseActivity {
         btn_calibration.setOnClickListener (view -> {
 
 //            isCalibration = true;
-
+            resetBackCounter();
             Intent openCalibrationIntent = new Intent(this, CalibrationActivity.class);
             startActivity(openCalibrationIntent);
 
@@ -306,7 +306,6 @@ public class MainActivity extends BaseActivity {
         });
         btn_main_show_player = findViewById(R.id.btn_main_show_player);
         btn_main_show_player.setOnClickListener(view -> {
-
             if (playerFragment!=null){
                 resetBackCounter();
                 if (!playerFragment.isHidden()) {
@@ -319,7 +318,8 @@ public class MainActivity extends BaseActivity {
                             .show(playerFragment).hide(currentFragment).commit();
                 }
             }
-
+            else
+                Toast.makeText(getApplicationContext(), "Plase play a song first!", Toast.LENGTH_SHORT).show();
         });
         backcounter = 0;
         btn_main_back.setOnClickListener(view ->{
