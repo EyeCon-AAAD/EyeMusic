@@ -14,11 +14,11 @@
 
         <ImageView
             android:id="@+id/splash_eye_icon"
-            android:layout_width="87dp"
-            android:layout_height="87dp"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="257dp"
-            android:src="@drawable/eye_icon"
+            android:src="@drawable/eyemusic_96"
             tools:ignore="ContentDescription" />
 
         <TextView

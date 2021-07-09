@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.projectx.eyemusic.MainActivity;
 import com.projectx.eyemusic.R;
 
 /**
@@ -26,6 +27,7 @@ public class NetworkErrorFragment extends Fragment {
     private String playlistId;
 
     Button btn_retry;
+    MainActivity mainActivity;
 
     public NetworkErrorFragment() {
         // Required empty public constructor
@@ -60,15 +62,25 @@ public class NetworkErrorFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         btn_retry = view.findViewById(R.id.btn_retry_connection);
+        mainActivity = (MainActivity)  getActivity();
+
         btn_retry.setOnClickListener(v -> {
+            Fragment curfragment = mainActivity.getSupportFragmentManager().findFragmentByTag("Network Error Fragment");
             if(prevFragment.equals(getString(R.string.playlistFragment))){
-                requireActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.main_fragment_container, new PlaylistFragment())
+                assert curfragment != null;
+                Fragment fragment = new PlaylistFragment();
+                MainActivity.currentFragment = fragment;
+                mainActivity.getSupportFragmentManager().beginTransaction()
+                        .remove(curfragment)
+                        .add(R.id.main_fragment_container, fragment, "Playlist Fragment")
                         .commit();
             }else if(prevFragment.equals(getString(R.string.tracksFragment))){
                 Fragment fragment = TracksFragment.newInstance(playlistId);
-                requireActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.main_fragment_container, fragment)
+                assert curfragment != null;
+                MainActivity.currentFragment = fragment;
+                mainActivity.getSupportFragmentManager().beginTransaction()
+                        .remove(curfragment)
+                        .add(R.id.main_fragment_container, fragment, "Tracks Fragment")
                         .commit();
             }
         });

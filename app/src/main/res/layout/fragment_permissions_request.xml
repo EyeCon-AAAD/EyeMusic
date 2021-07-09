@@ -14,11 +14,11 @@
 
         <ImageView
             android:id="@+id/spotify_connect"
-            android:layout_width="87dp"
-            android:layout_height="87dp"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="257dp"
-            android:src="@drawable/approval"
+            android:src="@drawable/approval_96"
             tools:ignore="ContentDescription" />
 
         <TextView

@@ -6,6 +6,9 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
 import com.android.volley.NoConnectionError;
@@ -15,6 +18,9 @@ import com.android.volley.Response;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
+import com.projectx.eyemusic.App;
+import com.projectx.eyemusic.Fragments.NetworkErrorFragment;
+import com.projectx.eyemusic.MainActivity;
 import com.projectx.eyemusic.R;
 import com.projectx.eyemusic.VolleyRequests.RefreshTokenStringRequest;
 import com.projectx.eyemusic.VolleyRequests.RefreshedAccessTokenStringRequest;
@@ -72,6 +78,20 @@ public class Authentication implements AuthUtils, Serializable {
                 Toast.makeText(context, "Internet Connection Error!", Toast.LENGTH_SHORT).show();
                 Log.e(TAG, "Internet Connection Error! From: " + request);
                 parseVolleyError(error);
+                if(request.equals("Fetch Playlists")){
+                    // show network error fragment
+                    Fragment fragment = NetworkErrorFragment.newInstance(context.getString(R.string.playlistFragment),
+                            null);
+                    ((FragmentActivity)context).getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.main_fragment_container, fragment, "Network Error fragment")
+                            .commit();
+                } else if(request.equals("Fetch Tracks")){
+                    // show network error fragment
+                    Fragment fragment = NetworkErrorFragment.newInstance(context.getString(R.string.tracksFragment), null);
+                    ((FragmentActivity)context).getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.main_fragment_container, fragment, "Network Error fragment")
+                            .commit();
+                }
 
             } else if (error instanceof AuthFailureError) {
                 // Error indicating that there was an Authentication Failure while performing the request
@@ -242,7 +262,7 @@ public class Authentication implements AuthUtils, Serializable {
             String errorType = data.getString("error");
             String error_description = data.getString("error_description");
             Log.e(context.toString(), "{Error Type: " + errorType + ", Error description: " + error_description + "}");
-        } catch (JSONException jsonException) {
+        } catch (JSONException | NullPointerException jsonException) {
             jsonException.printStackTrace();
         }
     }

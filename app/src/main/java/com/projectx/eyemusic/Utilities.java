@@ -88,17 +88,11 @@ public class Utilities {
     }
 
     private static boolean isConnectedToNetwork(){
-        boolean conneceted = false;
 
         ConnectivityManager cm = (ConnectivityManager)
                 App.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-        if(networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected()){
-            conneceted = true;
-            return conneceted;
-        }
-
-        return conneceted;
+        return networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected();
     }
 
     private static boolean isConnectedToInternet() throws InterruptedException {

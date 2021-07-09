@@ -94,8 +94,11 @@ public class PlaylistFragment extends Fragment {
         } else{
             // show network error fragment
             Fragment fragment = NetworkErrorFragment.newInstance(getString(R.string.playlistFragment), null);
+            MainActivity.currentFragment = fragment;
+            Fragment curfragment = mainActivity.getSupportFragmentManager().findFragmentByTag("Playlist Fragment");
             mainActivity.getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.main_fragment_container, fragment, "Network Error fragment")
+                    .remove(curfragment)
+                    .add(R.id.main_fragment_container, fragment, "Network Error Fragment")
                     .commit();
         }
         scrollControls(layoutManager, rv_playlists);

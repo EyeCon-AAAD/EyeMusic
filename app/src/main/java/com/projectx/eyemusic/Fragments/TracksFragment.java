@@ -121,8 +121,11 @@ public class TracksFragment extends Fragment {
             // show network error fragment
             Fragment fragment = NetworkErrorFragment.newInstance(getString(R.string.tracksFragment),
                     playlistID);
+            MainActivity.currentFragment = fragment;
+            Fragment curfragment = mainActivity.getSupportFragmentManager().findFragmentByTag("Tracks Fragment");
             mainActivity.getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.main_fragment_container, fragment, "Network Error fragment")
+                    .remove(curfragment)
+                    .add(R.id.main_fragment_container, fragment, "Network Error Fragment")
                     .commit();
         }
         scrollControls(layoutManager, rv_tracks);
