@@ -3,13 +3,13 @@ package com.projectx.eyemusic.Fragments.OnBoarding;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.projectx.eyemusic.Fragments.CalibrationFragment;
 import com.projectx.eyemusic.R;
 
 import java.util.ArrayList;
@@ -28,6 +28,7 @@ public class ViewPagerFragment extends Fragment {
         ArrayList<Fragment> fragmentScreens = new ArrayList<>();
         fragmentScreens.add(0, new SpotifyConnectionFragment());
         fragmentScreens.add(1, new PermissionsRequestFragment());
+        fragmentScreens.add(2, new CalibrationRequestFragment());
 
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(
                 fragmentScreens,

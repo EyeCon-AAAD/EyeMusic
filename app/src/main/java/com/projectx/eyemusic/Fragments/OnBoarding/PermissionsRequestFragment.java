@@ -1,30 +1,21 @@
 package com.projectx.eyemusic.Fragments.OnBoarding;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
-import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.provider.Settings;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,15 +24,11 @@ import android.widget.Button;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.multi.DialogOnAnyDeniedMultiplePermissionsListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.projectx.eyemusic.MainActivity;
-import com.projectx.eyemusic.OnBoardingActivity;
 import com.projectx.eyemusic.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -55,6 +42,9 @@ public class PermissionsRequestFragment extends Fragment {
     private static final int PERMISSION_REQUESTS = 1;
     Context context;
     ActivityResultLauncher<Intent> mIntent;
+
+    public static ViewPager2 viewPager2;
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -117,16 +107,16 @@ public class PermissionsRequestFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         btnRequestPermissions = view.findViewById(R.id.btn_fragment_permission_request);
         context = getContext();
-
+        viewPager2 = requireActivity().findViewById(R.id.view_pager);
         // settings Activity Result Callback
         mIntent = registerForActivityResult(new StartActivityForResult(),
-                result -> startMainActivity());
+                result -> startCalibrationRequestFragment());
 
         MultiplePermissionsListener listener = new MultiplePermissionsListener() {
             @Override
             public void onPermissionsChecked(MultiplePermissionsReport multiplePermissionsReport) {
                 if(multiplePermissionsReport.areAllPermissionsGranted()) {
-                    startMainActivity();
+                    startCalibrationRequestFragment();
                 } else if(multiplePermissionsReport.isAnyPermissionPermanentlyDenied()){
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     builder.setTitle("Camera & Storage Permissions")
@@ -136,7 +126,7 @@ public class PermissionsRequestFragment extends Fragment {
                             })
                             .setNegativeButton("No Thanks", ((dialogInterface, i) -> {
                                 // proceed without granting permissions
-                                startMainActivity();
+                                startCalibrationRequestFragment();
                             }))
                             .setIcon(R.mipmap.ic_launcher_eye_music)
                             .show();
@@ -149,7 +139,7 @@ public class PermissionsRequestFragment extends Fragment {
                             })
                             .setNegativeButton("No Thanks", ((dialogInterface, i) -> {
                                 // proceed without granting permissions
-                                startMainActivity();
+                                startCalibrationRequestFragment();
                             }))
                             .setIcon(R.mipmap.ic_launcher_eye_music)
                             .show();
@@ -163,8 +153,6 @@ public class PermissionsRequestFragment extends Fragment {
             }
         };
         btnRequestPermissions.setOnClickListener(v -> {
-            // finish onBoarding
-            onBoardingFinished();
 
             Dexter.withContext(getContext())
                     .withPermissions(
@@ -178,17 +166,8 @@ public class PermissionsRequestFragment extends Fragment {
         });
     }
 
-    private void startMainActivity() {
-        Intent intent = new Intent(getActivity(), MainActivity.class);
-        startActivity(intent);
-        getActivity().finish();
-    }
-
-    private void onBoardingFinished(){
-        String appPackageName = getString(R.string.APP_PACKAGE_NAME);
-        SharedPreferences preferences = requireActivity().getSharedPreferences(appPackageName,
-                Context.MODE_PRIVATE);
-        preferences.edit().putBoolean("finished", true).apply();
+    private void startCalibrationRequestFragment() {
+        viewPager2.setCurrentItem(2);
     }
 
     public void showSettings(){

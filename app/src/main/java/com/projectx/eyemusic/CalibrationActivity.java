@@ -26,7 +26,6 @@
 package com.projectx.eyemusic;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.Preview;
@@ -35,18 +34,13 @@ import androidx.camera.view.PreviewView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.PorterDuff;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -54,37 +48,22 @@ import android.util.Size;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
 import com.google.mlkit.common.MlKitException;
 import com.google.mlkit.vision.face.FaceDetectorOptions;
-import com.projectx.eyemusic.Authentication.Authentication;
-import com.projectx.eyemusic.Features.Feature1;
 import com.projectx.eyemusic.Features.FeatureExtractor;
 import com.projectx.eyemusic.Fragments.CalibrationFragment;
 import com.projectx.eyemusic.FaceDetection.CameraXViewModel;
 import com.projectx.eyemusic.FaceDetection.FaceDetectorProcessor;
 import com.projectx.eyemusic.FaceDetection.PreferenceUtils;
 import com.projectx.eyemusic.FaceDetection.VisionImageProcessor;
-import com.projectx.eyemusic.Fragments.PlaylistFragment;
-import com.projectx.eyemusic.Graphics.DotGraphic;
 import com.projectx.eyemusic.Graphics.GraphicOverlay;
 import com.projectx.eyemusic.Model.GazeModelManager;
 import com.projectx.eyemusic.Model.OriginalModel;
-import com.spotify.android.appremote.api.ConnectionParams;
-import com.spotify.android.appremote.api.Connector;
-import com.spotify.android.appremote.api.SpotifyAppRemote;
-import com.spotify.sdk.android.auth.*;
-
-import com.spotify.protocol.types.Track;
-import com.spotify.sdk.android.auth.AuthorizationResponse;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class CalibrationActivity extends BaseActivity {
