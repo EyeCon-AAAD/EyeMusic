@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">EyeMusic</string>
     <string name="play">Play</string>
-    <string name="pause">pause</string>
+    <string name="pause">Pause</string>
     <!-- The endpoint past is /me to get this user's playlists. No need for user id at this stage  -->
-    <string name="SpotifyUserPlaylistsEndpoint">https://api.spotify.com/v1/me/playlists</string>
+    <string name="SpotifyUserPlaylistsEndpoint">https://api.spotify.com/v1/me/playlists?limit=50</string>
     <!-- Token endpoint for requesting refreshed Token -->
     <string name="SpotifyTokenEndpoint">https://accounts.spotify.com/api/token</string>
     <string name="SpotifyPlaylistItemsEndpoint">https://api.spotify.com/v1/playlists</string>
@@ -24,4 +24,32 @@
     <string name="jsonRefreshTokenKey">refresh_token</string>
     <string name="jsonTokenExpiryKey">expires_in</string>
     <string name="UnauthorizedError">No Access code stored, check authorization</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Strings for camera settings. -->
+    <!-- TODO: delete the parts you dont need-->
+    <string name="pref_category_key_camera" translatable="false">pckc</string>
+    <string name="pref_category_title_camera">Camera</string>
+    <string name="pref_key_rear_camera_preview_size" translatable="false">rcpvs</string>
+    <string name="pref_key_rear_camera_picture_size" translatable="false">rcpts</string>
+    <string name="pref_key_front_camera_preview_size" translatable="false">fcpvs</string>
+    <string name="pref_key_front_camera_picture_size" translatable="false">fcpts</string>
+    <string name="pref_key_camerax_rear_camera_target_resolution" translatable="false">crctas</string>
+    <string name="pref_key_camerax_front_camera_target_resolution" translatable="false">cfctas</string>
+    <string name="pref_key_camera_live_viewport" translatable="false">clv</string>
+    <string name="pref_title_rear_camera_preview_size">Rear camera preview size</string>
+    <string name="pref_title_front_camera_preview_size">Front camera preview size</string>
+    <string name="pref_title_camerax_rear_camera_target_resolution">CameraX rear camera target resolution</string>
+    <string name="pref_title_camerax_front_camera_target_resolution">CameraX front camera target resolution</string>
+    <string name="pref_title_camera_live_viewport">Enable live viewport</string>
+    <string name="pref_summary_camera_live_viewport">Do not block camera preview drawing on detection</string>
+    <!-- Gaze prediction Model name in Firebase -->
+    <string name="GazeModelName">Gaze-Predictor</string>
+    <string name="permission_request">EyeMusic needs some permissions to function</string>
+    <string name="no_playlists_msg">No Playlists were found.<br />Please create playlists in Spotify and try again.</string>
+    <string name="no_network_msg">You are currently not connected to the internet. Please try again.</string>
+    <string name="calibrate_msg">Please calibrate to start using the application</string>
+    <string name="playlistFragment">playlistFragment</string>
+    <string name="tracksFragment">tracksFragment</string>
 </resources>
