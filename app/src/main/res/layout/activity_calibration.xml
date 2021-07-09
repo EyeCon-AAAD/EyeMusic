@@ -80,7 +80,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <FrameLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/calibration_fragment_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -91,21 +91,37 @@
         app:layout_constraintTop_toBottomOf="@id/preview_view">
 
         <TextView
-            android:id="@+id/calibration_instructions_textview"
-            android:layout_width="300dp"
-            android:layout_height="400dp"
-            android:layout_marginStart="55dp"
-            android:layout_marginTop="70dp"
-            android:text=""
+            android:id="@+id/calibration_title_textview"
+            android:layout_width="350dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="40dp"
+            android:text="Calibration Instructions:"
             android:textAlignment="textStart"
             android:typeface="sans"
             android:textStyle="bold"
-            android:textSize="19sp"
-            android:textColor="#0000ef"
+            android:textSize="30sp"
+            android:textColor="@color/colorPrimaryDark"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-    </FrameLayout>
+        <TextView
+            android:id="@+id/calibration_instructions_textview"
+            android:layout_width="350dp"
+            android:layout_height="400dp"
+            android:text=""
+            android:textAlignment="textStart"
+            android:typeface="sans"
+            android:textSize="23sp"
+            android:textColor="@color/colorPrimaryDark"
+            android:padding="7dp"
+            android:scrollbars="vertical"
+            android:background="@drawable/arrows_background"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/calibration_title_textview" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
