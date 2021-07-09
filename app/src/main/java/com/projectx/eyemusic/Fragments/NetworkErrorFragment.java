@@ -65,14 +65,22 @@ public class NetworkErrorFragment extends Fragment {
         mainActivity = (MainActivity)  getActivity();
 
         btn_retry.setOnClickListener(v -> {
+            Fragment curfragment = mainActivity.getSupportFragmentManager().findFragmentByTag("Network Error Fragment");
             if(prevFragment.equals(getString(R.string.playlistFragment))){
+                assert curfragment != null;
+                Fragment fragment = new PlaylistFragment();
+                MainActivity.currentFragment = fragment;
                 mainActivity.getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.main_fragment_container, new PlaylistFragment(), "Playlist Fragment")
+                        .remove(curfragment)
+                        .add(R.id.main_fragment_container, fragment, "Playlist Fragment")
                         .commit();
             }else if(prevFragment.equals(getString(R.string.tracksFragment))){
                 Fragment fragment = TracksFragment.newInstance(playlistId);
+                assert curfragment != null;
+                MainActivity.currentFragment = fragment;
                 mainActivity.getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.main_fragment_container, fragment, "Tracks Fragment")
+                        .remove(curfragment)
+                        .add(R.id.main_fragment_container, fragment, "Tracks Fragment")
                         .commit();
             }
         });
