@@ -181,12 +181,14 @@ public class TracksFragment extends Fragment {
         MainActivity.buttoneffect(btnup);
 
         btndown.setOnClickListener(v -> {
-            int totalItemCount = recyclerView.getAdapter().getItemCount();
-            if (totalItemCount <= 0) return;
-            int lastVisibleItemIndex = linearLayoutManager.findLastCompletelyVisibleItemPosition();
+            if(recyclerView.getAdapter() != null) {
+                int totalItemCount = recyclerView.getAdapter().getItemCount();
+                if (totalItemCount <= 0) return;
+                int lastVisibleItemIndex = linearLayoutManager.findLastCompletelyVisibleItemPosition();
 
-            if (lastVisibleItemIndex >= totalItemCount) return;
-            linearLayoutManager.smoothScrollToPosition(recyclerView,null,lastVisibleItemIndex+1);
+                if (lastVisibleItemIndex >= totalItemCount) return;
+                linearLayoutManager.smoothScrollToPosition(recyclerView, null, lastVisibleItemIndex + 1);
+            }
         });
         MainActivity.buttoneffect(btndown);
     }

@@ -50,6 +50,7 @@
             android:layout_marginBottom="77dp"
             android:ellipsize="end"
             android:text="@string/track_name"
+            android:fontFamily="@font/segoe_ui"
             android:textStyle="bold"
             android:textSize="17sp" />
 
@@ -68,6 +69,7 @@
             android:layout_marginBottom="5dp"
             android:ellipsize="end"
             android:text="@string/artist_name"
+            android:fontFamily="@font/segoe_ui"
             android:textSize="14sp" />
     </RelativeLayout>
 
