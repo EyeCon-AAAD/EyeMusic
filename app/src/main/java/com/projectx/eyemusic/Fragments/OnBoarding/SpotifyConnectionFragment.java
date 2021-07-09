@@ -22,6 +22,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.projectx.eyemusic.Authentication.Authentication;
+import com.projectx.eyemusic.MainActivity;
 import com.projectx.eyemusic.OnBoardingActivity;
 import com.projectx.eyemusic.R;
 import com.projectx.eyemusic.Utilities;
@@ -122,7 +123,7 @@ public class SpotifyConnectionFragment extends Fragment {
         btn_connect.setOnClickListener(view1 -> {
             // navigate to the Permissions fragment(through view pager) for now
             if(!Utilities.isSpotifyInstalled()){
-                Utilities.directUserToPlayStore();
+                Utilities.directUserToPlayStore(getActivity());
             } else {
                 // authenticate the user
                 onBoardingActivity.authentication.authenticate(getActivity(), SPOTIFY_AUTH_CODE_REQUEST_CODE);
