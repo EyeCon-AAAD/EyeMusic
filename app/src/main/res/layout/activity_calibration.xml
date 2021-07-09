@@ -62,7 +62,8 @@
         android:layout_height="68dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="8dp"
-        android:background="@color/colorAccent"
+        android:background="@drawable/navigation_btn_background"
+        android:textColor="@color/colorWhite"
         android:text="Start calibration"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -85,7 +86,8 @@
         android:layout_height="68dp"
         android:layout_marginTop="84dp"
         android:layout_marginEnd="8dp"
-        android:background="@color/colorAccent"
+        android:background="@drawable/navigation_btn_background"
+        android:textColor="@color/colorWhite"
         android:text="Back to main"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
