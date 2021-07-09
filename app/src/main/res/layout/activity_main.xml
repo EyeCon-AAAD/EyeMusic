@@ -62,6 +62,7 @@
         android:background="@drawable/navigation_btn_background"
         android:textColor="@color/colorWhite"
         android:text="calibration"
+        android:fontFamily="@font/segoe_ui"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -74,6 +75,7 @@
         android:background="@drawable/navigation_btn_background"
         android:textColor="@color/colorWhite"
         android:text="Player Controls"
+        android:fontFamily="@font/segoe_ui"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

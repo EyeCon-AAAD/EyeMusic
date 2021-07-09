@@ -279,7 +279,7 @@ public class MainActivity extends BaseActivity {
         btn_calibration.setOnClickListener (view -> {
 
 //            isCalibration = true;
-
+            resetBackCounter();
             Intent openCalibrationIntent = new Intent(this, CalibrationActivity.class);
             startActivity(openCalibrationIntent);
 
@@ -304,9 +304,10 @@ public class MainActivity extends BaseActivity {
 
 
         });
+        buttoneffect(btn_calibration);
+
         btn_main_show_player = findViewById(R.id.btn_main_show_player);
         btn_main_show_player.setOnClickListener(view -> {
-
             if (playerFragment!=null){
                 resetBackCounter();
                 if (!playerFragment.isHidden()) {
@@ -319,8 +320,11 @@ public class MainActivity extends BaseActivity {
                             .show(playerFragment).hide(currentFragment).commit();
                 }
             }
-
+            else
+                Toast.makeText(getApplicationContext(), "Plase play a song first!", Toast.LENGTH_SHORT).show();
         });
+        buttoneffect(btn_main_show_player);
+
         backcounter = 0;
         btn_main_back.setOnClickListener(view ->{
             Fragment fragment = getSupportFragmentManager().findFragmentByTag("Tracks Fragment");
@@ -346,7 +350,7 @@ public class MainActivity extends BaseActivity {
                     Toast.makeText(getApplicationContext(), "One more time to exit!", Toast.LENGTH_SHORT).show();
             }
         });
-
+        buttoneffect(btn_main_back);
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -740,7 +744,6 @@ public class MainActivity extends BaseActivity {
     //--------------------------- GUI ---------------------------------------------------
     public static void buttoneffect (View button){
         button.setOnTouchListener(new View.OnTouchListener() {
-
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN: {

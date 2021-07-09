@@ -49,6 +49,8 @@ import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.util.Size;
 import android.view.MotionEvent;
@@ -123,6 +125,7 @@ public class CalibrationActivity extends BaseActivity {
     private String selectedModel = "Face Detection";
     private CameraSelector cameraSelector;
     private TextView textViewReport;
+    private TextView textViewInstructions;
 
     //Calibration
     private Button btn_start_calibration;
@@ -165,6 +168,7 @@ public class CalibrationActivity extends BaseActivity {
 
         // Camera and features
         textViewReport = findViewById(R.id.text_view_report);
+        textViewInstructions = findViewById(R.id.calibration_instructions_textview);
         textViewReport.setVisibility(View.INVISIBLE);
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
@@ -212,7 +216,7 @@ public class CalibrationActivity extends BaseActivity {
 
         isCalibration = false;
         graphicOverlayCalibration = findViewById(R.id.graphic_overlay_calibration);
-        calibrationRunnable = new CalibrationRunnable(graphicOverlayCalibration, this, findViewById(R.id.calibration_instructions_textview));
+        calibrationRunnable = new CalibrationRunnable(graphicOverlayCalibration, this, findViewById(R.id.calibration_title_textview),textViewInstructions);
 
         btn_calibration_back = findViewById(R.id.btn_calibration_back);
         btn_calibration_back.setOnClickListener(view -> {
@@ -257,6 +261,21 @@ public class CalibrationActivity extends BaseActivity {
             //graphicOverlayFace.setAlpha(0.4f);
 //
         });
+
+        textViewInstructions.setText(Html.fromHtml(
+                "<ul>"+
+                "<li>   Multiple dots will be shown on the screen to be gazed at.</li>" +
+                "<li>   The dots will appear on different places on the screen</li>" +
+                "<li>   You will have enough time to look at them.</li>" +
+                "<li>   <b>Please be sure to:</b>" +
+                    "<ul>"+
+                    "<li>Have a good lighting.</li>"+
+                    "<li>Look straight at the dots.</li>" +
+                    "<li>Stabilize your head.</li>"+
+                    "</ul>"+
+                "</li>"+
+                "</ul>"));
+        textViewInstructions.setMovementMethod(new ScrollingMovementMethod());
 
     }
 
