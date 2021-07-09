@@ -95,26 +95,7 @@ public class PlayerFragment extends Fragment {
         repeat = false;
         threadrepeat= false;
         progress = 0;
-
-        btnplay.setOnClickListener(v -> MainActivity.mSpotifyAppRemote.getPlayerApi().getPlayerState().setResultCallback(playerState -> {
-            if (playerState.isPaused){
-                MainActivity.mSpotifyAppRemote.getPlayerApi().resume();
-                btnplay.setImageResource(R.drawable.ic_pause);
-
-                paused = false;
-            }
-            else{
-                MainActivity.mSpotifyAppRemote.getPlayerApi().pause();
-                btnplay.setImageResource(R.drawable.ic_play);
-                paused = true;
-            }
-        }));
-        MainActivity.buttoneffect(btnplay);
-
-
         tracksecond = track.getDuration_ms() / 100;
-
-
         seekBar.setOnTouchListener(new View.OnTouchListener(){
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -144,6 +125,21 @@ public class PlayerFragment extends Fragment {
                 }
             }
         }).start();
+
+        btnplay.setOnClickListener(v -> MainActivity.mSpotifyAppRemote.getPlayerApi().getPlayerState().setResultCallback(playerState -> {
+            if (playerState.isPaused){
+                MainActivity.mSpotifyAppRemote.getPlayerApi().resume();
+                btnplay.setImageResource(R.drawable.ic_pause);
+
+                paused = false;
+            }
+            else{
+                MainActivity.mSpotifyAppRemote.getPlayerApi().pause();
+                btnplay.setImageResource(R.drawable.ic_play);
+                paused = true;
+            }
+        }));
+        MainActivity.buttoneffect(btnplay);
 
         btnnext.setOnClickListener(v -> {
             if (shuffle){
@@ -239,11 +235,6 @@ public class PlayerFragment extends Fragment {
                 played_index = tracks.indexOf(track);
             }
         });
-
-
-
-
     }
-
 
 }

@@ -36,11 +36,13 @@ public class CalibrationRunnable implements Runnable {
     private final static int SCREEN_WIDTH = Utilities.getScreenWidth();
     private final static int SCREEN_HEIGHT = Utilities.getScreenHeight();
 
+    private static TextView calibrationTitleTextview;
     private static TextView calibrationInstructionsTextview;
     private static String calibrationResults;
     private static String resultMessage;
 
-    CalibrationRunnable(GraphicOverlay overlayGaze, CalibrationActivity activity, TextView tmpCalibrationInstruction){
+    CalibrationRunnable(GraphicOverlay overlayGaze, CalibrationActivity activity, TextView tmpcalibrationTitleTextview, TextView tmpCalibrationInstruction){
+        calibrationTitleTextview = tmpcalibrationTitleTextview;
         calibrationInstructionsTextview = tmpCalibrationInstruction;
         graphicOverlayCalibration= overlayGaze;
         this.activity =  activity;
@@ -55,28 +57,13 @@ public class CalibrationRunnable implements Runnable {
     @SuppressLint("DefaultLocale")
     @Override
     public void run() {
-
-        //Showing instructions for calibration
-        calibrationInstructionsTextview.post(new Runnable() {
+        calibrationTitleTextview.post(new Runnable() {
             @SuppressLint({"DefaultLocale", "SetTextI18n"})
             @Override
             public void run() {
-                calibrationInstructionsTextview.setText("Calibration\nMultiple dots will be shown on the screen." +
-                        "You should look at them\n" +
-                        "The dots will appear on different places on the screen\n" +
-                        "You will have enough time to look at them.\n" +
-                        "Remember to:\n  *have a good lighting.\n  *look straight at the dots\n " +
-                        " *Try not to move your head\n");
-                calibrationInstructionsTextview.setVisibility(View.VISIBLE);
+                calibrationTitleTextview.setText("");
             }
         });
-
-        try {
-            Thread.sleep(8000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
         for (int i = 3; i >= 0; i--) {
             try {
                 Thread.sleep(1000);
@@ -88,7 +75,8 @@ public class CalibrationRunnable implements Runnable {
                 @SuppressLint({"DefaultLocale", "SetTextI18n"})
                 @Override
                 public void run() {
-                    calibrationInstructionsTextview.setText(String.format("Calibration starting in %d seconds", finalI));
+                    calibrationInstructionsTextview.scrollTo(0,0);
+                    calibrationInstructionsTextview.setText(String.format("Calibration starting in %d seconds...", finalI));
                     calibrationInstructionsTextview.setVisibility(View.VISIBLE);
                     if (finalI == 0) {
                         calibrationInstructionsTextview.setVisibility(View.INVISIBLE);
@@ -147,7 +135,7 @@ public class CalibrationRunnable implements Runnable {
                 @SuppressLint("DefaultLocale")
                 @Override
                 public void run() {
-                    calibrationInstructionsTextview.setText("Please wait\nThe model is being calibrated!\n");
+                    calibrationInstructionsTextview.setText("Please wait as the model is being calibrated!\n");
                     calibrationInstructionsTextview.setVisibility(View.VISIBLE);
                 }
             });
@@ -166,11 +154,11 @@ public class CalibrationRunnable implements Runnable {
                     @SuppressLint("DefaultLocale")
                     @Override
                     public void run() {
-                        calibrationInstructionsTextview.setText("CalibrationResult: the model is updated");
+                        calibrationInstructionsTextview.setText("Calibration Result: the model is updated!");
                         calibrationInstructionsTextview.setVisibility(View.VISIBLE);
                     }
                 });
-                Log.d(TAG, "CalibrationResult: the model is updated");
+                Log.d(TAG, "Calibration Result: the model is updated");
                 Thread.sleep(3000);
 
                 //Show the training error (saving for later
@@ -196,7 +184,7 @@ public class CalibrationRunnable implements Runnable {
                     @SuppressLint("DefaultLocale")
                     @Override
                     public void run() {
-                        calibrationInstructionsTextview.setText("For testing you need to look at the colored dots!");
+                        calibrationInstructionsTextview.setText("For testing, please look at the colored dots!");
                         calibrationInstructionsTextview.setVisibility(View.VISIBLE);
                     }
                 });
@@ -277,6 +265,14 @@ public class CalibrationRunnable implements Runnable {
                 resultMessage += String.format("%.2f (inch)\t", testError.getXy_error_inch());
                 resultMessage += String.format("dp=%.2f (cm),\n", testError.getXy_error_cm());
 
+                calibrationTitleTextview.post(new Runnable() {
+                    @SuppressLint({"DefaultLocale", "SetTextI18n"})
+                    @Override
+                    public void run() {
+                        calibrationTitleTextview.setText("Calibration Results:");
+                        calibrationInstructionsTextview.setVisibility(View.VISIBLE);
+                    }
+                });
                 calibrationInstructionsTextview.post(new Runnable() {
                     @SuppressLint("DefaultLocale")
                     @Override
@@ -295,7 +291,7 @@ public class CalibrationRunnable implements Runnable {
                     @SuppressLint({"DefaultLocale", "SetTextI18n"})
                     @Override
                     public void run() {
-                        calibrationInstructionsTextview.setText("CalibrationResult: the model could not be updated\n press start calibration again"); //why setTextI18n is needed ?
+                        calibrationInstructionsTextview.setText("Calibration Result: the model could not be updated... \nPress start calibration again!"); //why setTextI18n is needed ?
                         calibrationInstructionsTextview.setVisibility(View.VISIBLE);
                     }
                 });
