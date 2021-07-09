@@ -3,13 +3,14 @@ package com.projectx.eyemusic.Model;
 
 import android.util.Log;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 
 // TODO: you can make it more general
-public class LinearRegressionModel {
+public class LinearRegressionModel implements Serializable {
     private static final String TAG = "LinearRegressionModel";
     private  List<Float> X1_array; // for x coordinates
     private  List<Float> X2_array; // for y coordinates

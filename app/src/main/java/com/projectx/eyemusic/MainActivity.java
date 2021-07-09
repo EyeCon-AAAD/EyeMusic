@@ -222,7 +222,7 @@ public class MainActivity extends BaseActivity {
         //Gaze thread
 
         mainGazeModelManager = new GazeModelManager();
-        GazeModelManager.initializeGazeModelManager();
+        GazeModelManager.initializeGazeModelManager(getApplicationContext());
 
         predictionThread = new PredictionThread(mainGazeModelManager, graphicOverlayGazeLocation, this);
         predictionThread.start();
@@ -491,10 +491,35 @@ public class MainActivity extends BaseActivity {
         predictionThread = new PredictionThread(mainGazeModelManager, graphicOverlayGazeLocation, this);
         predictionThread.start();
 
-        if (! GazeModelManager.isIsCalibratedAtAll()) {
-            Intent openCalibrationIntent = new Intent(this, CalibrationActivity.class);
-            startActivity(openCalibrationIntent);
+        // check if EyeMusic is launched for the first time
+        if (Utilities.isOnboardingFinished()) {
+            // order matters
+            mAccessCode = authentication.getAccessCode();
+            mAccessToken = authentication.getAccessToken();
+
+            // ------------------- perform error check for when the access is denied but launch is not first time ----------
         }
+        // Check if Spotify is installed each time the app is launched. Requirement!
+        if (!Utilities.isSpotifyInstalled()) {
+            Utilities.directUserToPlayStore();
+        } else {
+            if (authentication.isAuthenticated()) {
+                ConnectionParams connectionParams = new ConnectionParams.Builder(CLIENT_ID)
+                        .setRedirectUri(REDIRECT_URI)
+                        .showAuthView(true)
+                        .build();
+                if (mSpotifyAppRemote == null) {
+                    connectSpotifyRemote(connectionParams);
+                } else if (!mSpotifyAppRemote.isConnected()) {
+                    connectSpotifyRemote(connectionParams);
+                }
+            }
+        }
+
+//        if (! GazeModelManager.isIsCalibratedAtAll()) {
+//            Intent openCalibrationIntent = new Intent(this, CalibrationActivity.class);
+//            startActivity(openCalibrationIntent);
+//        }
     }
 
     //------------------------------------ SPOTIFY -------------------------------------------------

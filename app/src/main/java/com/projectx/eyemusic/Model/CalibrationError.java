@@ -5,9 +5,10 @@ import android.util.Log;
 
 import com.projectx.eyemusic.App;
 
+import java.io.Serializable;
 import java.util.List;
 
-public  class CalibrationError{
+public  class CalibrationError implements Serializable {
     private static final String TAG = "CalibrationError";
 
     private static final Float X_DPI =  App.getContext().getResources().getDisplayMetrics().xdpi;

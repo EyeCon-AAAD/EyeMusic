@@ -1,5 +1,6 @@
 package com.projectx.eyemusic.Model;
 
+import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
 import com.google.android.gms.common.Feature;
@@ -28,9 +29,12 @@ public class GazeModelManager {
     private static boolean isCalibratedAtAll = false;
     private static boolean recentCalibrationSuccess = false;
 
+    private static Context context = null;
+
     private static Random rand  = new Random();
 
-    public static boolean initializeGazeModelManager() {
+    public static boolean initializeGazeModelManager(Context c) {
+        context = c;
         loadCalibratedModel();
 
         if(calibratedModel == null) {
@@ -54,9 +58,11 @@ public class GazeModelManager {
 //            fileIn.close();
 
             ObjectInput input;
-            input = new ObjectInputStream(new FileInputStream("calibratedmodel.data"));
+            input = new ObjectInputStream(new FileInputStream(context.getFilesDir() + "/calibratedmodel.data"));
             calibratedModel =(CalibratedModel) input.readObject();
             input.close();
+
+            isCalibratedAtAll = true;
 
             Log.d(TAG, "The model is loaded");
         } catch (ClassNotFoundException | IOException i) {
@@ -68,13 +74,14 @@ public class GazeModelManager {
     public static void storeCalibratedModel() {
         try {
 
+//            context.openFileOutput();
 //            FileOutputStream fileOut = new FileOutputStream("employee.ser");
 //            ObjectOutputStream out = new ObjectOutputStream(fileOut);
 //            out.writeObject(calibratedModel);
 //            out.close();
 //            fileOut.close();
 
-            File outFile = new File(Environment.getExternalStorageDirectory(), "calibratedmodel.data");
+            File outFile = new File(context.getFilesDir() + "/calibratedmodel.data");
             ObjectOutput out = new ObjectOutputStream(new FileOutputStream(outFile));
             out.writeObject(calibratedModel);
             out.close();
