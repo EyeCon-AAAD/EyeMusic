@@ -436,30 +436,37 @@ public class MainActivity extends BaseActivity {
         super.onStart();
         Log.d(TAG, "onStart: ");
 
-        // check if EyeMusic is launched for the first time
-        if (Utilities.isOnboardingFinished()) {
-            // order matters
-            mAccessCode = authentication.getAccessCode();
-            mAccessToken = authentication.getAccessToken();
+        if (! GazeModelManager.isIsCalibratedAtAll()) {
+            Intent openCalibrationIntent = new Intent(this, CalibrationActivity.class);
+            startActivity(openCalibrationIntent);
+        }else{
+            // check if EyeMusic is launched for the first time
+            if (Utilities.isOnboardingFinished()) {
+                // order matters
+                mAccessCode = authentication.getAccessCode();
+                mAccessToken = authentication.getAccessToken();
 
-            // ------------------- perform error check for when the access is denied but launch is not first time ----------
-        }
-        // Check if Spotify is installed each time the app is launched. Requirement!
-        if (!Utilities.isSpotifyInstalled()) {
-            Utilities.directUserToPlayStore();
-        } else {
-            if (authentication.isAuthenticated()) {
-                ConnectionParams connectionParams = new ConnectionParams.Builder(CLIENT_ID)
-                        .setRedirectUri(REDIRECT_URI)
-                        .showAuthView(true)
-                        .build();
-                if (mSpotifyAppRemote == null) {
-                    connectSpotifyRemote(connectionParams);
-                } else if (!mSpotifyAppRemote.isConnected()) {
-                    connectSpotifyRemote(connectionParams);
+                // ------------------- perform error check for when the access is denied but launch is not first time ----------
+            }
+            // Check if Spotify is installed each time the app is launched. Requirement!
+            if (!Utilities.isSpotifyInstalled()) {
+                Utilities.directUserToPlayStore();
+            } else {
+                if (authentication.isAuthenticated()) {
+                    ConnectionParams connectionParams = new ConnectionParams.Builder(CLIENT_ID)
+                            .setRedirectUri(REDIRECT_URI)
+                            .showAuthView(true)
+                            .build();
+                    if (mSpotifyAppRemote == null) {
+                        connectSpotifyRemote(connectionParams);
+                    } else if (!mSpotifyAppRemote.isConnected()) {
+                        connectSpotifyRemote(connectionParams);
+                    }
                 }
             }
         }
+
+
 
     }
 
@@ -490,36 +497,6 @@ public class MainActivity extends BaseActivity {
         bindAllCameraUseCases();
         predictionThread = new PredictionThread(mainGazeModelManager, graphicOverlayGazeLocation, this);
         predictionThread.start();
-
-        // check if EyeMusic is launched for the first time
-        if (Utilities.isOnboardingFinished()) {
-            // order matters
-            mAccessCode = authentication.getAccessCode();
-            mAccessToken = authentication.getAccessToken();
-
-            // ------------------- perform error check for when the access is denied but launch is not first time ----------
-        }
-        // Check if Spotify is installed each time the app is launched. Requirement!
-        if (!Utilities.isSpotifyInstalled()) {
-            Utilities.directUserToPlayStore();
-        } else {
-            if (authentication.isAuthenticated()) {
-                ConnectionParams connectionParams = new ConnectionParams.Builder(CLIENT_ID)
-                        .setRedirectUri(REDIRECT_URI)
-                        .showAuthView(true)
-                        .build();
-                if (mSpotifyAppRemote == null) {
-                    connectSpotifyRemote(connectionParams);
-                } else if (!mSpotifyAppRemote.isConnected()) {
-                    connectSpotifyRemote(connectionParams);
-                }
-            }
-        }
-
-//        if (! GazeModelManager.isIsCalibratedAtAll()) {
-//            Intent openCalibrationIntent = new Intent(this, CalibrationActivity.class);
-//            startActivity(openCalibrationIntent);
-//        }
     }
 
     //------------------------------------ SPOTIFY -------------------------------------------------
