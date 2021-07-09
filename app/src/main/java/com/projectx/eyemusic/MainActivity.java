@@ -444,7 +444,7 @@ public class MainActivity extends BaseActivity {
         }
         // Check if Spotify is installed each time the app is launched. Requirement!
         if (!Utilities.isSpotifyInstalled()) {
-            Utilities.directUserToPlayStore();
+            Utilities.directUserToPlayStore(MainActivity.this);
         } else {
             if (authentication.isAuthenticated()) {
                 ConnectionParams connectionParams = new ConnectionParams.Builder(CLIENT_ID)
