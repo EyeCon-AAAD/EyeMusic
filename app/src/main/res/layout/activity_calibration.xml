@@ -34,7 +34,6 @@
         android:layout_marginStart="8dp"
         android:text=""
         android:textAlignment="textStart"
-        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -69,17 +68,6 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-<!--    <Button-->
-<!--        android:id="@+id/btn_main_back"-->
-<!--        android:layout_width="125dp"-->
-<!--        android:layout_height="68dp"-->
-<!--        android:layout_marginStart="8dp"-->
-<!--        android:layout_marginTop="45dp"-->
-<!--        android:background="@color/colorAccent"-->
-<!--        android:text="go back"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
-
     <Button
         android:id="@+id/btn_calibration_back"
         android:layout_width="125dp"
@@ -107,10 +95,13 @@
             android:layout_width="300dp"
             android:layout_height="400dp"
             android:layout_marginStart="55dp"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="70dp"
             android:text=""
             android:textAlignment="textStart"
+            android:typeface="sans"
             android:textStyle="bold"
+            android:textSize="19sp"
+            android:textColor="#0000ef"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

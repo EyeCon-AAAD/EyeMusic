@@ -49,14 +49,14 @@ public class Utilities {
         }
     }
 
-    public static void directUserToPlayStore(){
+    public static void directUserToPlayStore(Context context){
         String REFERRER = App.getContext().getString(R.string.REFERRER);
         String PLAY_STORE_URI = App.getContext().getString(R.string.PLAY_STORE_URI);
         // Send user to Play Store to install if available in current market
         // TO-DO: If Spotify is not in user's market --> potentially can't make use of our app
         Log.w("Utilities", "Spotify isn't installed! Going to play store");
         // Alert Dialog for good UX
-        AlertDialog.Builder builder = new AlertDialog.Builder(App.getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage("Please install Spotify from Play Store then launch app again.")
                 .setCancelable(true) // may change this
                 .setPositiveButton("Install", (dialogInterface, i) -> {
@@ -66,14 +66,14 @@ public class Utilities {
                                 .appendQueryParameter("id", SPOTIFY_PACKAGE_NAME)
                                 .appendQueryParameter("referrer", REFERRER)
                                 .build();
-                        App.getContext().startActivity(new Intent(Intent.ACTION_VIEW, uri));
+                        context.startActivity(new Intent(Intent.ACTION_VIEW, uri));
                     } catch (android.content.ActivityNotFoundException ignored) {
                         Uri uri = Uri.parse(PLAY_STORE_URI)
                                 .buildUpon()
                                 .appendQueryParameter("id", SPOTIFY_PACKAGE_NAME)
                                 .appendQueryParameter("referrer", REFERRER)
                                 .build();
-                        App.getContext().startActivity(new Intent(Intent.ACTION_VIEW, uri));
+                        context.startActivity(new Intent(Intent.ACTION_VIEW, uri));
                     }
                 })
                 .setNegativeButton("Cancel", (dialogInterface, i) -> dialogInterface.cancel())
