@@ -1,15 +1,20 @@
 package com.projectx.eyemusic.Model;
 
+import android.content.Context;
+import android.os.Environment;
 import android.util.Log;
 import com.google.android.gms.common.Feature;
 import com.projectx.eyemusic.Features.Feature1;
 import com.projectx.eyemusic.Features.RawFeature;
 import com.projectx.eyemusic.Utilities;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInput;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +29,12 @@ public class GazeModelManager {
     private static boolean isCalibratedAtAll = false;
     private static boolean recentCalibrationSuccess = false;
 
+    private static Context context = null;
+
     private static Random rand  = new Random();
 
-    public static boolean initializeGazeModelManager() {
+    public static boolean initializeGazeModelManager(Context c) {
+        context = c;
         loadCalibratedModel();
 
         if(calibratedModel == null) {
@@ -43,25 +51,46 @@ public class GazeModelManager {
 
     public static void loadCalibratedModel() {
         try {
-            FileInputStream fileIn = new FileInputStream("calibratedmodel.ser");
-            ObjectInputStream in = new ObjectInputStream(fileIn);
-            calibratedModel = (CalibratedModel) in.readObject();
-            in.close();
-            fileIn.close();
+//            FileInputStream fileIn = new FileInputStream("calibratedmodel.data");
+//            ObjectInputStream in = new ObjectInputStream(fileIn);
+//            calibratedModel = (CalibratedModel) in.readObject();
+//            in.close();
+//            fileIn.close();
+
+            ObjectInput input;
+            input = new ObjectInputStream(new FileInputStream(context.getFilesDir() + "/calibratedmodel.data"));
+            calibratedModel =(CalibratedModel) input.readObject();
+            input.close();
+
+            isCalibratedAtAll = true;
+
+            Log.d(TAG, "The model is loaded");
         } catch (ClassNotFoundException | IOException i) {
+            Log.d(TAG, "The model could not be loaded" + i.toString());
             i.printStackTrace();
         }
     }
 
     public static void storeCalibratedModel() {
         try {
-            FileOutputStream fileOut = new FileOutputStream("employee.ser");
-            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+
+//            context.openFileOutput();
+//            FileOutputStream fileOut = new FileOutputStream("employee.ser");
+//            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+//            out.writeObject(calibratedModel);
+//            out.close();
+//            fileOut.close();
+
+            File outFile = new File(context.getFilesDir() + "/calibratedmodel.data");
+            ObjectOutput out = new ObjectOutputStream(new FileOutputStream(outFile));
             out.writeObject(calibratedModel);
             out.close();
-            fileOut.close();
+
+
+            Log.d(TAG, "The model is saved");
         } catch (IOException i) {
             i.printStackTrace();
+            Log.d(TAG, "The model could not be saved "+ i.toString());
         }
     }
 
