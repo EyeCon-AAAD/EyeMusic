@@ -122,6 +122,7 @@ public class CalibrationActivity extends BaseActivity {
     private String selectedModel = "Face Detection";
     private CameraSelector cameraSelector;
     private TextView textViewReport;
+    private TextView textViewInstructions;
 
     //Calibration
     private Button btn_start_calibration;
@@ -164,6 +165,7 @@ public class CalibrationActivity extends BaseActivity {
 
         // Camera and features
         textViewReport = findViewById(R.id.text_view_report);
+        textViewInstructions = findViewById(R.id.calibration_instructions_textview);
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             Toast.makeText(
@@ -210,7 +212,7 @@ public class CalibrationActivity extends BaseActivity {
 
         isCalibration = false;
         graphicOverlayCalibration = findViewById(R.id.graphic_overlay_calibration);
-        calibrationRunnable = new CalibrationRunnable(graphicOverlayCalibration, this, findViewById(R.id.calibration_instructions_textview));
+        calibrationRunnable = new CalibrationRunnable(graphicOverlayCalibration, this, textViewInstructions);
 
         btn_calibration_back = findViewById(R.id.btn_calibration_back);
         btn_calibration_back.setOnClickListener(view -> {
@@ -253,6 +255,12 @@ public class CalibrationActivity extends BaseActivity {
             //graphicOverlayFace.setAlpha(0.4f);
 //
         });
+        textViewReport.setText("Calibration\nMultiple dots will be shown on the screen." +
+                "You should look at them\n" +
+                "The dots will appear on different places on the screen\n" +
+                "You will have enough time to look at them.\n" +
+                "Remember to:\n  *have a good lighting.\n  *look straight at the dots\n " +
+                " *Try not to move your head\n");
 
     }
 
