@@ -15,17 +15,21 @@
         android:id="@+id/preview_view"
         android:layout_width="120dp"
         android:layout_height="160dp"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="invisible" />
 
     <com.projectx.eyemusic.Graphics.GraphicOverlay
         android:id="@+id/graphic_overlay_face"
         android:layout_width="120dp"
         android:layout_height="160dp"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="invisible" />
 
     <TextView
         android:id="@+id/text_view_report"
