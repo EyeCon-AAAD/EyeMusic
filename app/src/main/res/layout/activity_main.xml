@@ -11,6 +11,15 @@
         android:orientation="vertical"
         tools:context=".MainActivity">
 
+    <TextView
+        android:id="@+id/face_feedback"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <androidx.camera.view.PreviewView
         android:id="@+id/preview_view"
         android:layout_width="120dp"
@@ -19,7 +28,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="invisible" />
+        tools:visibility="invisible" >
+
+    </androidx.camera.view.PreviewView>
 
     <com.projectx.eyemusic.Graphics.GraphicOverlay
         android:id="@+id/graphic_overlay_face"
