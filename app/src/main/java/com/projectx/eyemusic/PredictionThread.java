@@ -1,5 +1,6 @@
 package com.projectx.eyemusic;
 
+import android.graphics.Color;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Process;
@@ -61,12 +62,16 @@ public class PredictionThread extends HandlerThread {
 
                 Log.d(TAG, "SHOWN DOT: " + shown_X + " " + shown_Y);
                 graphicOverlayGazeLocation.clear();
-                graphicOverlayGazeLocation.add(new DotGraphic(activity, graphicOverlayGazeLocation, shown_X, shown_Y));
+                DotGraphic dot = new DotGraphic(activity, graphicOverlayGazeLocation, shown_X, shown_Y);
+                if(feature.getSmileProb() > 0.8) dot.setColor(Color.GREEN);
+                graphicOverlayGazeLocation.add(dot);
                 graphicOverlayGazeLocation.postInvalidate();
 
                 if(feature.getSmileProb() > 0.8) {
                     try{
                         SimulatedTouch.click(shown_X, shown_Y);
+                        Toast.makeText(activity, "Clicked", Toast.LENGTH_LONG).show();
+                        sleep(1700);
                     }catch(Exception e){
                         Log.e(TAG, "on click: ", e);
                         e.printStackTrace();

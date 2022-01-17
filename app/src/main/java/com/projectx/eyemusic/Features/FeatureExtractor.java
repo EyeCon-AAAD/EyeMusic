@@ -45,15 +45,6 @@ public class FeatureExtractor {
              Log.i(TAG, "getData: data sent to predict");
              PredictionThread.getHandler().removeCallbacksAndMessages(null); // all the pending runnable objects will be removed
              PredictionThread.getHandler().post(new PredictionThread.GazeRunnable(newFeature));
-             /*
-             //wanted to make teh click slower
-             if(rawFeature.getSmileProb() > 0.8){
-                 try {
-                     Thread.sleep(2000);
-                 } catch (InterruptedException e) {
-                     e.printStackTrace();
-                 }
-             }*/
          }
     }
 
