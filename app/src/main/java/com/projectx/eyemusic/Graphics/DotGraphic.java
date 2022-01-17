@@ -12,6 +12,7 @@ public class DotGraphic extends Graphic{
     private static final String TAG = "DotGraphic";
     private  float radius = 40.0f; //default values
     private  int color = Color.RED;
+    private Boolean strikes;
 
     private Paint paint;
     private float x;
@@ -23,6 +24,16 @@ public class DotGraphic extends Graphic{
         paint.setColor(color);
         this.x = x;
         this.y = y - activity.getGraphicOverlayGazeLocationLocation()[1];
+        strikes = Boolean.FALSE;
+    }
+
+    public DotGraphic(BaseActivity activity, GraphicOverlay overlay, float x, float y, Boolean strikes){
+        super(overlay);
+        paint = new Paint();
+        paint.setColor(color);
+        this.x = x;
+        this.y = y - activity.getGraphicOverlayGazeLocationLocation()[1];
+        this.strikes = strikes;
     }
 
     public void setColor(int color){
@@ -37,6 +48,15 @@ public class DotGraphic extends Graphic{
     @Override
     public void draw(Canvas canvas) {
         canvas.drawCircle(x, y, radius, paint);
+
+        if(strikes){
+            Paint linePaint = new Paint();
+            linePaint.setColor(Color.BLACK);
+            linePaint.setStrokeWidth(3);
+            canvas.drawLine(x-(radius*60/100), y, x+(radius*60/100), y, linePaint);
+            canvas.drawLine(x, y-(radius*60/100), x, y+(radius*60/100), linePaint);
+        }
+
     }
 
 
