@@ -52,6 +52,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -736,19 +737,30 @@ public class MainActivity extends BaseActivity {
 
 
     //--------------------------- GUI ---------------------------------------------------
-    public static void buttoneffect (View button){
+    public static void  buttoneffect (View button){
         button.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN: {
-                        v.getBackground().setColorFilter(0x69696969, PorterDuff.Mode.SRC_ATOP);
+                        if (v.getBackground() != null) {
+                            v.getBackground().setColorFilter(0x99999999, PorterDuff.Mode.SRC_ATOP);
+                        }
+                        else {
+                            ((ImageView) v).setColorFilter(0x66666666, PorterDuff.Mode.SRC_ATOP);
+                        }
                         v.invalidate();
                         break;
                     }
                     case MotionEvent.ACTION_UP: {
-                        v.getBackground().clearColorFilter();
+                        if (v.getBackground() != null) {
+                            v.getBackground().clearColorFilter();
+                        }
+                        else {
+                            ((ImageView) v).clearColorFilter();
+                        }
                         v.invalidate();
                         break;
+
                     }
                 }
                 return false;
