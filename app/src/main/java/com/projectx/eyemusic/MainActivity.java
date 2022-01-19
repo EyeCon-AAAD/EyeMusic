@@ -152,7 +152,7 @@ public class MainActivity extends BaseActivity {
     public static Fragment playerFragment;
     public static Fragment currentFragment;
 
-    Button btn_main_show_player;
+    ImageButton btn_main_show_player;
     ImageButton btn_main_back;
     private int backcounter;
     @Override
