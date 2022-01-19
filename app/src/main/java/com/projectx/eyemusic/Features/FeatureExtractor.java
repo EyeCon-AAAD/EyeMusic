@@ -26,9 +26,11 @@ public class FeatureExtractor {
     public static void getData(RawFeature rawFeature){
          Feature1 newFeature = new Feature1(rawFeature.getOriginal(), rawFeature.getFace());
 
-         // TODO: complete show the error message that the face is not in the image so fix it
          if (!newFeature.isFaceInImage()){
+             MainActivity.updateFaceFeedback(Boolean.FALSE);
              return;
+         }else{
+             MainActivity.updateFaceFeedback(Boolean.TRUE);
          }
 
         /*if (saveCount > 0){
