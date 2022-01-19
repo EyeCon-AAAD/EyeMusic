@@ -719,28 +719,30 @@ public class MainActivity extends BaseActivity {
     }
 
     //--------------------------- PERMISSIONS FINISH ---------------------------------------------------
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        int X = (int) event.getX();
-        int Y = (int) event.getY();
-        int eventAction = event.getAction();
-        switch (eventAction) {
-            case MotionEvent.ACTION_DOWN:
-                Toast.makeText(this, "ACTION_DOWN " + "X: " + X + " Y: " + Y, Toast.LENGTH_SHORT).show();
-                Log.i(TAG, "action_down: " + X + " " + Y);
-                break;
-            case MotionEvent.ACTION_MOVE:
-                Toast.makeText(this, "MOVE " + "X: " + X + " Y: " + Y,
-                        Toast.LENGTH_SHORT).show();
-                Log.i(TAG, "action_move: " + X + " " + Y);
-                break;
-            case MotionEvent.ACTION_UP:
-                Toast.makeText(this, "ACTION_UP " + "X: " + X + " Y: " + Y, Toast.LENGTH_SHORT).show();
-                Log.i(TAG, "action_up: " + X + " " + Y);
-                break;
-        }
-        return false;
-    }
+
+
+//    @Override
+//    public boolean onTouchEvent(MotionEvent event) {
+//        int X = (int) event.getX();
+//        int Y = (int) event.getY();
+//        int eventAction = event.getAction();
+//        switch (eventAction) {
+//            case MotionEvent.ACTION_DOWN:
+//                Toast.makeText(this, "ACTION_DOWN " + "X: " + X + " Y: " + Y, Toast.LENGTH_SHORT).show();
+//                Log.i(TAG, "action_down: " + X + " " + Y);
+//                break;
+//            case MotionEvent.ACTION_MOVE:
+//                Toast.makeText(this, "MOVE " + "X: " + X + " Y: " + Y,
+//                        Toast.LENGTH_SHORT).show();
+//                Log.i(TAG, "action_move: " + X + " " + Y);
+//                break;
+//            case MotionEvent.ACTION_UP:
+//                Toast.makeText(this, "ACTION_UP " + "X: " + X + " Y: " + Y, Toast.LENGTH_SHORT).show();
+//                Log.i(TAG, "action_up: " + X + " " + Y);
+//                break;
+//        }
+//        return false;
+//    }
 
 
 
