@@ -41,6 +41,7 @@ public class PlayerFragment extends Fragment {
     ImageView albumart;
     TextView trackname;
     TextView artistname;
+    ImageView tintView;
     SeekBar seekBar;
     long tracksecond;
     int progress;
@@ -79,7 +80,7 @@ public class PlayerFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        albumart = view.findViewById(R.id.imgalbumart);
+        albumart = view.findViewById(R.id.iv_backart);
         Picasso.get().load(track.getImageURL()).into(albumart);
         trackname = view.findViewById(R.id.playersongname);
         trackname.setText(track.getTrackName());
@@ -91,11 +92,14 @@ public class PlayerFragment extends Fragment {
         btnprev = view.findViewById(R.id.btnprev);
         btnrepeat = view.findViewById(R.id.btnrepeat);
         btnshuffle = view.findViewById(R.id.btnshuffle);
+        tintView = view.findViewById(R.id.iv_tint);
+
         paused = false;
         repeat = false;
         threadrepeat= false;
         progress = 0;
         tracksecond = track.getDuration_ms() / 100;
+        seekBar.setVisibility(View.INVISIBLE);
         seekBar.setOnTouchListener(new View.OnTouchListener(){
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -219,6 +223,7 @@ public class PlayerFragment extends Fragment {
                 repeat = false;
             }
         });
+        MainActivity.buttoneffect(btnrepeat);
 
         btnshuffle.setOnClickListener(v -> {
             if (!shuffle){
@@ -235,6 +240,7 @@ public class PlayerFragment extends Fragment {
                 played_index = tracks.indexOf(track);
             }
         });
+        MainActivity.buttoneffect(btnshuffle);
     }
 
 }

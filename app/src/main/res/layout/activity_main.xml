@@ -7,6 +7,7 @@
         android:id="@+id/main_constraint_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/custom_rounded_button"
         android:keepScreenOn="true"
         android:orientation="vertical"
         tools:context=".MainActivity">
@@ -15,6 +16,7 @@
         android:id="@+id/preview_view"
         android:layout_width="120dp"
         android:layout_height="160dp"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -23,6 +25,7 @@
         android:id="@+id/graphic_overlay_face"
         android:layout_width="120dp"
         android:layout_height="160dp"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -32,6 +35,7 @@
         android:layout_width="120dp"
         android:layout_height="160dp"
         android:layout_marginStart="8dp"
+        android:visibility="invisible"
         android:text=""
         android:textAlignment="textStart"
         android:textStyle="bold"
@@ -41,6 +45,7 @@
     <com.projectx.eyemusic.Graphics.GraphicOverlay
         android:id="@+id/graphic_overlay_gaze_location"
         android:layout_width="match_parent"
+
         android:layout_height="match_parent"
         android:elevation="10dp"
         />
@@ -48,6 +53,7 @@
     <com.projectx.eyemusic.Graphics.GraphicOverlay
         android:id="@+id/graphic_overlay_calibration"
         android:layout_width="match_parent"
+
         android:layout_height="match_parent"
         android:elevation="11dp"
         />
@@ -60,47 +66,55 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="8dp"
         android:background="@drawable/navigation_btn_background"
+        android:visibility="invisible"
         android:textColor="@color/colorWhite"
         android:text="calibration"
         android:fontFamily="@font/segoe_ui"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+    <ImageButton
         android:id="@+id/btn_main_show_player"
-        android:layout_width="125dp"
-        android:layout_height="68dp"
-        android:layout_marginTop="84dp"
-        android:layout_marginEnd="8dp"
+        android:layout_width="170dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="30dp"
+        android:padding="10dp"
+        android:scaleType="fitCenter"
         android:background="@drawable/navigation_btn_background"
-        android:textColor="@color/colorWhite"
-        android:text="Player Controls"
-        android:fontFamily="@font/segoe_ui"
+        android:src="@drawable/ic_play"
+
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/btn_main_back"
-        android:layout_width="125dp"
-        android:layout_height="68dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="45dp"
-        android:padding="10dp"
+        android:layout_width="170dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="30dp"
+        android:layout_marginEnd="20dp"
+        android:padding="8dp"
         android:scaleType="fitCenter"
         android:background="@drawable/navigation_btn_background"
-        android:src="@drawable/ic_back"
+        android:src="@drawable/ic_back2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btn_main_show_player"/>
 
     <FrameLayout
         android:id="@+id/main_fragment_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="10dp"
         android:backgroundTint="@color/colorWhite"
         app:layout_constraintBottom_toBottomOf ="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/preview_view">
+        app:layout_constraintTop_toBottomOf="@id/btn_main_show_player">
 
     </FrameLayout>
 
