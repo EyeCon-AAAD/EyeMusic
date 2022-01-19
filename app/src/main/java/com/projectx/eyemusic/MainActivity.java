@@ -43,6 +43,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
@@ -154,6 +155,10 @@ public class MainActivity extends BaseActivity {
     Button btn_main_show_player;
     ImageButton btn_main_back;
     private int backcounter;
+
+    // face feedback message
+    public static TextView faceFeedback;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -352,6 +357,9 @@ public class MainActivity extends BaseActivity {
             }
         };
         getOnBackPressedDispatcher().addCallback(this, callback);
+
+        //face feedback
+        faceFeedback = findViewById(R.id.face_feedback);
     }
 
     public void resetBackCounter(){
@@ -755,6 +763,20 @@ public class MainActivity extends BaseActivity {
             }
         });
     }
+
+    //---------------------------- Face Feedback ---------------------------------------------------
+    static public void updateFaceFeedback(Boolean faceInBounds){
+        if(faceInBounds){
+            faceFeedback.setText("face: ok");
+            faceFeedback.setTextColor(Color.GREEN);
+            //faceFeedback.setBackgroundColor(Color.GREEN);
+        }else{
+            faceFeedback.setText("face: not ok\nBe in front of the camera");
+            faceFeedback.setTextColor(Color.RED);
+            //faceFeedback.setBackgroundColor(Color.RED);
+        }
+    }
+
 
 }
 
