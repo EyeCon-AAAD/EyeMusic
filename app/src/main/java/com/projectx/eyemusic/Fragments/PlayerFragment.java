@@ -1,5 +1,7 @@
 package com.projectx.eyemusic.Fragments;
 
+import android.content.Context;
+import android.location.LocationManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -7,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.os.Parcelable;
+import android.util.FloatProperty;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -17,14 +20,20 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.projectx.eyemusic.MainActivity;
 import com.projectx.eyemusic.Model.GazePoint;
 import com.projectx.eyemusic.Music.MyTrack;
 import com.projectx.eyemusic.R;
 import com.squareup.picasso.Picasso;
 
+import org.tensorflow.lite.support.metadata.schema.Content;
+
 import java.util.ArrayList;
 import java.util.Collections;
+
+
 
 
 public class PlayerFragment extends Fragment {
@@ -57,12 +66,37 @@ public class PlayerFragment extends Fragment {
     static ImageButton btnshuffle;
     static GazePoint[] locations = new GazePoint[5];
 
+
     public PlayerFragment() {
         // Required empty public constructor
     }
 
     public static GazePoint[] getLocationButtons(){
         return locations;
+    }
+
+    @Override
+    public void onActivityCreated (Bundle savedInstanceState) {
+
+        super.onActivityCreated(savedInstanceState);
+        //remap
+        int[] tmp_location = new int[2];
+
+        btnplay.getLocationOnScreen(tmp_location);
+        locations[0] = new GazePoint(tmp_location[0], tmp_location[1]);
+
+        btnnext.getLocationOnScreen(tmp_location);
+        locations[1] = new GazePoint(tmp_location[0], tmp_location[1]);
+
+        btnprev.getLocationOnScreen(tmp_location);
+        locations[2] = new GazePoint(tmp_location[0], tmp_location[1]);
+
+        btnrepeat.getLocationOnScreen(tmp_location);
+        locations[3] = new GazePoint(tmp_location[0], tmp_location[1]);
+
+        btnshuffle.getLocationOnScreen(tmp_location);
+        locations[4] = new GazePoint(tmp_location[0], tmp_location[1]);
+
     }
 
     @Override
@@ -78,22 +112,10 @@ public class PlayerFragment extends Fragment {
         btnrepeat = view.findViewById(R.id.btnrepeat);
         btnshuffle = view.findViewById(R.id.btnshuffle);
 
-
-        if (getArguments() != null) {
-            played_index = this.getArguments().getInt("played");
-            tracks = new ArrayList<MyTrack>();
-
-            for (Parcelable parcelable: this.getArguments().getParcelableArrayList("tracks")){
-                tracks.add((MyTrack) parcelable);
-            }
-            track = tracks.get(played_index);
-            shuffled_tracks = new ArrayList<MyTrack>(tracks);
-
-
-        }
-
         return view;
     }
+
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -256,24 +278,6 @@ public class PlayerFragment extends Fragment {
             }
         });
         MainActivity.buttoneffect(btnshuffle);
-
-        //remap
-        int[] tmp_location = new int[2];
-
-        btnplay.getLocationOnScreen(tmp_location);
-        locations[0] = new GazePoint(tmp_location[0], tmp_location[1]);
-
-        btnnext.getLocationOnScreen(tmp_location);
-        locations[1] = new GazePoint(tmp_location[0], tmp_location[1]);
-
-        btnprev.getLocationOnScreen(tmp_location);
-        locations[2] = new GazePoint(tmp_location[0], tmp_location[1]);
-
-        btnrepeat.getLocationOnScreen(tmp_location);
-        locations[3] = new GazePoint(tmp_location[0], tmp_location[1]);
-
-        btnshuffle.getLocationOnScreen(tmp_location);
-        locations[4] = new GazePoint(tmp_location[0], tmp_location[1]);
     }
 
 }
