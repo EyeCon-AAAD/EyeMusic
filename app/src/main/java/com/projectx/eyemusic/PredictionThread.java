@@ -61,15 +61,32 @@ public class PredictionThread extends HandlerThread {
                 float shown_Y = LimitToScreen(prediction.getY(), 0f, Float.valueOf(SCREEN_HEIGHT));
 
                 Log.d(TAG, "SHOWN DOT: " + shown_X + " " + shown_Y);
+
+                //remap the gaze location
+                float remap_X = shown_X;
+                float remap_Y = shown_Y;
+                RemapGaze remaper = new RemapGaze();
+                if(remaper.needRemap()){
+                    GazePoint remaped_point = remaper.remap(new GazePoint(shown_X, shown_Y));
+                    if(remaped_point != null){
+                        Log.d("remap", "run: remaped_point not null");
+                        remap_X = remaped_point.getX();
+                        remap_Y = remaped_point.getY();
+                    }
+
+                }
+
+                //showing
                 graphicOverlayGazeLocation.clear();
-                DotGraphic dot = new DotGraphic(activity, graphicOverlayGazeLocation, shown_X, shown_Y);
+                DotGraphic dot = new DotGraphic(activity, graphicOverlayGazeLocation, remap_X, remap_Y);
                 if(feature.getSmileProb() > 0.8) dot.setColor(Color.GREEN);
                 graphicOverlayGazeLocation.add(dot);
                 graphicOverlayGazeLocation.postInvalidate();
 
+                //clicking
                 if(feature.getSmileProb() > 0.8) {
                     try{
-                        SimulatedTouch.click(shown_X, shown_Y);
+                        SimulatedTouch.click(remap_X, remap_Y);
                         Toast.makeText(activity, "Clicked", Toast.LENGTH_LONG).show();
                         sleep(1700);
                     }catch(Exception e){

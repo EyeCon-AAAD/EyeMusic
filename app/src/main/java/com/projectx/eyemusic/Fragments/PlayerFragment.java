@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.projectx.eyemusic.MainActivity;
+import com.projectx.eyemusic.Model.GazePoint;
 import com.projectx.eyemusic.Music.MyTrack;
 import com.projectx.eyemusic.R;
 import com.squareup.picasso.Picasso;
@@ -33,16 +35,7 @@ public class PlayerFragment extends Fragment {
     private ArrayList<MyTrack> tracks;
     private ArrayList<MyTrack> shuffled_tracks;
     private MyTrack track;
-    ImageButton btnplay;
-    ImageButton btnnext;
-    ImageButton btnprev;
-    ImageButton btnrepeat;
-    ImageButton btnshuffle;
-    ImageView albumart;
-    TextView trackname;
-    TextView artistname;
-    ImageView tintView;
-    SeekBar seekBar;
+
     long tracksecond;
     int progress;
     long currenttime;
@@ -51,14 +44,40 @@ public class PlayerFragment extends Fragment {
     boolean shuffle;
     boolean paused;
 
+    ImageView albumart;
+    TextView trackname;
+    TextView artistname;
+    ImageView tintView;
+    SeekBar seekBar;
+
+    static ImageButton btnplay;
+    static ImageButton btnnext;
+    static ImageButton btnprev;
+    static ImageButton btnrepeat;
+    static ImageButton btnshuffle;
+    static GazePoint[] locations = new GazePoint[5];
 
     public PlayerFragment() {
         // Required empty public constructor
     }
 
+    public static GazePoint[] getLocationButtons(){
+        return locations;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // initialize view
+        View view = inflater.inflate(R.layout.fragment_player, container, false);
+
+        // assign variables
+        btnplay = view.findViewById(R.id.btnplay);
+        btnnext = view.findViewById(R.id.btnnext);
+        btnprev = view.findViewById(R.id.btnprev);
+        btnrepeat = view.findViewById(R.id.btnrepeat);
+        btnshuffle = view.findViewById(R.id.btnshuffle);
+
 
         if (getArguments() != null) {
             played_index = this.getArguments().getInt("played");
@@ -73,7 +92,7 @@ public class PlayerFragment extends Fragment {
 
         }
 
-        return inflater.inflate(R.layout.fragment_player, container, false);
+        return view;
     }
 
     @Override
@@ -86,13 +105,9 @@ public class PlayerFragment extends Fragment {
         trackname.setText(track.getTrackName());
         artistname = view.findViewById(R.id.playerartistname);
         artistname.setText(track.getArtistName());
-        seekBar =  view.findViewById(R.id.seekbar);
-        btnplay = view.findViewById(R.id.btnplay);
-        btnnext = view.findViewById(R.id.btnnext);
-        btnprev = view.findViewById(R.id.btnprev);
-        btnrepeat = view.findViewById(R.id.btnrepeat);
-        btnshuffle = view.findViewById(R.id.btnshuffle);
         tintView = view.findViewById(R.id.iv_tint);
+        seekBar =  view.findViewById(R.id.seekbar);
+
 
         paused = false;
         repeat = false;
@@ -241,6 +256,24 @@ public class PlayerFragment extends Fragment {
             }
         });
         MainActivity.buttoneffect(btnshuffle);
+
+        //remap
+        int[] tmp_location = new int[2];
+
+        btnplay.getLocationOnScreen(tmp_location);
+        locations[0] = new GazePoint(tmp_location[0], tmp_location[1]);
+
+        btnnext.getLocationOnScreen(tmp_location);
+        locations[1] = new GazePoint(tmp_location[0], tmp_location[1]);
+
+        btnprev.getLocationOnScreen(tmp_location);
+        locations[2] = new GazePoint(tmp_location[0], tmp_location[1]);
+
+        btnrepeat.getLocationOnScreen(tmp_location);
+        locations[3] = new GazePoint(tmp_location[0], tmp_location[1]);
+
+        btnshuffle.getLocationOnScreen(tmp_location);
+        locations[4] = new GazePoint(tmp_location[0], tmp_location[1]);
     }
 
 }
