@@ -13,4 +13,12 @@ public class GazePoint{
     public float getY() {
         return y;
     }
+
+    @Override
+    public String toString() {
+        return "GazePoint{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
+    }
 }

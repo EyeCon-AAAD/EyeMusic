@@ -70,6 +70,7 @@ import com.projectx.eyemusic.FaceDetection.VisionImageProcessor;
 import com.projectx.eyemusic.Fragments.PlaylistFragment;
 import com.projectx.eyemusic.Graphics.GraphicOverlay;
 import com.projectx.eyemusic.Model.GazeModelManager;
+import com.projectx.eyemusic.Model.GazePoint;
 import com.projectx.eyemusic.Model.OriginalModel;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
@@ -153,12 +154,18 @@ public class MainActivity extends BaseActivity {
     public static Fragment playerFragment;
     public static Fragment currentFragment;
 
-    ImageButton btn_main_show_player;
-    ImageButton btn_main_back;
+    static ImageButton btn_main_show_player;
+    static ImageButton btn_main_back;
+
+    static GazePoint[] locations_menu_buttons = new GazePoint[2];
     private int backcounter;
 
     // face feedback message
     public static TextView faceFeedback;
+
+    public static GazePoint[] getLocations_menu_buttons() {
+        return locations_menu_buttons;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -398,6 +405,19 @@ public class MainActivity extends BaseActivity {
     public void onWindowFocusChanged(boolean hasFocus) {
         graphicOverlayGazeLocation.getLocationOnScreen(graphicOverlayGazeLocationLocation);
         Log.i(TAG, "onWindowFocusChanged:Location of overlay " + graphicOverlayGazeLocationLocation[0] + " " + graphicOverlayGazeLocationLocation[1]);
+
+        int[] point = new int[2];
+        btn_main_back.getLocationOnScreen(point);
+        int width = btn_main_back.getWidth();
+        int height = btn_main_back.getHeight();
+        locations_menu_buttons[0] = new GazePoint(point[0]+((float)width/2), point[1]+((float)height/2));
+
+        btn_main_show_player.getLocationOnScreen(point);
+        width = btn_main_back.getWidth();
+        height = btn_main_back.getHeight();
+        locations_menu_buttons[1] = new GazePoint(point[0]+((float)width/2), point[1]+((float)height/2));
+
+        Log.d("location_back", "onWindowFocusChanged: location of back button "+ locations_menu_buttons[0].toString());
     }
 
     /**

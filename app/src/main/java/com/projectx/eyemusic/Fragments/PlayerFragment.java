@@ -75,29 +75,6 @@ public class PlayerFragment extends Fragment {
         return locations;
     }
 
-    @Override
-    public void onActivityCreated (Bundle savedInstanceState) {
-
-        super.onActivityCreated(savedInstanceState);
-        //remap
-        int[] tmp_location = new int[2];
-
-        btnplay.getLocationOnScreen(tmp_location);
-        locations[0] = new GazePoint(tmp_location[0], tmp_location[1]);
-
-        btnnext.getLocationOnScreen(tmp_location);
-        locations[1] = new GazePoint(tmp_location[0], tmp_location[1]);
-
-        btnprev.getLocationOnScreen(tmp_location);
-        locations[2] = new GazePoint(tmp_location[0], tmp_location[1]);
-
-        btnrepeat.getLocationOnScreen(tmp_location);
-        locations[3] = new GazePoint(tmp_location[0], tmp_location[1]);
-
-        btnshuffle.getLocationOnScreen(tmp_location);
-        locations[4] = new GazePoint(tmp_location[0], tmp_location[1]);
-
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -105,12 +82,59 @@ public class PlayerFragment extends Fragment {
         // initialize view
         View view = inflater.inflate(R.layout.fragment_player, container, false);
 
-        // assign variables
+        if (getArguments() != null) {
+            played_index = this.getArguments().getInt("played");
+            tracks = new ArrayList<MyTrack>();
+
+            for (Parcelable parcelable: this.getArguments().getParcelableArrayList("tracks")){
+                tracks.add((MyTrack) parcelable);
+            }
+            track = tracks.get(played_index);
+            shuffled_tracks = new ArrayList<MyTrack>(tracks);
+        }
+
+
+        // assign variables and set their locations
         btnplay = view.findViewById(R.id.btnplay);
+        btnplay.post(() -> {
+            int[] point = new int[2];
+            btnplay.getLocationOnScreen(point);
+            int width = btnplay.getWidth();
+            int height = btnplay.getHeight();
+            locations[0] = new GazePoint(point[0]+((float)height/2), point[1]+((float)width/2));
+        });
         btnnext = view.findViewById(R.id.btnnext);
+        btnnext.post(() -> {
+            int[] point = new int[2];
+            btnnext.getLocationOnScreen(point);
+            int width = btnnext.getWidth();
+            int height = btnnext.getHeight();
+            locations[1] = new GazePoint(point[0]+((float)height/2), point[1]+((float)width/2));
+        });
         btnprev = view.findViewById(R.id.btnprev);
+        btnprev.post(() -> {
+            int[] point = new int[2];
+            btnprev.getLocationOnScreen(point);
+            int width = btnprev.getWidth();
+            int height = btnprev.getHeight();
+            locations[2] = new GazePoint(point[0]+((float)height/2), point[1]+((float)width/2));
+        });
         btnrepeat = view.findViewById(R.id.btnrepeat);
+        btnrepeat.post(() -> {
+            int[] point = new int[2];
+            btnrepeat.getLocationOnScreen(point);
+            int width = btnrepeat.getWidth();
+            int height = btnrepeat.getHeight();
+            locations[3] = new GazePoint(point[0]+((float)height/2), point[1]+((float)width/2));
+        });
         btnshuffle = view.findViewById(R.id.btnshuffle);
+        btnshuffle.post(() -> {
+            int[] point = new int[2];
+            btnshuffle.getLocationOnScreen(point);
+            int width = btnshuffle.getWidth();
+            int height = btnshuffle.getHeight();
+            locations[4] = new GazePoint((float) point[0]+((float)height/2), (float) point[1]+((float)width/2));
+        });
 
         return view;
     }

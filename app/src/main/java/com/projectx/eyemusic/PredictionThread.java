@@ -65,6 +65,7 @@ public class PredictionThread extends HandlerThread {
                 //remap the gaze location
                 float remap_X = shown_X;
                 float remap_Y = shown_Y;
+                Boolean remaped = Boolean.FALSE;
                 RemapGaze remaper = new RemapGaze();
                 if(remaper.needRemap()){
                     GazePoint remaped_point = remaper.remap(new GazePoint(shown_X, shown_Y));
@@ -72,15 +73,26 @@ public class PredictionThread extends HandlerThread {
                         Log.d("remap", "run: remaped_point not null");
                         remap_X = remaped_point.getX();
                         remap_Y = remaped_point.getY();
+                        remaped = Boolean.TRUE;
                     }
 
                 }
 
                 //showing
                 graphicOverlayGazeLocation.clear();
-                DotGraphic dot = new DotGraphic(activity, graphicOverlayGazeLocation, remap_X, remap_Y);
-                if(feature.getSmileProb() > 0.8) dot.setColor(Color.GREEN);
+
+                DotGraphic dot = new DotGraphic(activity, graphicOverlayGazeLocation, shown_X, shown_Y);
                 graphicOverlayGazeLocation.add(dot);
+
+                if(remaped){
+                    DotGraphic remaped_dot = new DotGraphic(activity, graphicOverlayGazeLocation, remap_X, remap_Y);
+                    remaped_dot.setColor(Color.GREEN);
+                    if(feature.getSmileProb() > 0.8) remaped_dot.setColor(Color.parseColor("#FF013220")); //dark green
+                    graphicOverlayGazeLocation.add(remaped_dot);
+                }else{
+                    if(feature.getSmileProb() > 0.8) dot.setColor(Color.parseColor("#FF800000")); //dark red
+                }
+
                 graphicOverlayGazeLocation.postInvalidate();
 
                 //clicking
