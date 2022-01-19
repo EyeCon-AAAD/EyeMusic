@@ -316,7 +316,7 @@ public class MainActivity extends BaseActivity {
                 }
             }
             else
-                Toast.makeText(getApplicationContext(), "Plase play a song first!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "No song has been played yet.", Toast.LENGTH_SHORT).show();
         });
         buttoneffect(btn_main_show_player);
 

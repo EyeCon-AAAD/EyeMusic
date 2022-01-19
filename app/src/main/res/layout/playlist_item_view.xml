@@ -9,14 +9,14 @@
     android:layout_marginTop="5dp"
     android:layout_marginBottom="5dp"
     android:layout_gravity="center"
-    android:background="@drawable/arrows_background"
     app:cardElevation="4dp"
     app:cardUseCompatPadding="true"
     app:cardCornerRadius="5dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@drawable/arrows_background">
 
         <androidx.cardview.widget.CardView
             android:layout_width="130dp"
@@ -45,6 +45,7 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginStart="173dp"
+            android:textColor="#FFF"
             android:layout_marginTop="44dp"
             android:layout_marginBottom="39dp"
             android:ellipsize="end"

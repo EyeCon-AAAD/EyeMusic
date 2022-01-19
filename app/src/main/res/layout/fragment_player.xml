@@ -28,7 +28,7 @@
             android:id="@+id/iv_tint"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:alpha="0.8"
+            android:alpha="0.7"
             android:background="@color/colorBlack"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

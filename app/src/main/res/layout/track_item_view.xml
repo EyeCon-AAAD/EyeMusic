@@ -16,7 +16,8 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@drawable/arrows_background">
 
         <androidx.cardview.widget.CardView
             android:layout_width="130dp"
@@ -50,6 +51,7 @@
             android:layout_marginBottom="77dp"
             android:ellipsize="end"
             android:text="@string/track_name"
+            android:textColor="@color/colorWhite"
             android:fontFamily="@font/segoe_ui"
             android:textStyle="bold"
             android:textSize="17sp" />
@@ -68,6 +70,7 @@
             android:layout_marginEnd="5dp"
             android:layout_marginBottom="5dp"
             android:ellipsize="end"
+            android:textColor="@color/colorWhite"
             android:text="@string/artist_name"
             android:fontFamily="@font/segoe_ui"
             android:textSize="14sp" />
