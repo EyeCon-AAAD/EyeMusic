@@ -96,7 +96,7 @@ public class CalibrationRunnable implements Runnable {
         int size_points = points.size();
         for(GazePoint point : points){
             graphicOverlayCalibration.clear();
-            DotGraphic dot = new DotGraphic(activity, graphicOverlayCalibration, point.getX(), point.getY());
+            DotGraphic dot = new DotGraphic(activity, graphicOverlayCalibration, point.getX(), point.getY(), Boolean.TRUE);
             dot.setColor(Color.BLUE);
             dot.setRadius(50f);
             graphicOverlayCalibration.add(dot);
@@ -105,6 +105,28 @@ public class CalibrationRunnable implements Runnable {
             //giving time to the user to look at the dot
             try {
                 Thread.sleep(1500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            dot.setColor(Color.parseColor("#FF800080"));
+            dot.setRadius(40f);
+            graphicOverlayCalibration.add(dot);
+            graphicOverlayCalibration.postInvalidate();
+
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            dot.setColor(Color.RED);
+            dot.setRadius(30f);
+            graphicOverlayCalibration.add(dot);
+            graphicOverlayCalibration.postInvalidate();
+
+            try {
+                Thread.sleep(300);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -179,7 +201,7 @@ public class CalibrationRunnable implements Runnable {
                 calibrationResults += String.format("%.2f (inch)\t", calibError.getXy_error_inch());
                 calibrationResults += String.format("dp=%.2f (cm),\n\n", calibError.getXy_error_cm());
 
-                //TODO: show the message that they have to look at the screen
+                //show the message that they have to look at the screen
                 calibrationInstructionsTextview.post(new Runnable() {
                     @SuppressLint("DefaultLocale")
                     @Override
@@ -191,19 +213,31 @@ public class CalibrationRunnable implements Runnable {
 
                 //waiting for the person to look
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(4000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
 
+                //clear the message
+                calibrationInstructionsTextview.post(new Runnable() {
+                    @SuppressLint("DefaultLocale")
+                    @Override
+                    public void run() {
+                        calibrationInstructionsTextview.setText("");
+                        calibrationInstructionsTextview.setVisibility(View.INVISIBLE);
+                    }
+                });
 
-                int dotColors[] = new int[]{Color.RED, Color.YELLOW, Color.GREEN , Color.BLUE, Color.BLACK};
+
+
+
+                int dotColors[] = new int[]{Color.GREEN , Color.BLUE};
 
                 for(int count = 0; count<5; count++){
                     // show the dot in the screen for showing the calibration test error
                     graphicOverlayCalibration.clear();
-                    DotGraphic dot = new DotGraphic(activity, graphicOverlayCalibration, SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
-                    dot.setColor(dotColors[count]);
+                    DotGraphic dot = new DotGraphic(activity, graphicOverlayCalibration, SCREEN_WIDTH/2, SCREEN_HEIGHT/2, Boolean.TRUE);
+                    dot.setColor(dotColors[count%2]);
                     dot.setRadius(50f);
                     graphicOverlayCalibration.add(dot);
                     graphicOverlayCalibration.postInvalidate();

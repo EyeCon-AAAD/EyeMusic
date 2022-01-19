@@ -209,36 +209,23 @@ public class CalibrationActivity extends BaseActivity {
 
         btn_start_calibration = findViewById(R.id.btn_start_calibration);
         btn_start_calibration.setOnClickListener (view -> {
-            isCalibration = true;
-
-
-
-            FeatureExtractor.setCalibrationMode(isCalibration);
+            FeatureExtractor.setCalibrationMode(true);
             tmpInstructionMessage.setVisibility(View.INVISIBLE);
             calibrationThread  = new Thread(calibrationRunnable);
-
             calibrationThread.start();
-//            View tmpBox = findViewById(R.id.graphic_overlay_calibration);
-//            tmpBox.setVisibility(View.INVISIBLE);
-
-
 
             // set the calibration fragment
             getSupportFragmentManager().beginTransaction().replace(R.id.calibration_fragment_container,
                     new CalibrationFragment()).commit();
 
-
-
             //change the buttons
-            //btn_start_calibration.setEnabled(false);
             btn_start_calibration.setVisibility(View.INVISIBLE);
             btn_calibration_back.setVisibility(View.INVISIBLE);
-            //btn_main_back.setVisibility(View.INVISIBLE);
 
             //change the preview opacity
-            //previewView.setVisibility(View.INVISIBLE);
-            //graphicOverlayFace.setAlpha(0.4f);
-//
+            graphicOverlayFace.setAlpha(0.4f);
+
+            graphicOverlayGazeLocation.clear();
         });
 
         textViewInstructions.setText(Html.fromHtml(
