@@ -158,13 +158,18 @@ public class MainActivity extends BaseActivity {
     static ImageButton btn_main_back;
 
     static GazePoint[] locations_menu_buttons = new GazePoint[2];
+    static ImageButton[] references_menu_button = new ImageButton[2];
     private int backcounter;
 
     // face feedback message
     public static TextView faceFeedback;
 
-    public static GazePoint[] getLocations_menu_buttons() {
+    public static GazePoint[] getLocationsMenuButtons() {
         return locations_menu_buttons;
+    }
+
+    public static ImageButton[] getReferencesMenuButtons() {
+        return references_menu_button;
     }
 
     @Override
@@ -411,11 +416,13 @@ public class MainActivity extends BaseActivity {
         int width = btn_main_back.getWidth();
         int height = btn_main_back.getHeight();
         locations_menu_buttons[0] = new GazePoint(point[0]+((float)width/2), point[1]+((float)height/2));
+        references_menu_button[0] = btn_main_back;
 
         btn_main_show_player.getLocationOnScreen(point);
         width = btn_main_back.getWidth();
         height = btn_main_back.getHeight();
         locations_menu_buttons[1] = new GazePoint(point[0]+((float)width/2), point[1]+((float)height/2));
+        references_menu_button[1] = btn_main_show_player;
 
         Log.d("location_back", "onWindowFocusChanged: location of back button "+ locations_menu_buttons[0].toString());
     }
