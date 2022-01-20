@@ -231,7 +231,7 @@ public class CalibrationRunnable implements Runnable {
 
 
 
-                int dotColors[] = new int[]{Color.parseColor("#FF00EE00"), Color.parseColor("#FFCCFF99")};
+                int dotColors[] = new int[]{Color.parseColor("#FF00EE00"), Color.parseColor("#FFB2FF66")};
 
                 for(int count = 0; count<5; count++){
                     // show the dot in the screen for showing the calibration test error
