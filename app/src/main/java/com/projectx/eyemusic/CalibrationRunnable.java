@@ -109,7 +109,7 @@ public class CalibrationRunnable implements Runnable {
                 e.printStackTrace();
             }
 
-            dot.setColor(Color.parseColor("#FFCCFF99"));
+            dot.setColor(Color.parseColor("#FFB2FF66")); //light green
             dot.setRadius(40f);
             graphicOverlayCalibration.add(dot);
             graphicOverlayCalibration.postInvalidate();
@@ -120,7 +120,7 @@ public class CalibrationRunnable implements Runnable {
                 e.printStackTrace();
             }
 
-            dot.setColor(Color.GREEN);
+            dot.setColor(Color.parseColor("#FF00EE00")); // green
             dot.setRadius(30f);
             graphicOverlayCalibration.add(dot);
             graphicOverlayCalibration.postInvalidate();
@@ -231,7 +231,7 @@ public class CalibrationRunnable implements Runnable {
 
 
 
-                int dotColors[] = new int[]{Color.GREEN , Color.parseColor("#FFCCFF99")};
+                int dotColors[] = new int[]{Color.parseColor("#FF00EE00"), Color.parseColor("#FFCCFF99")};
 
                 for(int count = 0; count<5; count++){
                     // show the dot in the screen for showing the calibration test error

@@ -31,7 +31,7 @@ public class DotGraphic extends Graphic{
         super(overlay);
         paint = new Paint();
         paint.setColor(color);
-        this.x = x;
+        this.x = x - activity.getGraphicOverlayGazeLocationLocation()[0];
         this.y = y - activity.getGraphicOverlayGazeLocationLocation()[1];
         this.strikes = strikes;
     }
