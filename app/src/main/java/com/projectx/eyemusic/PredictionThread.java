@@ -21,6 +21,7 @@ public class PredictionThread extends HandlerThread {
     private static GraphicOverlay graphicOverlayGazeLocation;
     private static BaseActivity activity;
     private static Handler handler;
+    private static final float SMILE_LIMIT = 0.75f;
 
     private final static Integer SCREEN_WIDTH = Utilities.getScreenWidth();
     private final static Integer SCREEN_HEIGHT = Utilities.getScreenHeight();
@@ -82,21 +83,22 @@ public class PredictionThread extends HandlerThread {
                 graphicOverlayGazeLocation.clear();
 
                 DotGraphic dot = new DotGraphic(activity, graphicOverlayGazeLocation, shown_X, shown_Y);
+                dot.setColor(Color.parseColor("#FF00EE00")); // green
                 graphicOverlayGazeLocation.add(dot);
 
-                if(remaped){
+                /*if(remaped){
                     DotGraphic remaped_dot = new DotGraphic(activity, graphicOverlayGazeLocation, remap_X, remap_Y);
-                    remaped_dot.setColor(Color.GREEN);
-                    if(feature.getSmileProb() > 0.8) remaped_dot.setColor(Color.parseColor("#FF013220")); //dark green
+                    remaped_dot.setColor(Color.RED);
+                    if(feature.getSmileProb() > SMILE_LIMIT) remaped_dot.setColor(Color.parseColor("#FF800000")); //dark red
                     graphicOverlayGazeLocation.add(remaped_dot);
-                }
+                }*/
 
-                if(feature.getSmileProb() > 0.8) dot.setColor(Color.parseColor("#FF800000")); //dark red
+                if(feature.getSmileProb() > SMILE_LIMIT) dot.setColor(Color.parseColor("#FF013220")); //dark green
 
                 graphicOverlayGazeLocation.postInvalidate();
 
                 //clicking
-                if(feature.getSmileProb() > 0.8) {
+                if(feature.getSmileProb() > SMILE_LIMIT) {
                     try{
                         SimulatedTouch.click(remap_X, remap_Y);
                         sleep(1700);
