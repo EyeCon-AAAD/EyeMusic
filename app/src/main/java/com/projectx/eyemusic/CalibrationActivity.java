@@ -132,9 +132,11 @@ public class CalibrationActivity extends BaseActivity {
             Log.d(TAG, "graphicOverlay is null");
         }
 
-        //Gaze thread
-        predictionThread = new PredictionThread(new GazeModelManager(), graphicOverlayGazeLocation, this);
-        predictionThread.start();
+        //Gaze thread you can uncomment to have prediction also in calibration activity
+        /*predictionThread = new PredictionThread(new GazeModelManager(), graphicOverlayGazeLocation, this);
+        predictionThread.start();*/
+
+
 
         // Camera and features
         textViewReport = findViewById(R.id.text_view_report);
@@ -259,7 +261,8 @@ public class CalibrationActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy: ");
-        predictionThread.quit(); // it will destroy all the messages that has not been started yet and are in the message queue
+        if(predictionThread != null )
+            predictionThread.quit(); // it will destroy all the messages that has not been started yet and are in the message queue
 
         FeatureExtractor.setCalibrationMode(false);
 
