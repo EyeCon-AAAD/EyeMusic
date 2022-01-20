@@ -103,7 +103,7 @@ public class PlayerFragment extends Fragment {
             btnplay.getLocationOnScreen(point);
             int width = btnplay.getWidth();
             int height = btnplay.getHeight();
-            locations[0] = new GazePoint(point[0]+((float)height/2), point[1]+((float)width/2));
+            locations[0] = new GazePoint(point[0]+((float)width/2), point[1]+((float)height/2));
             location_references[0] = btnplay;
         });
         btnnext = view.findViewById(R.id.btnnext);
@@ -112,7 +112,7 @@ public class PlayerFragment extends Fragment {
             btnnext.getLocationOnScreen(point);
             int width = btnnext.getWidth();
             int height = btnnext.getHeight();
-            locations[1] = new GazePoint(point[0]+((float)height/2), point[1]+((float)width/2));
+            locations[1] = new GazePoint(point[0]+((float)width/2), point[1]+((float)height/2));
             location_references[1] = btnnext;
         });
         btnprev = view.findViewById(R.id.btnprev);
@@ -121,7 +121,7 @@ public class PlayerFragment extends Fragment {
             btnprev.getLocationOnScreen(point);
             int width = btnprev.getWidth();
             int height = btnprev.getHeight();
-            locations[2] = new GazePoint(point[0]+((float)height/2), point[1]+((float)width/2));
+            locations[2] = new GazePoint(point[0]+((float)width/2), point[1]+((float)height/2));
             location_references[2] = btnprev;
         });
         btnrepeat = view.findViewById(R.id.btnrepeat);
@@ -130,7 +130,7 @@ public class PlayerFragment extends Fragment {
             btnrepeat.getLocationOnScreen(point);
             int width = btnrepeat.getWidth();
             int height = btnrepeat.getHeight();
-            locations[3] = new GazePoint(point[0]+((float)height/2), point[1]+((float)width/2));
+            locations[3] = new GazePoint(point[0]+((float)width/2), point[1]+((float)height/2));
             location_references[3] = btnrepeat;
         });
         btnshuffle = view.findViewById(R.id.btnshuffle);
@@ -139,7 +139,7 @@ public class PlayerFragment extends Fragment {
             btnshuffle.getLocationOnScreen(point);
             int width = btnshuffle.getWidth();
             int height = btnshuffle.getHeight();
-            locations[4] = new GazePoint((float) point[0]+((float)height/2), (float) point[1]+((float)width/2));
+            locations[4] = new GazePoint((float) point[0]+((float)width/2), (float) point[1]+((float)height/2));
             location_references[4] = btnshuffle;
         });
 

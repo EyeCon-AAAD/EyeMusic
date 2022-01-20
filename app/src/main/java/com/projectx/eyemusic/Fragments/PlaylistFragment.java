@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
@@ -19,6 +20,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.projectx.eyemusic.App;
 import com.projectx.eyemusic.MainActivity;
+import com.projectx.eyemusic.Model.GazePoint;
 import com.projectx.eyemusic.Music.Playlist;
 import com.projectx.eyemusic.Music.PlaylistAdapter;
 import com.projectx.eyemusic.R;
@@ -42,8 +44,29 @@ public class PlaylistFragment extends Fragment {
     private static final String TAG = "PlaylistFragment";
     public MainActivity mainActivity;
     ProgressBar progressBar;
-    ImageView btnup;
-    ImageView btndown;
+
+    static ImageView btnup;
+    static ImageView btndown;
+    static GazePoint[] locations_button = new GazePoint[2];
+    static ImageView[] references_button = new ImageButton[2];
+    static int[] location_rv = new int[2];
+    static RecyclerView reference_rv;
+
+    public static GazePoint[] getLocations_button() {
+        return locations_button;
+    }
+
+    public static ImageView[] getReferences_button() {
+        return references_button;
+    }
+
+    public static int[] getLocation_rv() {
+        return location_rv;
+    }
+
+    public static RecyclerView getReference_rv() {
+        return reference_rv;
+    }
 
     public PlaylistFragment() {
         // Required empty public constructor
@@ -70,6 +93,8 @@ public class PlaylistFragment extends Fragment {
                              Bundle savedInstanceState) {
         mainActivity = (MainActivity) getActivity();
         mainActivity.resetBackCounter();
+
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_playlist, container, false);
     }
@@ -78,9 +103,30 @@ public class PlaylistFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         progressBar = view.findViewById(R.id.pb_load_main);
+
         btnup = view.findViewById(R.id.btnup);
+        btnup.post(() -> {
+            int[] point = new int[2];
+            btnup.getLocationOnScreen(point);
+            int width = btnup.getWidth();
+            int height = btnup.getHeight();
+            locations_button[0] = new GazePoint(point[0]+((float)width/2), point[1]+((float)height/2));
+            references_button[0] = btnup;
+            location_rv[0] = point[1]+height;
+        });
+
         btndown = view.findViewById(R.id.btndown);
+        btndown.post(() -> {
+            int[] point = new int[2];
+            btndown.getLocationOnScreen(point);
+            int width = btndown.getWidth();
+            int height = btndown.getHeight();
+            locations_button[1] = new GazePoint(point[0]+((float)width/2), point[1]+((float)height/2));
+            references_button[1] = btndown;
+            location_rv[1] = point[1];
+        });
         initPlaylistRecyclerView(view);
+        reference_rv = view.findViewById(R.id.rv_playlists);
     }
 
     private void initPlaylistRecyclerView(View view) {

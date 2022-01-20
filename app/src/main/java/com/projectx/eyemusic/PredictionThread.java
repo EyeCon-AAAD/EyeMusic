@@ -89,9 +89,9 @@ public class PredictionThread extends HandlerThread {
                     remaped_dot.setColor(Color.GREEN);
                     if(feature.getSmileProb() > 0.8) remaped_dot.setColor(Color.parseColor("#FF013220")); //dark green
                     graphicOverlayGazeLocation.add(remaped_dot);
-                }else{
-                    if(feature.getSmileProb() > 0.8) dot.setColor(Color.parseColor("#FF800000")); //dark red
                 }
+
+                if(feature.getSmileProb() > 0.8) dot.setColor(Color.parseColor("#FF800000")); //dark red
 
                 graphicOverlayGazeLocation.postInvalidate();
 
@@ -99,7 +99,6 @@ public class PredictionThread extends HandlerThread {
                 if(feature.getSmileProb() > 0.8) {
                     try{
                         SimulatedTouch.click(remap_X, remap_Y);
-                        Toast.makeText(activity, "Clicked", Toast.LENGTH_LONG).show();
                         sleep(1700);
                     }catch(Exception e){
                         Log.e(TAG, "on click: ", e);
