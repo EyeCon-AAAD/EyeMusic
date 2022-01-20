@@ -71,15 +71,9 @@ import java.util.List;
 
 public class CalibrationActivity extends BaseActivity {
     private static final String TAG = "CalibrationActivity";
-
-
     public SharedPreferences preferences = null; // made this public to access from fragment
-
     // Views
     TextView tmpInstructionMessage;
-
-//    public Authentication authentication; // made this public to access from fragment
-
     //graphics
     static int[] graphicOverlayGazeLocationLocation = new int[2];
     public static volatile GraphicOverlay graphicOverlayGazeLocation;
@@ -133,18 +127,16 @@ public class CalibrationActivity extends BaseActivity {
         // fetch latest model
         gazePredictionModel = OriginalModel.getInstance();
 
-
-        // --------------------------------------------------------------------------------------------------------------------------
-
-
         graphicOverlayGazeLocation = findViewById(R.id.graphic_overlay_gaze_location);
         if (graphicOverlayGazeLocation == null) {
             Log.d(TAG, "graphicOverlay is null");
         }
 
-        //Gaze thread
-        predictionThread = new PredictionThread(new GazeModelManager(), graphicOverlayGazeLocation, this);
-        predictionThread.start();
+        //Gaze thread you can uncomment to have prediction also in calibration activity
+        /*predictionThread = new PredictionThread(new GazeModelManager(), graphicOverlayGazeLocation, this);
+        predictionThread.start();*/
+
+
 
         // Camera and features
         textViewReport = findViewById(R.id.text_view_report);
@@ -183,16 +175,6 @@ public class CalibrationActivity extends BaseActivity {
                                 bindAllCameraUseCases();
                             }
                         });
-
-        //***
-//        if (!allPermissionsGranted()) {
-//            getRuntimePermissions();
-//        }
-
-        //Calibration
-//        btn_main_back = findViewById(R.id.btn_main_back);
-//        btn_main_back.setVisibility(View.INVISIBLE);
-//        btn_main_reconnect_spotify = findViewById(R.id.btn_main_reconnect_spotify);
 
         isCalibration = false;
         graphicOverlayCalibration = findViewById(R.id.graphic_overlay_calibration);
@@ -249,18 +231,8 @@ public class CalibrationActivity extends BaseActivity {
     public void calibrationFinished(){
         Log.d(TAG, "CalibrationRun: ");
         isCalibration = false;
-//        for (Feature1 feature : features){
-//            Log.d(TAG, "CalibrationRun: RESULTS-> " + feature);
-//        }
-
         btn_start_calibration.post( () -> {btn_start_calibration.setVisibility(View.VISIBLE);} );
         btn_calibration_back.post( () -> {btn_calibration_back.setVisibility(View.VISIBLE);});
-        //btn_main_back.post( () -> {btn_main_back.setVisibility(View.VISIBLE);} );
-//        btn_main_reconnect_spotify.post( () -> {btn_main_reconnect_spotify.setVisibility(View.VISIBLE);} );
-
-        // start the playlist fragment
-//        getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment_container,
-//                new PlaylistFragment()).commit();
     }
 
     public static GraphicOverlay getGraphicOverlayGazeLocation() {
@@ -283,26 +255,16 @@ public class CalibrationActivity extends BaseActivity {
         Log.d(TAG, "onStart: ");
 //        // check if EyeMusic is launched for the first time
         Utilities.isOnboardingFinished();
-//        if (Utilities.isOnboardingFinished()) {
-//            // order matters
-//            mAccessCode = authentication.getAccessCode();
-//            mAccessToken = authentication.getAccessToken();
-//
-//            // ------------------- perform error check for when the access is denied but launch is not first time ----------
-//        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy: ");
-        predictionThread.quit(); // it will destroy all the messages that has not been started yet and are in the message queue
+        if(predictionThread != null )
+            predictionThread.quit(); // it will destroy all the messages that has not been started yet and are in the message queue
 
-//        graphicOverlayCalibration.clear();
         FeatureExtractor.setCalibrationMode(false);
-//        setCalibration(false);
-//        calibrationFinished();
-
 
         if (imageProcessor != null) {
             imageProcessor.stop();}
@@ -316,11 +278,6 @@ public class CalibrationActivity extends BaseActivity {
         Log.d(TAG, "Calibration Activity: closed");
     }
 
-//    @Override
-//    protected void onStop() {
-//        super.onStop();
-//        finish();
-//    }
 
     @Override
     protected void onPause() {
@@ -328,8 +285,6 @@ public class CalibrationActivity extends BaseActivity {
         if (imageProcessor != null) {
             imageProcessor.stop();
         }
-//        finish();
-//        onDestroy();
     }
 
     @Override
@@ -356,22 +311,9 @@ public class CalibrationActivity extends BaseActivity {
     }
 
     private boolean isOnBoardingFinished() {
-//        if (preferences.getBoolean("firstTime", true)) {
-//            // Do authentication once
-//            authentication.authenticate(MainActivity.this, SPOTIFY_AUTH_CODE_REQUEST_CODE);
-//
-//            // Do initial download of the model.
-//            // TODO: initialization in it's own activity later on
-            gazePredictionModel = OriginalModel.getInstance();
-
-        return true;
-//
-//            // set first time to false
-//            preferences.edit().putBoolean("firstTime", false).apply();
-//            return true;
-//        } else {
-//            return false;
-//        }
+          // TODO: initialization in it's own activity later on
+           gazePredictionModel = OriginalModel.getInstance();
+            return true;
     }
 
     //-----------------------------CAMERA AND FEATURES --------------------------------------------
@@ -384,27 +326,6 @@ public class CalibrationActivity extends BaseActivity {
             bindAnalysisUseCase();
         }
     }
-
-//    private void bindPreviewUseCase(){
-//        if (cameraProvider == null) {
-//            return;
-//        }
-//        if (previewUseCase != null) {
-//            cameraProvider.unbind(previewUseCase);
-//        }
-//
-//        Preview.Builder builder = new Preview.Builder();
-//
-//        Size targetResolution = PreferenceUtils.getCameraXTargetResolution(this, lensFacing);
-//        if (targetResolution != null) {
-//            builder.setTargetResolution(targetResolution);
-//        }
-//
-//        previewUseCase = builder.build();
-//        previewUseCase.setSurfaceProvider(previewView.getSurfaceProvider());
-//        cameraProvider.bindToLifecycle(/* lifecycleOwner= */ this,
-//                cameraSelector, previewUseCase);
-//    }
 
     private void bindAnalysisUseCase() {
         if (cameraProvider == null) {
@@ -545,32 +466,7 @@ public class CalibrationActivity extends BaseActivity {
         Log.i(TAG, "Permission NOT granted: " + permission);
         return false;
     }
-
     //--------------------------- PERMISSIONS FINISH ---------------------------------------------------
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        int X = (int) event.getX();
-        int Y = (int) event.getY();
-        int eventAction = event.getAction();
-        switch (eventAction) {
-            case MotionEvent.ACTION_DOWN:
-                Toast.makeText(this, "ACTION_DOWN " + "X: " + X + " Y: " + Y, Toast.LENGTH_SHORT).show();
-                Log.i(TAG, "action_down: " + X + " " + Y);
-                break;
-            case MotionEvent.ACTION_MOVE:
-                Toast.makeText(this, "MOVE " + "X: " + X + " Y: " + Y,
-                        Toast.LENGTH_SHORT).show();
-                Log.i(TAG, "action_move: " + X + " " + Y);
-                break;
-            case MotionEvent.ACTION_UP:
-                Toast.makeText(this, "ACTION_UP " + "X: " + X + " Y: " + Y, Toast.LENGTH_SHORT).show();
-                Log.i(TAG, "action_up: " + X + " " + Y);
-                break;
-        }
-        return false;
-    }
-
-
 
     //--------------------------- GUI ---------------------------------------------------
     public static void buttoneffect (View button){
