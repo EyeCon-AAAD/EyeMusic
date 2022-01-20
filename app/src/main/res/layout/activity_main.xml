@@ -73,7 +73,7 @@
 
 
     <Button
-        android:id="@+id/btn_main_calibration"
+        android:id="@+id/btn_calibrate"
         android:layout_width="125dp"
         android:layout_height="68dp"
         android:layout_marginTop="10dp"
@@ -88,7 +88,7 @@
 
     <ImageButton
         android:id="@+id/btn_main_show_player"
-        android:layout_width="170dp"
+        android:layout_width="140dp"
         android:layout_height="100dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
@@ -104,12 +104,12 @@
 
     <ImageButton
         android:id="@+id/btn_main_back"
-        android:layout_width="170dp"
+        android:layout_width="140dp"
         android:layout_height="100dp"
-        android:layout_marginStart="10dp"
+
         android:layout_marginTop="10dp"
         android:layout_marginBottom="30dp"
-        android:layout_marginEnd="20dp"
+        android:layout_marginEnd="60dp"
         android:padding="8dp"
         android:scaleType="fitCenter"
         android:background="@drawable/navigation_btn_background"
@@ -117,7 +117,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toStartOf="@id/btn_main_show_player"/>
-
+    <ImageButton
+        android:id="@+id/btn_main_calibration"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="30dp"
+        android:padding="5dp"
+        android:scaleType="fitCenter"
+        android:background="@drawable/navigation_btn_background"
+        android:src="@drawable/eyeblack_icon"
+        app:layout_constraintStart_toEndOf="@id/btn_main_back"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btn_main_show_player"/>
     <FrameLayout
         android:id="@+id/main_fragment_container"
         android:layout_width="0dp"
@@ -128,7 +140,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btn_main_show_player">
-
     </FrameLayout>
 
 

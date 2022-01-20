@@ -141,7 +141,7 @@ public class MainActivity extends BaseActivity {
     private TextView textViewReport;
 
     //Calibration
-    private Button btn_calibration;
+
     private GraphicOverlay graphicOverlayCalibration;
     private CalibrationRunnable calibrationRunnable;
     private Thread calibrationThread;
@@ -156,7 +156,7 @@ public class MainActivity extends BaseActivity {
 
     static ImageButton btn_main_show_player;
     static ImageButton btn_main_back;
-
+    static ImageButton btn_calibration;
     static GazePoint[] locations_menu_buttons = new GazePoint[2];
     static ImageButton[] references_menu_button = new ImageButton[2];
     private int backcounter;
@@ -809,12 +809,14 @@ public class MainActivity extends BaseActivity {
     //---------------------------- Face Feedback ---------------------------------------------------
     static public void updateFaceFeedback(Boolean faceInBounds){
         if(faceInBounds){
-            faceFeedback.setText("face: ok");
-            faceFeedback.setTextColor(Color.GREEN);
+            btn_calibration.setImageResource(R.drawable.eyemusic_96);
+          //  faceFeedback.setText("face: ok");
+         //   faceFeedback.setTextColor(Color.GREEN);
             //faceFeedback.setBackgroundColor(Color.GREEN);
         }else{
-            faceFeedback.setText("face: not ok\nBe in front of the camera");
-            faceFeedback.setTextColor(Color.RED);
+            btn_calibration.setImageResource(R.drawable.eyeblack_icon);
+         //   faceFeedback.setText("face: not ok\nBe in front of the camera");
+          //  faceFeedback.setTextColor(Color.RED);
             //faceFeedback.setBackgroundColor(Color.RED);
         }
     }
