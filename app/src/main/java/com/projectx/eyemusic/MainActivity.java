@@ -349,7 +349,6 @@ public class MainActivity extends BaseActivity {
                         .add(R.id.main_fragment_container, playlistFragment, "Playlist Fragment")
                         .commit();
                 currentFragment = playlistFragment;
-                int x = 3;
             }
             else {
                 backcounter++;
@@ -542,8 +541,10 @@ public class MainActivity extends BaseActivity {
                 authentication.refreshAccessToken();
                 // load playlist fragment
                 // changed PlaylistFragment to Calibrate\ionFragment
+                Fragment playlistFragment = new PlaylistFragment();
                 getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment_container,
-                        new PlaylistFragment(), "Playlist Fragment").commit();
+                        playlistFragment, "Playlist Fragment").commit();
+                currentFragment = playlistFragment;
                 // fetchPlaylists(requestQueue, mSpotifyAppRemote);
             }
 
