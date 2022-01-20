@@ -344,8 +344,8 @@ public class CalibrationRunnable implements Runnable {
 
     private static List<GazePoint> produceDots(int no_x, int no_y){
         List<GazePoint> points = new ArrayList<GazePoint>();
-        double margin_x = SCREEN_WIDTH * 0.05;
-        double margin_y = SCREEN_HEIGHT * 0.05;
+        double margin_x = SCREEN_WIDTH * 0.07;
+        double margin_y = SCREEN_HEIGHT * 0.07;
 
         double start_x = margin_x;
         double start_y = margin_y;
