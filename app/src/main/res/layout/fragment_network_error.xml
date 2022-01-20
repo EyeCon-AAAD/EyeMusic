@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/custom_rounded_button"
     tools:context=".Fragments.NetworkErrorFragment">
 
     <Button
@@ -17,10 +18,10 @@
         android:paddingRight="70dp"
         android:paddingLeft="70dp"
 
-        android:background="@drawable/custom_rounded_button"
+        android:background="@drawable/light_color_button"
         android:text="Retry"
         android:textAllCaps="false"
-        android:textColor="@color/colorWhite"
+        android:textColor="@color/colorBlack"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -38,7 +39,7 @@
         android:fontFamily="@font/segoe_ui"
         android:text="@string/no_network_msg"
         android:textAlignment="center"
-        android:textColor="@color/colorBlack"
+        android:textColor="@color/colorWhite"
         android:textSize="26sp"
         app:layout_constraintBottom_toTopOf="@+id/btn_retry_connection"
         app:layout_constraintEnd_toEndOf="parent"

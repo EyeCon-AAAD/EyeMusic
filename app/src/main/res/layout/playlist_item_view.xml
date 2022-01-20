@@ -9,14 +9,14 @@
     android:layout_marginTop="5dp"
     android:layout_marginBottom="5dp"
     android:layout_gravity="center"
-    android:background="@drawable/arrows_background"
     app:cardElevation="4dp"
     app:cardUseCompatPadding="true"
     app:cardCornerRadius="5dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@drawable/arrows_background">
 
         <androidx.cardview.widget.CardView
             android:layout_width="130dp"
@@ -44,13 +44,15 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginStart="173dp"
-            android:layout_marginTop="44dp"
-            android:layout_marginBottom="39dp"
+            android:layout_marginStart="153dp"
+            android:textColor="#FFF"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginEnd="20dp"
             android:ellipsize="end"
             android:text="@string/playlist_name"
             android:fontFamily="@font/segoe_ui"
-            android:textSize="18sp"
+            android:textSize="17sp"
             android:textStyle="bold"/>
 
     </RelativeLayout>

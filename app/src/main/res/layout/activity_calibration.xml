@@ -8,6 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:keepScreenOn="true"
+    android:background="@drawable/custom_rounded_button"
         android:orientation="vertical"
         tools:context=".CalibrationActivity">
 
@@ -57,36 +58,42 @@
 
     <Button
         android:id="@+id/btn_start_calibration"
-        android:layout_width="125dp"
-        android:layout_height="68dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="8dp"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="10dp"
         android:background="@drawable/navigation_btn_background"
-        android:textColor="@color/colorWhite"
-        android:text="Start calibration"
+        android:textColor="@color/colorBlack"
+        android:text="Start"
         android:fontFamily="@font/segoe_ui"
+        style="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/graphic_overlay_face"/>
 
 
-    <Button
+    <ImageButton
         android:id="@+id/btn_calibration_back"
-        android:layout_width="125dp"
-        android:layout_height="68dp"
-        android:layout_marginTop="84dp"
-        android:layout_marginEnd="8dp"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="30dp"
+        android:layout_marginEnd="20dp"
+        android:padding="8dp"
+        android:scaleType="fitCenter"
         android:background="@drawable/navigation_btn_background"
-        android:textColor="@color/colorWhite"
-        android:text="Back to main"
-        android:fontFamily="@font/segoe_ui"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:src="@drawable/ic_back2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/graphic_overlay_face"
+        />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/calibration_fragment_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:backgroundTint="@color/colorWhite"
+        android:background="@drawable/custom_rounded_button"
         app:layout_constraintBottom_toBottomOf ="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -103,7 +110,7 @@
             android:typeface="sans"
             android:textStyle="bold"
             android:textSize="30sp"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/colorWhite"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -117,7 +124,7 @@
             android:fontFamily="@font/segoe_ui"
             android:typeface="sans"
             android:textSize="23sp"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/colorWhite"
             android:padding="7dp"
             android:scrollbars="vertical"
             android:background="@drawable/arrows_background"

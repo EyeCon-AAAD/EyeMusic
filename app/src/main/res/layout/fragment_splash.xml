@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/upper_layout"
+        android:background="@drawable/custom_rounded_button"
         android:orientation="vertical">
 
         <ImageView
@@ -29,7 +30,7 @@
             android:layout_marginTop="30dp"
             android:fontFamily="@font/segoe_ui"
             android:text="@string/app_name"
-            android:textColor="@color/colorBlack"
+            android:textColor="@color/colorWhite"
             android:textSize="26sp"
             android:textStyle="bold" />
 
@@ -39,6 +40,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/upper_layout"
+        android:background="@drawable/custom_rounded_button"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal">
 
@@ -50,6 +52,7 @@
             android:layout_marginBottom="16dp"
             android:fontFamily="@font/segoe_ui"
             android:text="Powered by Spotify"
+            android:textColor="@color/colorWhite"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -60,7 +63,7 @@
             android:layout_width="27dp"
             android:layout_height="27dp"
             android:layout_marginBottom="16dp"
-            android:src="@drawable/spotify_black"
+            android:src="@drawable/spotify_icon"
             android:layout_marginStart="2dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
