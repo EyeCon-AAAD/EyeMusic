@@ -97,7 +97,7 @@ public class CalibrationRunnable implements Runnable {
         for(GazePoint point : points){
             graphicOverlayCalibration.clear();
             DotGraphic dot = new DotGraphic(activity, graphicOverlayCalibration, point.getX(), point.getY(), Boolean.TRUE);
-            dot.setColor(Color.BLUE);
+            dot.setColor(Color.WHITE);
             dot.setRadius(50f);
             graphicOverlayCalibration.add(dot);
             graphicOverlayCalibration.postInvalidate();
@@ -109,7 +109,7 @@ public class CalibrationRunnable implements Runnable {
                 e.printStackTrace();
             }
 
-            dot.setColor(Color.parseColor("#FF800080"));
+            dot.setColor(Color.parseColor("#FFCCFF99"));
             dot.setRadius(40f);
             graphicOverlayCalibration.add(dot);
             graphicOverlayCalibration.postInvalidate();
@@ -120,7 +120,7 @@ public class CalibrationRunnable implements Runnable {
                 e.printStackTrace();
             }
 
-            dot.setColor(Color.RED);
+            dot.setColor(Color.GREEN);
             dot.setRadius(30f);
             graphicOverlayCalibration.add(dot);
             graphicOverlayCalibration.postInvalidate();
@@ -231,7 +231,7 @@ public class CalibrationRunnable implements Runnable {
 
 
 
-                int dotColors[] = new int[]{Color.GREEN , Color.BLUE};
+                int dotColors[] = new int[]{Color.GREEN , Color.parseColor("#FFCCFF99")};
 
                 for(int count = 0; count<5; count++){
                     // show the dot in the screen for showing the calibration test error

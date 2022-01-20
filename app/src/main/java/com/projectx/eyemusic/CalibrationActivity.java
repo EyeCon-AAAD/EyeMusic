@@ -50,6 +50,7 @@ import android.util.Size;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -108,7 +109,7 @@ public class CalibrationActivity extends BaseActivity {
 
     //Calibration
     private Button btn_start_calibration;
-    private Button btn_calibration_back;
+    private ImageButton btn_calibration_back;
     private GraphicOverlay graphicOverlayCalibration;
     private CalibrationRunnable calibrationRunnable;
     private Thread calibrationThread;
