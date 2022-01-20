@@ -20,8 +20,7 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
+
 import com.projectx.eyemusic.MainActivity;
 import com.projectx.eyemusic.Model.GazePoint;
 import com.projectx.eyemusic.Music.MyTrack;

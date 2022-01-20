@@ -36,7 +36,7 @@
     <ImageButton
         android:id="@+id/btnup"
         android:layout_width="300dp"
-        android:layout_height="115dp"
+        android:layout_height="100dp"
         android:layout_marginBottom="20dp"
         android:layout_marginTop="20dp"
         android:background="@drawable/arrows_background"
@@ -51,7 +51,7 @@
     <ImageButton
         android:id="@+id/btndown"
         android:layout_width="300dp"
-        android:layout_height="115dp"
+        android:layout_height="100dp"
         android:layout_marginBottom="20dp"
         android:layout_marginTop="20dp"
         android:background="@drawable/arrows_background"
