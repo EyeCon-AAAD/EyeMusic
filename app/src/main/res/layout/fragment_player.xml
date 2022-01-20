@@ -131,7 +131,7 @@
             android:layout_width="170dp"
             android:layout_height="190dp"
             android:layout_marginBottom="60dp"
-            android:layout_marginStart="80dp"
+            android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
             android:background="@null"
             android:contentDescription="@string/app_name"
@@ -140,14 +140,15 @@
             android:src="@drawable/ic_prev"
 
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/btnplay"
+            app:layout_constraintEnd_toStartOf="@id/btnnext"
             app:layout_constraintTop_toTopOf="parent"
             />
         <ImageButton
             android:id="@+id/btnnext"
             android:layout_width="170dp"
             android:layout_height="190dp"
-            android:layout_marginStart="60dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
             android:layout_marginBottom="60dp"
             android:background="@null"
             android:contentDescription="@string/app_name"
