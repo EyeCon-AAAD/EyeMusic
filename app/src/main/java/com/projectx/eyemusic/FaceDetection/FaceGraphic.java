@@ -145,7 +145,7 @@ public class FaceGraphic extends Graphic {
                       Locale.US, "Right eye open: %.2f", face.getRightEyeOpenProbability())));
     }*/
 
-    yLabelOffset = yLabelOffset - 3 * lineHeight;
+    /*yLabelOffset = yLabelOffset - 3 * lineHeight;
     textWidth =
         Math.max(
             textWidth,
@@ -160,7 +160,7 @@ public class FaceGraphic extends Graphic {
         Math.max(
             textWidth,
             idPaints[colorID].measureText(
-                String.format(Locale.US, "EulerZ: %.2f", face.getHeadEulerAngleZ())));
+                String.format(Locale.US, "EulerZ: %.2f", face.getHeadEulerAngleZ())));*/
 
     // Draw labels
     canvas.drawRect(
@@ -170,20 +170,23 @@ public class FaceGraphic extends Graphic {
         top,
         labelPaints[colorID]);
     yLabelOffset += ID_TEXT_SIZE;
-    canvas.drawRect(left, top, right, bottom, boxPaints[colorID]);
 
-    if (face.getTrackingId() != null) {
+    //draw face rect
+    //canvas.drawRect(left, top, right, bottom, boxPaints[colorID]);
+
+
+    /*if (face.getTrackingId() != null) {
       canvas.drawText("ID: " + face.getTrackingId(), left, top + yLabelOffset, idPaints[colorID]);
       yLabelOffset += lineHeight;
-    }
+    }*/
 
     // Draws all face contours.
-    for (FaceContour contour : face.getAllContours()) {
+    /*for (FaceContour contour : face.getAllContours()) {
       for (PointF point : contour.getPoints()) {
         canvas.drawCircle(
             translateX(point.x), translateY(point.y), FACE_POSITION_RADIUS, facePositionPaint);
       }
-    }
+    }*/
 
     // Draws smiling and left/right eye open probabilities.
     if (face.getSmilingProbability() != null) {
@@ -195,7 +198,7 @@ public class FaceGraphic extends Graphic {
       yLabelOffset += lineHeight;
     }
 
-    //AISAN CHANGED
+
     /*FaceLandmark leftEye = face.getLandmark(FaceLandmark.LEFT_EYE);
     if (face.getLeftEyeOpenProbability() != null) {
       canvas.drawText(
@@ -246,7 +249,7 @@ public class FaceGraphic extends Graphic {
       yLabelOffset += lineHeight;
     }
 */
-    canvas.drawText(
+    /*canvas.drawText(
             String.format(Locale.US, "EulerX: %.2f", face.getHeadEulerAngleX()), left, top + yLabelOffset, idPaints[colorID]);
     yLabelOffset += lineHeight;
     canvas.drawText(
@@ -254,6 +257,7 @@ public class FaceGraphic extends Graphic {
     yLabelOffset += lineHeight;
     canvas.drawText(
             String.format(Locale.US, "EulerZ: %.2f", face.getHeadEulerAngleZ()), left, top + yLabelOffset, idPaints[colorID]);
+    */
 
     // Draw facial landmarks
     drawFaceLandmark(canvas, FaceLandmark.LEFT_EYE);
