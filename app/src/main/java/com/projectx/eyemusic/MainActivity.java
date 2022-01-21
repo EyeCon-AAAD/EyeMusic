@@ -157,6 +157,7 @@ public class MainActivity extends BaseActivity {
     static ImageButton btn_main_show_player;
     static ImageButton btn_main_back;
     static ImageButton btn_calibration;
+    static ImageButton btn_face_guide;
     static GazePoint[] locations_menu_buttons = new GazePoint[2];
     static ImageButton[] references_menu_button = new ImageButton[2];
     private int backcounter;
@@ -286,7 +287,8 @@ public class MainActivity extends BaseActivity {
 
         isCalibration = false;
         graphicOverlayCalibration = findViewById(R.id.graphic_overlay_calibration);
-//        calibrationRunnable = new CalibrationRunnable(graphicOverlayCalibration, this);
+
+
         btn_calibration = findViewById(R.id.btn_main_calibration);
         btn_calibration.setOnClickListener (view -> {
 
@@ -317,6 +319,14 @@ public class MainActivity extends BaseActivity {
 
         });
         buttoneffect(btn_calibration);
+
+        btn_face_guide = findViewById(R.id.btn_face_guide);
+        btn_face_guide.setOnClickListener (view -> {
+            resetBackCounter();
+            Intent openCalibrationIntent = new Intent(this, CalibrationActivity.class);
+            startActivity(openCalibrationIntent);
+        });
+        buttoneffect(btn_face_guide);
 
         btn_main_show_player = findViewById(R.id.btn_main_show_player);
         btn_main_show_player.setOnClickListener(view -> {
@@ -809,12 +819,12 @@ public class MainActivity extends BaseActivity {
     //---------------------------- Face Feedback ---------------------------------------------------
     static public void updateFaceFeedback(Boolean faceInBounds){
         if(faceInBounds){
-            btn_calibration.setImageResource(R.drawable.eyemusic_96);
+            btn_face_guide.setImageResource(R.drawable.guide_green);
           //  faceFeedback.setText("face: ok");
          //   faceFeedback.setTextColor(Color.GREEN);
             //faceFeedback.setBackgroundColor(Color.GREEN);
         }else{
-            btn_calibration.setImageResource(R.drawable.eyeblack_icon);
+            btn_face_guide.setImageResource(R.drawable.guide_red);
          //   faceFeedback.setText("face: not ok\nBe in front of the camera");
           //  faceFeedback.setTextColor(Color.RED);
             //faceFeedback.setBackgroundColor(Color.RED);
