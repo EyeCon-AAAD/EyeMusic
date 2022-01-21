@@ -23,25 +23,27 @@
 
     <androidx.camera.view.PreviewView
         android:id="@+id/preview_view"
-        android:layout_width="120dp"
-        android:layout_height="160dp"
+        android:layout_width="90dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="5dp"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="invisible" >
+        tools:visibility="invisible">
 
     </androidx.camera.view.PreviewView>
 
     <com.projectx.eyemusic.Graphics.GraphicOverlay
         android:id="@+id/graphic_overlay_face"
-        android:layout_width="120dp"
-        android:layout_height="160dp"
-        android:visibility="invisible"
+        android:layout_width="90dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="5dp"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="invisible" />
+        tools:visibility="visible" />
 
     <TextView
         android:id="@+id/text_view_report"
@@ -88,48 +90,46 @@
 
     <ImageButton
         android:id="@+id/btn_main_show_player"
-        android:layout_width="140dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="30dp"
+        android:layout_width="120dp"
+        android:layout_height="85dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="5dp"
+        android:background="@drawable/navigation_btn_background"
+
+
         android:padding="10dp"
         android:scaleType="fitCenter"
-        android:background="@drawable/navigation_btn_background"
         android:src="@drawable/ic_play"
-
-
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/btn_main_back"
-        android:layout_width="140dp"
-        android:layout_height="100dp"
+        android:layout_width="120dp"
+        android:layout_height="85dp"
 
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="30dp"
-        android:layout_marginEnd="60dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/navigation_btn_background"
         android:padding="8dp"
         android:scaleType="fitCenter"
-        android:background="@drawable/navigation_btn_background"
         android:src="@drawable/ic_back2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/btn_main_show_player"/>
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ImageButton
         android:id="@+id/btn_main_calibration"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginTop="30dp"
-        android:layout_marginBottom="30dp"
+        android:background="@drawable/navigation_btn_background"
         android:padding="5dp"
         android:scaleType="fitCenter"
-        android:background="@drawable/navigation_btn_background"
         android:src="@drawable/eyeblack_icon"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@id/btn_main_show_player"
         app:layout_constraintStart_toEndOf="@id/btn_main_back"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/btn_main_show_player"/>
+        tools:visibility="invisible" />
     <FrameLayout
         android:id="@+id/main_fragment_container"
         android:layout_width="0dp"
