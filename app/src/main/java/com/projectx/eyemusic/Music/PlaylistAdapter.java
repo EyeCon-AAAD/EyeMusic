@@ -2,6 +2,7 @@ package com.projectx.eyemusic.Music;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +16,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.projectx.eyemusic.Fragments.PlaylistFragment;
 import com.projectx.eyemusic.Fragments.TracksFragment;
 import com.projectx.eyemusic.MainActivity;
+import com.projectx.eyemusic.Model.GazePoint;
 import com.projectx.eyemusic.R;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.squareup.picasso.Picasso;
@@ -29,11 +32,19 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
     public Context context;
     SpotifyAppRemote spotifyAppRemote;
 
+
+    static private ArrayList<View> references_playlistItems = new ArrayList<View>();
+
     public PlaylistAdapter(Context context, ArrayList<Playlist> playlists, SpotifyAppRemote spotifyAppRemote) {
         this.playlists = playlists;
         this.context = context;
         this.spotifyAppRemote =spotifyAppRemote;
     }
+
+    public static ArrayList<View> getReferencesPlaylistItems() {
+        return references_playlistItems;
+    }
+
 
     /**
      * Called when RecyclerView needs a new {@link ViewHolder} of the given type to represent
@@ -90,7 +101,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
         // update text and image
         holder.tv_playlist_name.setText(playlist.getName());
         Picasso.get().load(playlist.getImageURL()).into(holder.iv_playlist_image);
-    }
+}
 
     /**
      * Returns the total number of items in the data set held by the adapter.
@@ -107,9 +118,15 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
         public TextView tv_playlist_name;
         public Context context;
         public SpotifyAppRemote spotifyAppRemote;
+        public View playlistItemView;
+
+        public View getPlaylistItemView() {
+            return playlistItemView;
+        }
 
         public ViewHolder(@NonNull View itemView, Context context, SpotifyAppRemote spotifyAppRemote) {
             super(itemView);
+            this.playlistItemView = itemView;
             iv_playlist_image = itemView.findViewById(R.id.iv_playlist_image);
             tv_playlist_name = itemView.findViewById(R.id.tv_playlist_name);
             this.context = context;

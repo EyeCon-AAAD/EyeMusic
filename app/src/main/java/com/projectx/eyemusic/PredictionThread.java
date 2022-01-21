@@ -63,9 +63,14 @@ public class PredictionThread extends HandlerThread {
 
                 Log.d(TAG, "SHOWN DOT: " + shown_X + " " + shown_Y);
 
+                //for testing remap
+                shown_X = 600;
+                shown_Y = 1000;
+
                 //remap the gaze location
                 float remap_X = shown_X;
                 float remap_Y = shown_Y;
+
                 Boolean remaped = Boolean.FALSE;
                 RemapGaze remaper = new RemapGaze();
                 if(remaper.needRemap()){
@@ -86,12 +91,12 @@ public class PredictionThread extends HandlerThread {
                 dot.setColor(Color.parseColor("#FF00EE00")); // green
                 graphicOverlayGazeLocation.add(dot);
 
-                /*if(remaped){
+                if(remaped){
                     DotGraphic remaped_dot = new DotGraphic(activity, graphicOverlayGazeLocation, remap_X, remap_Y);
                     remaped_dot.setColor(Color.RED);
                     if(feature.getSmileProb() > SMILE_LIMIT) remaped_dot.setColor(Color.parseColor("#FF800000")); //dark red
                     graphicOverlayGazeLocation.add(remaped_dot);
-                }*/
+                }
 
                 if(feature.getSmileProb() > SMILE_LIMIT) dot.setColor(Color.parseColor("#FF013220")); //dark green
 

@@ -18,7 +18,6 @@ import android.widget.ProgressBar;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.projectx.eyemusic.App;
 import com.projectx.eyemusic.MainActivity;
 import com.projectx.eyemusic.Model.GazePoint;
 import com.projectx.eyemusic.Music.Playlist;
@@ -44,29 +43,31 @@ public class PlaylistFragment extends Fragment {
     private static final String TAG = "PlaylistFragment";
     public MainActivity mainActivity;
     ProgressBar progressBar;
+    LinearLayoutManager layoutManager;
 
+    // static for remap
     static ImageView btnup;
     static ImageView btndown;
-    static GazePoint[] locations_button = new GazePoint[2];
-    static ImageView[] references_button = new ImageButton[2];
+
+    // for remap
+    static GazePoint[] locations_playlist = new GazePoint[4];
+    static View[] references_playlist = new View[4];
+
     static int[] location_rv = new int[2];
     static RecyclerView reference_rv;
-
-    public static GazePoint[] getLocations_button() {
-        return locations_button;
+    public static GazePoint[] getLocationsPlaylist() {
+        return locations_playlist;
     }
-
-    public static ImageView[] getReferences_button() {
-        return references_button;
+    public static View[] getReferencesPlaylist() {
+        return references_playlist;
     }
-
     public static int[] getLocation_rv() {
         return location_rv;
     }
-
     public static RecyclerView getReference_rv() {
         return reference_rv;
     }
+
 
     public PlaylistFragment() {
         // Required empty public constructor
@@ -105,34 +106,42 @@ public class PlaylistFragment extends Fragment {
         progressBar = view.findViewById(R.id.pb_load_main);
 
         btnup = view.findViewById(R.id.btnup);
+        // for remap
         btnup.post(() -> {
             int[] point = new int[2];
             btnup.getLocationOnScreen(point);
             int width = btnup.getWidth();
             int height = btnup.getHeight();
-            locations_button[0] = new GazePoint(point[0]+((float)width/2), point[1]+((float)height/2));
-            references_button[0] = btnup;
+            locations_playlist[0] = new GazePoint(point[0]+((float)width/2), point[1]+((float)height/2));
+            references_playlist[0] = btnup;
             location_rv[0] = point[1]+height;
         });
 
+
         btndown = view.findViewById(R.id.btndown);
+        // for remap
         btndown.post(() -> {
             int[] point = new int[2];
             btndown.getLocationOnScreen(point);
             int width = btndown.getWidth();
             int height = btndown.getHeight();
-            locations_button[1] = new GazePoint(point[0]+((float)width/2), point[1]+((float)height/2));
-            references_button[1] = btndown;
+            locations_playlist[1] = new GazePoint(point[0]+((float)width/2), point[1]+((float)height/2));
+            references_playlist[1] = btndown;
             location_rv[1] = point[1];
         });
-        initPlaylistRecyclerView(view);
         reference_rv = view.findViewById(R.id.rv_playlists);
+
+        initPlaylistRecyclerView(view);
+
+
+
     }
 
     private void initPlaylistRecyclerView(View view) {
         RecyclerView rv_playlists = view.findViewById(R.id.rv_playlists);
         rv_playlists.setHasFixedSize(true);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager = new LinearLayoutManager(getActivity());
+
         rv_playlists.setLayoutManager(layoutManager);
         // check internet connection before fetching playlists
         if(Utilities.isConnected()){
@@ -185,8 +194,10 @@ public class PlaylistFragment extends Fragment {
                     Utilities.showProgressBar(progressBar, rv_playlists, false);
                     // set adapter for recycler view
                     PlaylistAdapter rv_adapter = new PlaylistAdapter(getContext(), playlists, mSpotifyAppRemote);
+                    Log.d(TAG, "playlist count: " + rv_adapter.getItemCount());
                     // set the adapter for the recycler view
                     rv_playlists.setAdapter(rv_adapter);
+
                 } else{
                     // the user doesn't have any playlists. Show appropriate UI to create playlists
                     // in Spotify
@@ -215,6 +226,7 @@ public class PlaylistFragment extends Fragment {
             if (firstVisibleItemIndex > 0) {
                 linearLayoutManager.smoothScrollToPosition(recyclerView,null,firstVisibleItemIndex-1);
             }
+            updatePlaylistItemReferences();
         });
         MainActivity.buttoneffect(btnup);
 
@@ -227,8 +239,43 @@ public class PlaylistFragment extends Fragment {
                 if (lastVisibleItemIndex >= totalItemCount) return;
                 linearLayoutManager.smoothScrollToPosition(recyclerView, null, lastVisibleItemIndex + 1);
             }
+            updatePlaylistItemReferences();
         });
         MainActivity.buttoneffect(btndown);
+
+
+    }
+
+    private void updatePlaylistItemReferences(){
+        // for remap
+        int first_position = layoutManager.findFirstCompletelyVisibleItemPosition();
+        Log.d(TAG, "first_position: "+first_position);
+        View first_item = layoutManager.findViewByPosition(first_position);
+        if(first_item!= null){
+            Log.d(TAG, "first_position: not null");
+            first_item.post(()->{
+                int[] point = new int[2];
+                first_item.getLocationOnScreen(point);
+                int width = first_item.getWidth();
+                int height = first_item.getHeight();
+                locations_playlist[2] = new GazePoint(point[0]+((float)width/2), point[1]+((float)height/2));
+                references_playlist[2] = first_item.findViewById(R.id.tv_playlist_name);
+            });
+        }else Log.d(TAG, "first_position: null");
+
+        // for remap
+        int last_position = layoutManager.findLastCompletelyVisibleItemPosition();
+        View last_item = layoutManager.findViewByPosition(last_position);
+        if(last_item!=null) {
+            last_item.post(() -> {
+                int[] point = new int[2];
+                last_item.getLocationOnScreen(point);
+                int width = last_item.getWidth();
+                int height = last_item.getHeight();
+                locations_playlist[3] = new GazePoint(point[0] + ((float) width / 2), point[1] + ((float) height / 2));
+                references_playlist[3] = last_item.findViewById(R.id.tv_playlist_name);;
+            });
+        }
     }
 
 }

@@ -2,8 +2,11 @@ package com.projectx.eyemusic;
 
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.media.Image;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,28 +15,36 @@ import com.projectx.eyemusic.Fragments.PlayerFragment;
 import com.projectx.eyemusic.Fragments.PlaylistFragment;
 import com.projectx.eyemusic.Fragments.TracksFragment;
 import com.projectx.eyemusic.Model.GazePoint;
+import com.projectx.eyemusic.Music.PlaylistAdapter;
+
+import java.util.ArrayList;
 
 public class RemapGaze {
-    static ImageButton prev_highlight_button;
-    static RecyclerView prev_highlight_rc;
+    private static final String TAG = "RemapGaze";
+    static View prev_highlight = null;
+    static Boolean prev_text = Boolean.FALSE;
+    static RecyclerView prev_highlight_rc = null;
 
     //player fragment
     GazePoint[] locations_player;
-    ImageButton[] references_player;
+    View[] references_player;
 
     //back and player menu buttons
     GazePoint[] locations_menu_button;
-    ImageButton[] references_menu_button;
+    View[] references_menu_button;
 
     // up and down buttons and recycler view in playlist fragment
     GazePoint[] locations_playlist;
-    ImageButton[] references_playlist;
+    View[] references_playlist;
     int[] location_rv_playlist;
     RecyclerView reference_rv_playlist;
 
+    //playlist items
+    View[] references_playlist_items;
+
     // up and down buttons and recycler view in tracks fragment
     GazePoint[] locations_track;
-    ImageButton[] references_track;
+    View[] references_track;
     int[] location_rv_track;
     RecyclerView reference_rv_track;
 
@@ -45,13 +56,18 @@ public class RemapGaze {
         locations_menu_button = MainActivity.getLocationsMenuButtons();
         references_menu_button = MainActivity.getReferencesMenuButtons();
 
-        locations_playlist = PlaylistFragment.getLocations_button();
-        references_playlist = (ImageButton[]) PlaylistFragment.getReferences_button();
+        locations_playlist = PlaylistFragment.getLocationsPlaylist();
+        references_playlist = PlaylistFragment.getReferencesPlaylist();
         location_rv_playlist = PlaylistFragment.getLocation_rv();
         reference_rv_playlist = PlaylistFragment.getReference_rv();
 
+        ArrayList<View> items = PlaylistAdapter.getReferencesPlaylistItems();
+        references_playlist_items = new View[items.size()];
+        references_playlist_items = items.toArray(references_playlist_items);
+
+
         locations_track = TracksFragment.getLocations_button();
-        references_track = (ImageButton[]) TracksFragment.getReferences_button();
+        references_track = TracksFragment.getReferences_button();
         location_rv_track = TracksFragment.getLocation_rv();
         reference_rv_track = TracksFragment.getReference_rv();
 
@@ -87,7 +103,7 @@ public class RemapGaze {
 
     private GazePoint playlistFragmentRemap(GazePoint point){
         //if the point is inside the recycle view
-        if(point.getY()>=location_rv_playlist[0] && point.getY()<=location_rv_playlist[1]){
+        /*if(point.getY()>=location_rv_playlist[0] && point.getY()<=location_rv_playlist[1]){
             //remove the previous highlights
             removePrevColorFilter(null);
             removeRCColorFilter(reference_rv_playlist);
@@ -95,43 +111,56 @@ public class RemapGaze {
             //hightlight the new one
             if(references_playlist!=null){
                 reference_rv_playlist.post(()->{
-                    reference_rv_playlist.getBackground().setColorFilter(Color.parseColor("#8800FF00"), PorterDuff.Mode.DARKEN);
+                    reference_rv_playlist.getBackground().setColorFilter(Color.parseColor("#8800FF00"), PorterDuff.Mode.LIGHTEN);
                 });
             }
 
             //set new prevs
             prev_highlight_rc = reference_rv_playlist;
-            prev_highlight_button = null;
+            prev_highlight = null;
             return point;
-        }
+        }*/
 
         //if it is near the buttons
         GazePoint[] all_locations_playlist;
-        ImageButton[] all_references_playlist;
+        View[] all_references_playlist;
 
         int playlist_length = locations_playlist.length;
         int menu_button_length = locations_menu_button.length;
+        int playlist_items_length = references_playlist_items.length;
 
         all_locations_playlist = new GazePoint[playlist_length+menu_button_length];
         System.arraycopy(locations_playlist, 0, all_locations_playlist, 0, playlist_length);
         System.arraycopy(locations_menu_button, 0, all_locations_playlist, playlist_length, menu_button_length);
 
-        all_references_playlist = new ImageButton[playlist_length+ menu_button_length];
+        all_references_playlist = new View[playlist_length+ menu_button_length+playlist_items_length];
         System.arraycopy(references_playlist, 0, all_references_playlist, 0, playlist_length);
         System.arraycopy(references_menu_button, 0, all_references_playlist, playlist_length, menu_button_length);
+        System.arraycopy(references_playlist_items, 0, all_references_playlist, menu_button_length, playlist_items_length);
 
         int nearest_index =  getNearestIndex(all_locations_playlist, point);
-
+        Log.d(TAG, "nearest_index: " + nearest_index);
         // if a near button found
         if(nearest_index!=-1){
             removePrevColorFilter(all_references_playlist[nearest_index]);
             removeRCColorFilter(null);
 
-            all_references_playlist[nearest_index].post(()->{
-                all_references_playlist[nearest_index].setColorFilter(Color.parseColor("#8800FF00"));
-            });
+            if(nearest_index == 2 || nearest_index== 3){
+                prev_text = Boolean.TRUE;
+                all_references_playlist[nearest_index].post(()->{
+                    addColorFilter(all_references_playlist[nearest_index], Boolean.TRUE);
+                    ((TextView)all_references_playlist[nearest_index]).setTextColor(Color.GREEN);
 
-            prev_highlight_button = all_references_playlist[nearest_index];
+                });
+            }else{
+                prev_text = Boolean.FALSE;
+                all_references_playlist[nearest_index].post(()->{
+                    addColorFilter(all_references_playlist[nearest_index], Boolean.FALSE);
+                });
+            }
+
+
+            prev_highlight = all_references_playlist[nearest_index];
             prev_highlight_rc = null;
 
             return all_locations_playlist[nearest_index];
@@ -141,7 +170,7 @@ public class RemapGaze {
             removePrevColorFilter(null);
             removeRCColorFilter(null);
 
-            prev_highlight_button = null;
+            prev_highlight = null;
             prev_highlight_rc = null;
 
             return null;
@@ -158,19 +187,19 @@ public class RemapGaze {
             //hightlight the new one
             if(reference_rv_track!=null){
                 reference_rv_track.post(()->{
-                    reference_rv_track.getBackground().setColorFilter(Color.parseColor("#8800FF00"), PorterDuff.Mode.DARKEN);
+                    reference_rv_track.getBackground().setColorFilter(Color.parseColor("#DD00FF00"), PorterDuff.Mode.LIGHTEN);
                 });
             }
 
             //set new prevs
             prev_highlight_rc = reference_rv_track;
-            prev_highlight_button = null;
+            prev_highlight = null;
             return point;
         }
 
         //if it is near the buttons
         GazePoint[] all_locations_track;
-        ImageButton[] all_references_track;
+        View[] all_references_track;
 
         int track_length = locations_track.length;
         int menu_button_length = locations_menu_button.length;
@@ -179,7 +208,7 @@ public class RemapGaze {
         System.arraycopy(locations_track, 0, all_locations_track, 0, track_length);
         System.arraycopy(locations_menu_button, 0, all_locations_track, track_length, menu_button_length);
 
-        all_references_track = new ImageButton[track_length+ menu_button_length];
+        all_references_track = new View[track_length+ menu_button_length];
         System.arraycopy(references_track, 0, all_references_track, 0, track_length);
         System.arraycopy(references_menu_button, 0, all_references_track, track_length, menu_button_length);
 
@@ -191,10 +220,10 @@ public class RemapGaze {
             removeRCColorFilter(null);
 
             all_references_track[nearest_index].post(()->{
-                all_references_track[nearest_index].setColorFilter(Color.parseColor("#8800FF00"));
+                addColorFilter(all_references_track[nearest_index], Boolean.FALSE);
             });
 
-            prev_highlight_button = all_references_track[nearest_index];
+            prev_highlight = all_references_track[nearest_index];
             prev_highlight_rc = null;
 
             return all_locations_track[nearest_index];
@@ -204,7 +233,7 @@ public class RemapGaze {
             removePrevColorFilter(null);
             removeRCColorFilter(null);
 
-            prev_highlight_button = null;
+            prev_highlight = null;
             prev_highlight_rc = null;
 
             return null;
@@ -213,7 +242,7 @@ public class RemapGaze {
 
     private GazePoint playerFragmentRemap(GazePoint point){
         GazePoint[] all_locations_player;
-        ImageButton[] all_references_player;
+        View[] all_references_player;
 
         int player_length = locations_player.length;
         int menu_button_length = locations_menu_button.length;
@@ -222,7 +251,7 @@ public class RemapGaze {
         System.arraycopy(locations_player, 0, all_locations_player, 0, player_length);
         System.arraycopy(locations_menu_button, 0, all_locations_player, player_length, menu_button_length);
 
-        all_references_player = new ImageButton[player_length+ menu_button_length];
+        all_references_player = new View[player_length+ menu_button_length];
         System.arraycopy(references_player, 0, all_references_player, 0, player_length);
         System.arraycopy(references_menu_button, 0, all_references_player, player_length, menu_button_length);
 
@@ -234,31 +263,53 @@ public class RemapGaze {
             //removeColorFilters(nearest_index);
             removePrevColorFilter(all_references_player[nearest_index]);
             all_references_player[nearest_index].post(()->{
-                all_references_player[nearest_index].setColorFilter(Color.parseColor("#8800FF00"));
+                addColorFilter(all_references_player[nearest_index], Boolean.FALSE);
             });
-            prev_highlight_button = all_references_player[nearest_index];
+            prev_highlight = all_references_player[nearest_index];
             return all_locations_player[nearest_index];
         }
 
     }
+
+    private void addColorFilter(View v, Boolean is_text_view){
+        if(is_text_view){
+            ((TextView) v).setTextColor(Color.parseColor("#8800FF00"));
+        }else{
+            if(v.getForeground()!=null){
+                v.getForeground().setColorFilter(Color.parseColor("#8800FF00"), PorterDuff.Mode.LIGHTEN);
+            }else if (v.getBackground()!=null){
+                v.getBackground().setColorFilter(Color.parseColor("#8800FF00"), PorterDuff.Mode.DARKEN);
+            }else{
+                ImageButton imageButton = (ImageButton) v;
+                imageButton.setColorFilter(Color.parseColor("#8800FF00"));
+            }
+        }
+
+    }
+
     private void removeRCColorFilter(RecyclerView exception_rc){
         if(prev_highlight_rc != null && prev_highlight_rc!=exception_rc)
             prev_highlight_rc.getBackground().setColorFilter(null);
     }
 
-    private void removePrevColorFilter(ImageButton exception_btn){
-        if(prev_highlight_button !=null && exception_btn!= prev_highlight_button){
-            prev_highlight_button.setColorFilter(null);
+    private void removePrevColorFilter(View exception_btn){
+        if(prev_text && prev_highlight !=null && exception_btn!= prev_highlight){
+            ((TextView) prev_highlight).setTextColor(Color.WHITE);
+            return;
+        }
+        //else
+        if(prev_highlight !=null && exception_btn!= prev_highlight){
+            if(prev_highlight.getForeground() != null){
+                prev_highlight.getForeground().setColorFilter(null);
+            }else if (prev_highlight.getBackground() != null){
+                prev_highlight.getBackground().setColorFilter(null);
+            }else{
+                ImageButton imageButton = (ImageButton) prev_highlight;
+                imageButton.setColorFilter(null);
+            }
         }
     }
 
-//    private void removeColorFilters(int exception){
-//        for (int i = 0; i< all_references.length; i++){
-//            ImageButton ib = all_references[i];
-//            if(ib!=null && i!=exception)
-//                ib.setColorFilter(null);
-//        }
-//    }
 
     private int getNearestIndex(GazePoint[] points, GazePoint desired_point){
         double smallest_distance=-1;
