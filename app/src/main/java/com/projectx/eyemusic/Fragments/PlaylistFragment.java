@@ -43,7 +43,7 @@ public class PlaylistFragment extends Fragment {
     private static final String TAG = "PlaylistFragment";
     public MainActivity mainActivity;
     ProgressBar progressBar;
-    LinearLayoutManager layoutManager;
+    static LinearLayoutManager layoutManager;
 
     // static for remap
     static ImageView btnup;
@@ -246,8 +246,9 @@ public class PlaylistFragment extends Fragment {
 
     }
 
-    private void updatePlaylistItemReferences(){
+    public static void updatePlaylistItemReferences(){
         // for remap
+        if(layoutManager==null) return;
         int first_position = layoutManager.findFirstCompletelyVisibleItemPosition();
         Log.d(TAG, "first_position: "+first_position);
         View first_item = layoutManager.findViewByPosition(first_position);

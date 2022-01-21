@@ -56,6 +56,7 @@ public class RemapGaze {
         locations_menu_button = MainActivity.getLocationsMenuButtons();
         references_menu_button = MainActivity.getReferencesMenuButtons();
 
+        PlaylistFragment.updatePlaylistItemReferences();
         locations_playlist = PlaylistFragment.getLocationsPlaylist();
         references_playlist = PlaylistFragment.getReferencesPlaylist();
         location_rv_playlist = PlaylistFragment.getLocation_rv();
