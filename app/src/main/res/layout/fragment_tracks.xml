@@ -17,7 +17,7 @@
         android:background="@drawable/arrows_background"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toTopOf="@id/btndown"
-        app:layout_constraintTop_toBottomOf="@id/btnup"
+        app:layout_constraintTop_toBottomOf="@id/tv_trackstitle"
         >
     </androidx.recyclerview.widget.RecyclerView>
 
@@ -32,11 +32,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         />
+    <TextView
+        android:id="@+id/tv_trackstitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="Tracks"
+        android:textColor="@color/colorWhite"
+        android:textAlignment="center"
+        android:fontFamily="@font/segoe_ui"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/btnup"
+        />
 
     <ImageButton
         android:id="@+id/btnup"
-        android:layout_width="300dp"
-        android:layout_height="100dp"
+        android:layout_width="250dp"
+        android:layout_height="80dp"
         android:layout_marginBottom="20dp"
         android:layout_marginTop="20dp"
         android:background="@drawable/arrows_background"
@@ -50,8 +63,8 @@
         />
     <ImageButton
         android:id="@+id/btndown"
-        android:layout_width="330dp"
-        android:layout_height="100dp"
+        android:layout_width="250dp"
+        android:layout_height="80dp"
         android:layout_marginBottom="20dp"
         android:layout_marginTop="20dp"
         android:background="@drawable/arrows_background"

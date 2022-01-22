@@ -16,6 +16,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -31,6 +32,7 @@ import com.android.volley.VolleyError;
 import com.projectx.eyemusic.MainActivity;
 import com.projectx.eyemusic.Model.GazePoint;
 import com.projectx.eyemusic.Music.MyTrack;
+import com.projectx.eyemusic.Music.PlaylistAdapter;
 import com.projectx.eyemusic.Music.TracksAdapter;
 import com.projectx.eyemusic.R;
 import com.projectx.eyemusic.Utilities;
@@ -57,6 +59,7 @@ public class TracksFragment extends Fragment {
 
     static ImageView btnup;
     static ImageView btndown;
+    static TextView playlisttitle;
     static GazePoint[] locations_button = new GazePoint[2];
     static ImageView[] references_button = new ImageButton[2];
     static int[] location_rv = new int[2];
@@ -103,6 +106,7 @@ public class TracksFragment extends Fragment {
         if (getArguments() != null) {
             playlistID = getArguments().getString(ARG_PLAYLIST_ID);
         }
+
     }
 
     @Override
@@ -128,6 +132,8 @@ public class TracksFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         progressBar = view.findViewById(R.id.pb_load_main);
         btnup = view.findViewById(R.id.btnup);
+        playlisttitle = view.findViewById(R.id.tv_trackstitle);
+        playlisttitle.setText(PlaylistAdapter.clickedPlaylist);
         btnup.post(() -> {
             int[] point = new int[2];
             btnup.getLocationOnScreen(point);
