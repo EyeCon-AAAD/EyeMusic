@@ -28,6 +28,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
     public ArrayList<Playlist> playlists;
     public Context context;
     SpotifyAppRemote spotifyAppRemote;
+    public static String clickedPlaylist;
 
     public PlaylistAdapter(Context context, ArrayList<Playlist> playlists, SpotifyAppRemote spotifyAppRemote) {
         this.playlists = playlists;
@@ -123,8 +124,8 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
                     // go to the Tracks Fragment
                     // Playlist id will be needed to fetch tracks of current album
                     AppCompatActivity activity = (AppCompatActivity) view.getContext();
+                    clickedPlaylist = playlist.getName();
                     Fragment fragment = TracksFragment.newInstance(playlist.getId());
-
                     Fragment frag = null;
                     MainActivity.currentFragment = fragment;
                     for (Fragment f: activity.getSupportFragmentManager().getFragments()){
