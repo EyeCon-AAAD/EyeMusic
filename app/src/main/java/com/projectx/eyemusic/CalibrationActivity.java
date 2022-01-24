@@ -223,6 +223,7 @@ public class CalibrationActivity extends BaseActivity {
                     "<li>Stabilize your head.</li>"+
                     "</ul>"+
                 "</li>"+
+                "<li> Should you decide to calibrate again, press the camera view on the top menu.</li>" +
                 "</ul>"));
         textViewInstructions.setMovementMethod(new ScrollingMovementMethod());
 

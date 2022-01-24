@@ -110,7 +110,7 @@ public class PredictionThread extends HandlerThread {
                 }
             }
             else{
-                Toast.makeText(App.getContext(), "There is no Calibrated Model", Toast.LENGTH_SHORT).show();
+             //   Toast.makeText(App.getContext(), "There is no Calibrated Model", Toast.LENGTH_SHORT).show();
                 prediction = GazeModelManager.predictOriginal(feature);
                 Log.d(TAG, "Original model coordinates: (" + prediction.getX() + ", " + prediction.getY() + ")");
                 Log.d(TAG, "run: using original model");
